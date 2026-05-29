@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Editar categoria - {{ categoria.nome }}</title>
+    <link rel="stylesheet" href="/static/css/catalogo.css?v=10">
+</head>
+<body class="merchant-dashboard">
+    <header class="panel-header panel-header--dashboard">
+        <div>
+            <p class="eyebrow">Categoria</p>
+            <h1>Editar categoria</h1>
+            <span class="panel-store-link">{{ loja.nome }}</span>
+        </div>
+        <nav class="panel-nav">
+            <a href="{% url 'painel_loja' loja.slug %}">Voltar ao painel</a>
+        </nav>
+    </header>
+    <main class="dashboard-shell dashboard-shell--narrow">
+        <section class="panel-section">
+            <form class="panel-form" method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit">Salvar categoria</button>
+            </form>
+        </section>
+    </main>
+</body>
+</html>

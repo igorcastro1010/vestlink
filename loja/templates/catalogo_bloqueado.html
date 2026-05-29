@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ loja.nome }} - Catalogo indisponivel</title>
+    <link rel="stylesheet" href="/static/css/catalogo.css?v=25">
+</head>
+<body class="storefront blocked-store">
+    <main class="blocked-store-card">
+        <p class="eyebrow">Catalogo pausado</p>
+        <h1>{{ loja.nome }}</h1>
+        <p>Esta vitrine esta temporariamente indisponivel porque o teste terminou ou a assinatura precisa ser regularizada.</p>
+        <a href="https://wa.me/55{{ loja.telefone }}" target="_blank" rel="noopener">Falar com a loja no WhatsApp</a>
+    </main>
+</body>
+</html>

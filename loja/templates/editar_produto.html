@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Editar - {{ produto.nome }}</title>
+    <link rel="stylesheet" href="/static/css/catalogo.css">
+</head>
+<body>
+    <header class="panel-header">
+        <div>
+            <p class="eyebrow">Editar produto</p>
+            <h1>{{ produto.nome }}</h1>
+        </div>
+        <nav class="panel-nav">
+            <span>{{ request.user.username }}</span>
+            <a href="{% url 'painel_loja' loja.slug %}">Voltar ao painel</a>
+            <a href="{% url 'catalogo' loja.slug %}">Ver catálogo</a>
+            <form method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit">Sair</button>
+            </form>
+        </nav>
+    </header>
+
+    <main class="panel-shell panel-shell--wide">
+        <section class="panel-section">
+            <h2>Dados do produto</h2>
+            <form class="panel-form" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit">Salvar alterações</button>
+            </form>
+        </section>
+
+        <section class="panel-section">
+            <h2>Fotos atuais</h2>
+            <div class="panel-current-images">
+                <img src="{{ produto.imagem.url }}" alt="{{ produto.nome }}">
+                {% for foto in produto.imagens.all %}
+                    <img src="{{ foto.imagem.url }}" alt="{{ produto.nome }} foto {{ forloop.counter }}">
+                {% empty %}
+                    <p class="empty">Sem fotos adicionais.</p>
+                {% endfor %}
+            </div>
+            <p class="panel-help">Novas fotos adicionais serão somadas às fotos existentes.</p>
+        </section>
+    </main>
+</body>
+</html>

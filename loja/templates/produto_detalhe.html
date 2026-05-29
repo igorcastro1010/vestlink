@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ produto.nome }} - {{ loja.nome }}</title>
+    <link rel="stylesheet" href="/static/css/catalogo.css?v=19">
+</head>
+<body class="storefront store-theme-{{ loja.tema }}">
+    <header class="store-header" style="--brand: {{ loja.cor_principal }}">
+        <div class="store-header__brand store-header__brand--with-logo">
+            {% if loja.logo %}
+                <img class="store-logo-image" src="{{ loja.logo.url }}" alt="{{ loja.nome }}">
+            {% endif %}
+            <div>
+                <p class="eyebrow">Produto</p>
+                <h1>{{ loja.nome }}</h1>
+                {% if loja.descricao %}<p>{{ loja.descricao }}</p>{% endif %}
+            </div>
+        </div>
+        <div class="store-header__actions">
+            <a href="{% url 'catalogo_curto' loja.slug %}">Voltar ao catalogo</a>
+            <a href="https://wa.me/55{{ loja.telefone }}" target="_blank" rel="noopener">Entre em contato</a>
+        </div>
+    </header>
+
+    <main class="product-detail-shell">
+        <section class="product-detail-card product"
+                 id="produto-{{ produto.id }}">
+            <div class="product-detail-gallery">
+                <img class="product__main-image" src="{{ produto.imagem.url }}" alt="{{ produto.nome }}">
+                {% if produto.imagens.all %}
+                    <div class="gallery" aria-label="Fotos de {{ produto.nome }}">
+                        <button type="button" class="gallery-thumb active" data-image="{{ produto.imagem.url }}" data-alt="{{ produto.nome }}" aria-pressed="true">
+                            <img src="{{ produto.imagem.url }}" alt="{{ produto.nome }}">
+                        </button>
+                        {% for foto in produto.imagens.all %}
+                            <button type="button" class="gallery-thumb" data-image="{{ foto.imagem.url }}" data-alt="{{ produto.nome }} - foto {{ forloop.counter|add:1 }}" aria-pressed="false">
+                                <img src="{{ foto.imagem.url }}" alt="{{ produto.nome }} - foto {{ forloop.counter|add:1 }}">
+                            </button>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="product-detail-info">
+                <p class="eyebrow">{% if produto.categoria %}{{ produto.categoria.nome }}{% else %}Produto{% endif %}</p>
+                <h2>{{ produto.nome }}</h2>
+                {% if produto.descricao %}<p>{{ produto.descricao }}</p>{% endif %}
+                <div class="price-stack">
+                    {% if produto.preco_antigo %}<span>R$ {{ produto.preco_antigo }}</span>{% endif %}
+                    <strong>R$ {{ produto.preco }}</strong>
+                </div>
+
+                {% if produto.variacoes.all %}
+                    <div class="variant-stock-list">
+                        <span class="option-label">Estoque por variacao</span>
+                        {% for variacao in produto.variacoes.all %}
+                            <span class="{% if not variacao.disponivel %}sold{% endif %}">
+                                {{ variacao.cor }} / {{ variacao.tamanho }}: {% if variacao.disponivel %}{{ variacao.estoque }} un.{% else %}esgotado{% endif %}
+                            </span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                {% if produto.tamanhos_lista %}
+                    <div class="option-group" aria-label="Tamanhos">
+                        <span class="option-label">Tamanho</span>
+                        {% for tamanho in produto.tamanhos_lista %}
+                            {% with tamanho_normalizado=tamanho|lower %}
+                            <button type="button"
+                                    class="choice-option size-option{% if tamanho_normalizado in produto.tamanhos_esgotados_lista %} choice-option--sold{% endif %}"
+                                    data-size="{{ tamanho }}"
+                                    aria-pressed="false"
+                                    {% if tamanho_normalizado in produto.tamanhos_esgotados_lista %}disabled aria-disabled="true" title="Tamanho esgotado"{% endif %}>
+                                {{ tamanho }}
+                            </button>
+                            {% endwith %}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                {% if produto.cores_lista %}
+                    <div class="option-group" aria-label="Cores">
+                        <span class="option-label">Cor</span>
+                        {% for cor in produto.cores_lista %}
+                            {% with cor_normalizada=cor|lower %}
+                            <button type="button"
+                                    class="choice-option color-option{% if cor_normalizada in produto.cores_esgotadas_lista %} choice-option--sold{% endif %}"
+                                    data-color="{{ cor }}"
+                                    aria-pressed="false"
+                                    {% if cor_normalizada in produto.cores_esgotadas_lista %}disabled aria-disabled="true" title="Cor esgotada"{% endif %}>
+                                {{ cor }}
+                            </button>
+                            {% endwith %}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                {% if produto.esgotado %}
+                    <button class="whatsapp" disabled>Esgotado</button>
+                {% else %}
+                    <a class="whatsapp {% if produto.tamanhos_lista or produto.cores_lista %}whatsapp--requires-choice{% endif %}"
+                       href="{% url 'whatsapp_produto' loja.slug produto.id %}"
+                       data-product="{{ produto.nome }}"
+                       data-track-url="{% url 'whatsapp_produto' loja.slug produto.id %}"
+                       data-base-label="Quero esse"
+                       data-needs-size="{% if produto.tamanhos_lista %}true{% else %}false{% endif %}"
+                       data-needs-color="{% if produto.cores_lista %}true{% else %}false{% endif %}"
+                       target="_blank"
+                       rel="noopener">
+                        {% if produto.tamanhos_lista and produto.cores_lista %}Escolha tamanho e cor{% elif produto.tamanhos_lista %}Escolha o tamanho{% elif produto.cores_lista %}Escolha a cor{% else %}Quero esse{% endif %}
+                    </a>
+                {% endif %}
+            </div>
+        </section>
+    </main>
+
+    <script>
+        document.querySelectorAll(".gallery-thumb").forEach((button) => {
+            button.addEventListener("click", () => {
+                const image = document.querySelector(".product__main-image");
+                document.querySelectorAll(".gallery-thumb").forEach((item) => {
+                    item.classList.remove("active");
+                    item.setAttribute("aria-pressed", "false");
+                });
+                button.classList.add("active");
+                button.setAttribute("aria-pressed", "true");
+                image.src = button.dataset.image;
+                image.alt = button.dataset.alt;
+            });
+        });
+
+        const product = document.querySelector(".product");
+        const whatsapp = product?.querySelector(".whatsapp");
+        const selection = { size: "", color: "" };
+        const sizeButtons = product?.querySelectorAll(".size-option:not(:disabled)") || [];
+        const colorButtons = product?.querySelectorAll(".color-option:not(:disabled)") || [];
+
+        const refreshWhatsapp = () => {
+            if (!whatsapp || whatsapp.tagName !== "A") return;
+            const needsSize = whatsapp.dataset.needsSize === "true" && sizeButtons.length > 0;
+            const needsColor = whatsapp.dataset.needsColor === "true" && colorButtons.length > 0;
+            if ((needsSize && !selection.size) || (needsColor && !selection.color)) return;
+            const params = new URLSearchParams();
+            if (selection.size) params.set("tamanho", selection.size);
+            if (selection.color) params.set("cor", selection.color);
+            const label = [selection.size, selection.color].filter(Boolean).join(" / ");
+            whatsapp.href = params.toString() ? `${whatsapp.dataset.trackUrl}?${params.toString()}` : whatsapp.dataset.trackUrl;
+            whatsapp.textContent = label ? `${whatsapp.dataset.baseLabel} - ${label}` : whatsapp.dataset.baseLabel;
+            whatsapp.classList.remove("whatsapp--requires-choice");
+        };
+
+        sizeButtons.forEach((button) => {
+            button.addEventListener("click", () => {
+                sizeButtons.forEach((item) => item.classList.remove("active"));
+                button.classList.add("active");
+                selection.size = button.dataset.size;
+                refreshWhatsapp();
+            });
+        });
+
+        colorButtons.forEach((button) => {
+            button.addEventListener("click", () => {
+                colorButtons.forEach((item) => item.classList.remove("active"));
+                button.classList.add("active");
+                selection.color = button.dataset.color;
+                refreshWhatsapp();
+            });
+        });
+
+        whatsapp?.addEventListener("click", (event) => {
+            if (whatsapp.classList.contains("whatsapp--requires-choice")) {
+                event.preventDefault();
+                const nextChoice = product.querySelector(".choice-option:not(.active):not(:disabled)");
+                nextChoice?.focus();
+            }
+        });
+    </script>
+</body>
+</html>

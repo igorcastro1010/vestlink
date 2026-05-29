@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Painel do catalogo</title>
+    <link rel="stylesheet" href="/static/css/catalogo.css?v=18">
+</head>
+<body class="stores-page">
+    <header class="panel-header panel-header--stores">
+        <div>
+            <p class="eyebrow">Painel do lojista</p>
+            <h1>Gerencie suas lojas</h1>
+            <span class="panel-store-link">Crie vitrines digitais e organize todos os catalogos em um so lugar.</span>
+        </div>
+        <nav class="panel-nav">
+            <span>{{ request.user.username }}</span>
+            <a href="/">Ver inicio</a>
+            <form method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit">Sair</button>
+            </form>
+        </nav>
+    </header>
+
+    <main class="stores-shell">
+        <section class="panel-section onboarding-card stores-onboarding">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">Primeiros passos</p>
+                    <h2>Coloque sua vitrine no ar</h2>
+                </div>
+                <span>Guia rapido</span>
+            </div>
+            <div class="onboarding-compact-list">
+                {% for passo in onboarding_painel %}
+                    <article class="{% if passo.feito %}done{% endif %}">
+                        <span>{% if passo.feito %}✓{% else %}{{ forloop.counter }}{% endif %}</span>
+                        <div>
+                            <strong>{{ passo.titulo }}</strong>
+                            <small>{{ passo.descricao }}</small>
+                        </div>
+                    </article>
+                {% endfor %}
+            </div>
+        </section>
+
+        <section class="panel-section stores-form-card">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">Nova vitrine</p>
+                    <h2>Criar loja</h2>
+                </div>
+                <span>Link proprio</span>
+            </div>
+            <form class="panel-form" method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit">Salvar loja</button>
+            </form>
+        </section>
+
+        <section class="panel-section stores-list-card">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">Seu catalogo</p>
+                    <h2>Lojas cadastradas</h2>
+                </div>
+                <span>{{ lojas|length }} loja(s)</span>
+            </div>
+            <div class="panel-list stores-list">
+                {% for loja in lojas %}
+                    <article class="store-card">
+                        <div class="store-card__avatar">{{ loja.nome|slice:":1" }}</div>
+                        <div class="store-card__content">
+                            <strong>{{ loja.nome }}</strong>
+                            <span>/c/{{ loja.slug }}/</span>
+                            {% if loja.telefone %}
+                                <small>WhatsApp: {{ loja.telefone }}</small>
+                            {% else %}
+                                <small>Adicione o WhatsApp para vender mais rapido.</small>
+                            {% endif %}
+                        </div>
+                        <div class="panel-actions">
+                            <a href="{% url 'painel_loja' loja.slug %}">Adicionar produtos</a>
+                            <a href="{% url 'catalogo_curto' loja.slug %}">Ver catalogo</a>
+                            <button class="copy-link-button" type="button" data-copy-url="{{ request.scheme }}://{{ request.get_host }}{% url 'catalogo_curto' loja.slug %}">Copiar link</button>
+                        </div>
+                    </article>
+                {% empty %}
+                    <div class="empty-dashboard">
+                        <strong>Nenhuma loja cadastrada ainda.</strong>
+                        <p>Crie sua primeira loja para gerar o link do catalogo e comecar a cadastrar produtos.</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+    </main>
+    <script>
+        document.querySelectorAll("[data-copy-url]").forEach((button) => {
+            button.addEventListener("click", async () => {
+                const originalText = button.dataset.copyLabel || button.textContent;
+                button.dataset.copyLabel = originalText;
+                try {
+                    await navigator.clipboard.writeText(button.dataset.copyUrl);
+                } catch (error) {
+                    const fallbackInput = document.createElement("textarea");
+                    fallbackInput.value = button.dataset.copyUrl;
+                    fallbackInput.setAttribute("readonly", "");
+                    fallbackInput.style.position = "fixed";
+                    fallbackInput.style.opacity = "0";
+                    document.body.appendChild(fallbackInput);
+                    fallbackInput.select();
+                    document.execCommand("copy");
+                    document.body.removeChild(fallbackInput);
+                }
+                button.textContent = "Link copiado";
+                button.classList.add("is-copied");
+                window.setTimeout(() => {
+                    button.textContent = originalText;
+                    button.classList.remove("is-copied");
+                }, 2200);
+            });
+        });
+    </script>
+</body>
+</html>

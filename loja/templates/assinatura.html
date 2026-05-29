@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Assinatura - {{ loja.nome }}</title>
+    <link rel="stylesheet" href="/static/css/catalogo.css?v=22">
+</head>
+<body class="plans-page">
+    <header class="lp-header">
+        <a class="lp-logo" href="{% url 'painel_loja' loja.slug %}">VestLink</a>
+        <nav>
+            <a href="{% url 'painel_loja' loja.slug %}">Painel</a>
+            <a href="{% url 'checkout_premium' loja.slug %}">Checkout</a>
+            <a href="{% url 'planos' %}">Planos</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="plans-hero">
+            <p class="lp-kicker">Assinatura</p>
+            <h1>Controle do Premium da {{ loja.nome }}.</h1>
+            <p>Acompanhe teste, status da assinatura e o caminho de pagamento da loja.</p>
+        </section>
+
+        <section class="subscription-grid">
+            <article class="subscription-status-card">
+                <span class="plan-tag">{{ loja.assinatura_status_label }}</span>
+                <h2>Plano Premium</h2>
+                <strong>R$ 39,90<span>/mes</span></strong>
+                {% if loja.assinatura_status == "trial" and loja.trial_dias_restantes > 0 %}
+                    <p>Teste ativo por mais {{ loja.trial_dias_restantes }} dia(s). Depois disso, conecte o pagamento para manter a loja regularizada.</p>
+                {% elif loja.assinatura_status == "ativa" %}
+                    <p>Assinatura ativa. A loja esta pronta para vender com catalogo profissional.</p>
+                {% elif loja.assinatura_status == "cancelada" %}
+                    <p>Assinatura cancelada. Voce pode reativar quando quiser.</p>
+                {% else %}
+                    <p>O teste expirou. Reative o Premium para manter o catalogo com uma experiencia profissional.</p>
+                {% endif %}
+
+                <dl class="subscription-facts">
+                    <div>
+                        <dt>Status</dt>
+                        <dd>{{ loja.assinatura_status_label }}</dd>
+                    </div>
+                    <div>
+                        <dt>Fim do teste</dt>
+                        <dd>{% if loja.trial_termina_em %}{{ loja.trial_termina_em|date:"d/m/Y H:i" }}{% else %}Nao definido{% endif %}</dd>
+                    </div>
+                    <div>
+                        <dt>Pagamento</dt>
+                        <dd>{% if mercado_pago_configurado %}Mercado Pago API{% elif checkout_configurado %}Checkout externo{% else %}Modo teste/manual{% endif %}</dd>
+                    </div>
+                </dl>
+
+                <div class="subscription-actions">
+                    <a href="{% url 'checkout_premium' loja.slug %}">Ir para checkout</a>
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="acao" value="ativar_manual">
+                        <button type="submit">Marcar como pago</button>
+                    </form>
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="acao" value="renovar_teste">
+                        <button type="submit">Renovar teste</button>
+                    </form>
+                    {% if loja.assinatura_status != "cancelada" %}
+                        <form method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="acao" value="cancelar">
+                            <button class="danger" type="submit">Cancelar</button>
+                        </form>
+                    {% endif %}
+                </div>
+            </article>
+
+            <article class="subscription-checklist">
+                <p class="lp-kicker">Incluido</p>
+                <h2>O que a loja recebe</h2>
+                <ul>
+                    <li>Catalogo profissional com link curto.</li>
+                    <li>Produtos com varias fotos, tamanhos e cores.</li>
+                    <li>Controle de esgotados e produtos publicados.</li>
+                    <li>Leads e cliques do WhatsApp no painel.</li>
+                    <li>Sem fidelidade para o lojista.</li>
+                </ul>
+            </article>
+        </section>
+
+        <section class="payments-history">
+            <div class="section-heading">
+                <div>
+                    <p class="lp-kicker">Pagamentos</p>
+                    <h2>Historico da assinatura</h2>
+                </div>
+                <span>{{ ultimos_pagamentos|length }} registro(s)</span>
+            </div>
+            <div class="payments-list">
+                {% for pagamento in ultimos_pagamentos %}
+                    <article>
+                        <div>
+                            <strong>{{ pagamento.get_status_display }}</strong>
+                            <span>{{ pagamento.external_reference }}</span>
+                        </div>
+                        <small>R$ {{ pagamento.valor }} - {{ pagamento.criado_em|date:"d/m/Y H:i" }}</small>
+                    </article>
+                {% empty %}
+                    <article>
+                        <div>
+                            <strong>Nenhum pagamento criado ainda.</strong>
+                            <span>Ao clicar no checkout, o VestLink cria uma preferencia no Mercado Pago.</span>
+                        </div>
+                    </article>
+                {% endfor %}
+            </div>
+        </section>
+    </main>
+</body>
+</html>

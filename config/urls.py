@@ -1,0 +1,95 @@
+from django.conf import settings
+from django.conf.urls.static import static
+from django.contrib import admin
+from django.contrib.auth.views import (
+    LogoutView,
+    PasswordResetCompleteView,
+    PasswordResetConfirmView,
+    PasswordResetDoneView,
+    PasswordResetView,
+)
+from django.urls import path, re_path, reverse_lazy
+from django.views.static import serve as static_serve
+
+from loja.views import (
+    LoginLojistaView,
+    assinatura,
+    cadastro,
+    catalogo,
+    catalogo_curto,
+    checkout_premium,
+    editar_categoria,
+    editar_loja,
+    editar_produto,
+    home,
+    mercado_pago_webhook,
+    painel,
+    painel_loja,
+    pagamento_retorno,
+    planos,
+    produto_detalhe,
+    remover_categoria,
+    remover_loja,
+    remover_produto,
+    whatsapp_produto,
+    whatsapp_carrinho,
+)
+
+urlpatterns = [
+    re_path(r"^static/(?P<path>.*)$", static_serve, {"document_root": settings.BASE_DIR / "static"}),
+    path("", home, name="home"),
+    path("planos/", planos, name="planos"),
+    path("cadastro/", cadastro, name="cadastro"),
+    path("entrar/", LoginLojistaView.as_view(), name="login"),
+    path(
+        "senha/recuperar/",
+        PasswordResetView.as_view(
+            template_name="lojista/password_reset_form.html",
+            email_template_name="lojista/password_reset_email.html",
+            success_url=reverse_lazy("recuperar_senha_done"),
+        ),
+        name="recuperar_senha",
+    ),
+    path(
+        "senha/recuperar/enviado/",
+        PasswordResetDoneView.as_view(template_name="lojista/password_reset_done.html"),
+        name="recuperar_senha_done",
+    ),
+    path(
+        "senha/redefinir/<uidb64>/<token>/",
+        PasswordResetConfirmView.as_view(
+            template_name="lojista/password_reset_confirm.html",
+            success_url=reverse_lazy("recuperar_senha_complete"),
+        ),
+        name="recuperar_senha_confirm",
+    ),
+    path(
+        "senha/redefinir/concluido/",
+        PasswordResetCompleteView.as_view(template_name="lojista/password_reset_complete.html"),
+        name="recuperar_senha_complete",
+    ),
+    path("sair/", LogoutView.as_view(next_page="login"), name="logout"),
+    path("painel/", painel, name="painel"),
+    path("painel/<slug:slug>/", painel_loja, name="painel_loja"),
+    path("painel/<slug:slug>/editar/", editar_loja, name="editar_loja"),
+    path("painel/<slug:slug>/remover/", remover_loja, name="remover_loja"),
+    path("painel/<slug:slug>/assinatura/", assinatura, name="assinatura"),
+    path("painel/<slug:slug>/checkout/", checkout_premium, name="checkout_premium"),
+    path("checkout/<slug:slug>/", checkout_premium, name="checkout_publico"),
+    path("painel/<slug:slug>/pagamento/<str:resultado>/", pagamento_retorno, name="pagamento_retorno"),
+    path("painel/<slug:slug>/categoria/<int:categoria_id>/editar/", editar_categoria, name="editar_categoria"),
+    path("painel/<slug:slug>/categoria/<int:categoria_id>/remover/", remover_categoria, name="remover_categoria"),
+    path("painel/<slug:slug>/produto/<int:produto_id>/editar/", editar_produto, name="editar_produto"),
+    path("painel/<slug:slug>/produto/<int:produto_id>/remover/", remover_produto, name="remover_produto"),
+    path("admin/", admin.site.urls),
+    path("api/pagamentos/mercado-pago/webhook/", mercado_pago_webhook, name="mercado_pago_webhook"),
+    path("c/<slug:slug>/", catalogo_curto, name="catalogo_curto"),
+    path("c/<slug:slug>/produto/<int:produto_id>/", produto_detalhe, name="produto_detalhe_curto"),
+    path("loja/<slug:slug>/carrinho/whatsapp/", whatsapp_carrinho, name="whatsapp_carrinho"),
+    path("loja/<slug:slug>/produto/<int:produto_id>/whatsapp/", whatsapp_produto, name="whatsapp_produto"),
+    path("loja/<slug:slug>/produto/<int:produto_id>/", produto_detalhe, name="produto_detalhe"),
+    path("loja/<slug:slug>/", catalogo, name="catalogo"),
+]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

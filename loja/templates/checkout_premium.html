@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Checkout Premium - {{ loja.nome }}</title>
+    <link rel="stylesheet" href="/static/css/catalogo.css?v=25">
+</head>
+<body class="plans-page">
+    <header class="lp-header">
+        <a class="lp-logo" href="{% url 'painel_loja' loja.slug %}">VestLink</a>
+        <nav>
+            <a href="{% url 'painel_loja' loja.slug %}">Painel</a>
+            <a href="{% url 'assinatura' loja.slug %}">Assinatura</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="checkout-shell">
+            <div class="checkout-copy">
+                <p class="lp-kicker">Checkout seguro</p>
+                <h1>Revise o Premium antes de pagar.</h1>
+                <p>O pagamento real usa Mercado Pago Checkout Pro quando o token estiver configurado. Antes de enviar para o gateway, a loja ve plano, valor, cupom e seguranca.</p>
+                {% if erro_pagamento %}
+                    <div class="payment-alert">{{ erro_pagamento }}</div>
+                {% endif %}
+                <div class="checkout-summary">
+                    <span>Loja: <strong>{{ loja.nome }}</strong></span>
+                    <span>Plano: <strong>Premium</strong></span>
+                    <span>Valor normal: <strong>R$ {{ valor|default:"39,90" }}</strong></span>
+                    {% if cupom %}
+                        <span>Cupom: <strong>{{ cupom.codigo }} - {{ cupom.percentual_desconto }}% OFF</strong></span>
+                    {% endif %}
+                    <span>Total hoje: <strong>R$ {{ valor_final|default:"39,90" }}</strong></span>
+                    <span>Gateway: <strong>{% if mercado_pago_configurado %}Mercado Pago API{% else %}Modo teste/manual{% endif %}</strong></span>
+                </div>
+                <div class="secure-checkout-list">
+                    <span>Sem fidelidade</span>
+                    <span>7 dias para testar</span>
+                    <span>Pagamento rastreado no painel</span>
+                </div>
+            </div>
+
+            <aside class="checkout-card">
+                <span class="plan-tag">{% if mercado_pago_configurado %}Pagamento real{% else %}Modo teste{% endif %}</span>
+                <h2>Finalizar assinatura</h2>
+                <p>Use o cupom de lancamento <strong>VESTLINK10</strong> se quiser testar desconto.</p>
+                <form class="checkout-form" method="post">
+                    {% csrf_token %}
+                    <label>
+                        Cupom de desconto
+                        <input type="text" name="cupom" value="{{ cupom_codigo }}" placeholder="VESTLINK10">
+                    </label>
+                    <button class="plan-submit" type="submit">
+                        {% if mercado_pago_configurado %}Ir para Mercado Pago{% else %}Preparar checkout{% endif %}
+                    </button>
+                </form>
+                {% if not mercado_pago_configurado %}
+                    <form method="post" action="{% url 'assinatura' loja.slug %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="acao" value="ativar_manual">
+                        <button class="plan-submit plan-submit--secondary" type="submit">Simular pagamento aprovado</button>
+                    </form>
+                {% endif %}
+            </aside>
+        </section>
+    </main>
+</body>
+</html>

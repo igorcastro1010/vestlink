@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ loja.nome }}</title>
+    <link rel="stylesheet" href="/static/css/catalogo.css?v=19">
+</head>
+<body class="storefront store-theme-{{ loja.tema }}">
+    <header class="store-header" style="--brand: {{ loja.cor_principal }}">
+        <div class="store-header__brand store-header__brand--with-logo">
+            {% if loja.logo %}
+                <img class="store-logo-image" src="{{ loja.logo.url }}" alt="{{ loja.nome }}">
+            {% endif %}
+            <div>
+                <p class="eyebrow">Catalogo digital</p>
+                <h1>{{ loja.nome }}</h1>
+                {% if loja.descricao %}<p>{{ loja.descricao }}</p>{% endif %}
+            </div>
+            <div class="store-header__meta" aria-label="Beneficios do catalogo">
+                <span>Pedido pelo WhatsApp</span>
+                <span>Escolha tamanho e cor</span>
+                <span>Link sempre atualizado</span>
+            </div>
+        </div>
+        <div class="store-header__actions">
+            {% if loja.instagram %}
+                <span>@{{ loja.instagram }}</span>
+            {% endif %}
+            <a href="https://wa.me/55{{ loja.telefone }}" target="_blank" rel="noopener">Entre em contato</a>
+        </div>
+    </header>
+    <aside class="cart-panel" aria-live="polite">
+        <button class="cart-toggle" type="button" aria-label="Abrir sacolinha" title="Sacolinha">
+            <span class="cart-toggle__icon" aria-hidden="true"></span>
+            <span class="cart-toggle__label">Sacolinha</span>
+            <span data-cart-count>0</span>
+        </button>
+        <div class="cart-box" hidden>
+            <strong>Sua sacolinha</strong>
+            <div class="cart-items" data-cart-items>
+                <p>Nenhum produto adicionado.</p>
+            </div>
+            <div class="cart-checkout">
+                <label>Seu nome <input type="text" data-cart-customer-name placeholder="Ex.: Ana"></label>
+                <label>Seu WhatsApp <input type="tel" data-cart-customer-phone placeholder="DDD + numero"></label>
+                <label>Observacao <textarea data-cart-note rows="2" placeholder="Ex.: quero retirar na loja"></textarea></label>
+            </div>
+            <a class="cart-send" data-cart-send href="{% url 'whatsapp_carrinho' loja.slug %}" target="_blank" rel="noopener">Enviar pelo WhatsApp</a>
+            <button class="cart-clear" type="button" data-cart-clear>Limpar</button>
+        </div>
+    </aside>
+
+    <main class="store-layout">
+        <aside class="store-sidebar">
+            <button class="menu-mark" type="button" aria-label="Menu"></button>
+            <h2>Produtos</h2>
+            <nav class="categories" aria-label="Categorias">
+                <a class="{% if not categoria_ativa %}active{% endif %}" href="{{ loja.get_absolute_url }}">Todos</a>
+                {% for categoria in categorias %}
+                    <a class="{% if categoria_ativa == categoria.id|stringformat:'s' %}active{% endif %}"
+                       href="?categoria={{ categoria.id }}{% if busca %}&q={{ busca|urlencode }}{% endif %}">
+                        {{ categoria.nome }}
+                    </a>
+                {% endfor %}
+            </nav>
+        </aside>
+
+        <section class="store-content">
+            <section class="catalog-banner {% if loja.banner_imagem %}catalog-banner--image{% endif %}"
+                     {% if loja.banner_imagem %}style="background-image: linear-gradient(90deg, rgba(23,18,63,0.82), rgba(23,18,63,0.24)), url('{{ loja.banner_imagem.url }}')"{% endif %}>
+                <div>
+                    <p class="eyebrow">Vitrine online</p>
+                    <h2>{% if loja.banner_titulo %}{{ loja.banner_titulo }}{% else %}Novidades selecionadas para voce{% endif %}</h2>
+                    <p>{% if loja.banner_texto %}{{ loja.banner_texto }}{% else %}Escolha seus produtos favoritos e envie tudo junto pelo WhatsApp.{% endif %}</p>
+                </div>
+                <a href="#produtos" class="catalog-banner__cta">Ver produtos</a>
+            </section>
+
+            <section class="store-summary" aria-label="Resumo do catalogo">
+                <article>
+                    <strong>{{ produtos|length }}</strong>
+                    <span>Produtos na vitrine</span>
+                </article>
+                <article>
+                    <strong>{{ categorias|length }}</strong>
+                    <span>Categorias</span>
+                </article>
+                <article>
+                    <strong>WhatsApp</strong>
+                    <span>Pedido direto com a loja</span>
+                </article>
+            </section>
+
+            <div class="store-topbar">
+                <span class="store-logo">{{ loja.nome }}</span>
+                <form class="search" method="get">
+                    {% if categoria_ativa %}
+                        <input type="hidden" name="categoria" value="{{ categoria_ativa }}">
+                    {% endif %}
+                    {% if filtro %}
+                        <input type="hidden" name="filtro" value="{{ filtro }}">
+                    {% endif %}
+                    <input type="search" name="q" value="{{ busca }}" placeholder="Buscar peca, cor ou tamanho">
+                    <button type="submit" aria-label="Buscar">Buscar</button>
+                </form>
+            </div>
+
+            <nav class="store-filters" aria-label="Filtros rapidos">
+                <a class="{% if not filtro %}active{% endif %}" href="{{ loja.get_absolute_url }}{% if categoria_ativa %}?categoria={{ categoria_ativa }}{% endif %}">Todos</a>
+                <a class="{% if filtro == 'novos' %}active{% endif %}" href="?filtro=novos{% if categoria_ativa %}&categoria={{ categoria_ativa }}{% endif %}{% if busca %}&q={{ busca|urlencode }}{% endif %}">Novos</a>
+                <a class="{% if filtro == 'promocoes' %}active{% endif %}" href="?filtro=promocoes{% if categoria_ativa %}&categoria={{ categoria_ativa }}{% endif %}{% if busca %}&q={{ busca|urlencode }}{% endif %}">Promocoes</a>
+                <a class="{% if filtro == 'disponiveis' %}active{% endif %}" href="?filtro=disponiveis{% if categoria_ativa %}&categoria={{ categoria_ativa }}{% endif %}{% if busca %}&q={{ busca|urlencode }}{% endif %}">Disponiveis</a>
+            </nav>
+
+            <section class="promo-grid" aria-label="Destaques da loja">
+                {% for produto in produtos|slice:":1" %}
+                    <article class="promo-card promo-card--wide">
+                        <div>
+                            <h2>Novidades</h2>
+                            <p>{{ produto.nome }}</p>
+                            <span>Escolha tamanho e cor antes de chamar no WhatsApp</span>
+                        </div>
+                        <img src="{{ produto.imagem.url }}" alt="{{ produto.nome }}">
+                    </article>
+                {% endfor %}
+                {% for produto in produtos|slice:"1:2" %}
+                    <article class="promo-card">
+                        <div>
+                            <h2>Queimando o estoque</h2>
+                            <p>{{ produto.nome }}</p>
+                        </div>
+                        <img src="{{ produto.imagem.url }}" alt="{{ produto.nome }}">
+                    </article>
+                {% empty %}
+                    {% for produto in produtos|slice:":1" %}
+                        <article class="promo-card">
+                            <div>
+                                <h2>Peça em destaque</h2>
+                                <p>{{ produto.nome }}</p>
+                            </div>
+                            <img src="{{ produto.imagem.url }}" alt="{{ produto.nome }}">
+                        </article>
+                    {% endfor %}
+                {% endfor %}
+            </section>
+
+            <h2 class="section-title">{% if filtro == "novos" %}Novos produtos{% elif filtro == "promocoes" %}Promocoes{% elif filtro == "disponiveis" %}Disponiveis agora{% else %}Novidades{% endif %}</h2>
+
+            <section class="grid" id="produtos" aria-label="Produtos">
+                {% for produto in produtos %}
+                    <article id="produto-{{ produto.id }}" class="product {% if produto.esgotado %}product--sold{% endif %}">
+                        <button class="favorite-button" type="button" aria-label="Favoritar {{ produto.nome }}">♥</button>
+
+                        <div class="product__media">
+                            <img class="product__main-image" src="{{ produto.imagem.url }}" alt="{{ produto.nome }}">
+                            <div class="badges">
+                                {% if produto.destaque %}<span>Novo</span>{% endif %}
+                                {% if produto.promocao %}<span>Promocao</span>{% endif %}
+                                {% if produto.esgotado %}<span>Esgotado</span>{% endif %}
+                            </div>
+                        </div>
+
+                        {% if produto.imagens.all %}
+                            <div class="gallery" aria-label="Fotos de {{ produto.nome }}">
+                                <button type="button"
+                                        class="gallery-thumb active"
+                                        data-image="{{ produto.imagem.url }}"
+                                        data-alt="{{ produto.nome }}"
+                                        aria-pressed="true">
+                                    <img src="{{ produto.imagem.url }}" alt="{{ produto.nome }}">
+                                </button>
+                                {% for foto in produto.imagens.all %}
+                                    <button type="button"
+                                            class="gallery-thumb"
+                                            data-image="{{ foto.imagem.url }}"
+                                            data-alt="{{ produto.nome }} - foto {{ forloop.counter|add:1 }}"
+                                            aria-pressed="false">
+                                        <img src="{{ foto.imagem.url }}" alt="{{ produto.nome }} - foto {{ forloop.counter|add:1 }}">
+                                    </button>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        <div class="product__body">
+                            <h2>{{ produto.nome }}</h2>
+                            {% if produto.descricao %}<p>{{ produto.descricao }}</p>{% endif %}
+                            <a class="product-detail-link" href="{% url 'produto_detalhe_curto' loja.slug produto.id %}">Ver detalhes</a>
+                            <div class="price-stack">
+                                {% if produto.preco_antigo %}
+                                    <span>R$ {{ produto.preco_antigo }}</span>
+                                {% endif %}
+                                <strong>R$ {{ produto.preco }}</strong>
+                            </div>
+
+                            {% if produto.tamanhos_lista %}
+                                <div class="option-group" aria-label="Tamanhos">
+                                    <span class="option-label">Tamanho</span>
+                                    {% for tamanho in produto.tamanhos_lista %}
+                                        {% with tamanho_normalizado=tamanho|lower %}
+                                        <button type="button"
+                                                class="choice-option size-option{% if tamanho_normalizado in produto.tamanhos_esgotados_lista %} choice-option--sold{% endif %}"
+                                                data-size="{{ tamanho }}"
+                                                aria-pressed="false"
+                                                {% if tamanho_normalizado in produto.tamanhos_esgotados_lista %}disabled aria-disabled="true" title="Tamanho esgotado"{% endif %}>
+                                            {{ tamanho }}
+                                        </button>
+                                        {% endwith %}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+
+                            {% if produto.cores_lista %}
+                                <div class="option-group" aria-label="Cores">
+                                    <span class="option-label">Cor</span>
+                                    {% for cor in produto.cores_lista %}
+                                        {% with cor_normalizada=cor|lower %}
+                                        <button type="button"
+                                                class="choice-option color-option{% if cor_normalizada in produto.cores_esgotadas_lista %} choice-option--sold{% endif %}"
+                                                data-color="{{ cor }}"
+                                                aria-pressed="false"
+                                                {% if cor_normalizada in produto.cores_esgotadas_lista %}disabled aria-disabled="true" title="Cor esgotada"{% endif %}>
+                                            {{ cor }}
+                                        </button>
+                                        {% endwith %}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+
+                            {% if produto.variacoes.all %}
+                                <div class="variant-stock-list">
+                                    <span class="option-label">Estoque por variacao</span>
+                                    {% for variacao in produto.variacoes.all %}
+                                        <span class="{% if not variacao.disponivel %}sold{% endif %}">
+                                            {{ variacao.cor }} / {{ variacao.tamanho }}: {% if variacao.disponivel %}{{ variacao.estoque }} un.{% else %}esgotado{% endif %}
+                                        </span>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+
+                            {% if produto.esgotado %}
+                                <button class="whatsapp" disabled>Esgotado</button>
+                            {% else %}
+                                <button class="add-cart-button"
+                                        type="button"
+                                        data-cart-product="{{ produto.nome }}"
+                                        data-cart-price="R$ {{ produto.preco }}">
+                                    Adicionar a sacolinha
+                                </button>
+                                <a class="whatsapp {% if produto.tamanhos_lista or produto.cores_lista %}whatsapp--requires-choice{% endif %}"
+                                   href="{% url 'whatsapp_produto' loja.slug produto.id %}"
+                                   data-phone="55{{ loja.telefone }}"
+                                   data-product="{{ produto.nome }}"
+                                   data-track-url="{% url 'whatsapp_produto' loja.slug produto.id %}"
+                                   data-base-label="Quero esse"
+                                   data-needs-size="{% if produto.tamanhos_lista %}true{% else %}false{% endif %}"
+                                   data-needs-color="{% if produto.cores_lista %}true{% else %}false{% endif %}"
+                                   target="_blank"
+                                   rel="noopener">
+                                    {% if produto.tamanhos_lista and produto.cores_lista %}
+                                        Escolha tamanho e cor
+                                    {% elif produto.tamanhos_lista %}
+                                        Escolha o tamanho
+                                    {% elif produto.cores_lista %}
+                                        Escolha a cor
+                                    {% else %}
+                                        Quero esse
+                                    {% endif %}
+                                </a>
+                            {% endif %}
+                        </div>
+                    </article>
+                {% empty %}
+                    <p class="empty">Nenhum produto encontrado.</p>
+                {% endfor %}
+            </section>
+
+            <section class="store-footer-contact" aria-label="Contato da loja">
+                <div>
+                    <p class="eyebrow">Atendimento</p>
+                    <h2>Quer falar direto com a loja?</h2>
+                    <p>Chame no WhatsApp para tirar duvidas, combinar entrega ou pedir ajuda com uma peca.</p>
+                </div>
+                <a class="store-whatsapp-footer" href="https://wa.me/55{{ loja.telefone }}" target="_blank" rel="noopener">WhatsApp da loja</a>
+            </section>
+        </section>
+    </main>
+
+    <script>
+        document.querySelectorAll(".product").forEach((product) => {
+            const mainImage = product.querySelector(".product__main-image");
+            const galleryButtons = product.querySelectorAll(".gallery-thumb");
+            const sizeButtons = product.querySelectorAll(".size-option:not(:disabled)");
+            const colorButtons = product.querySelectorAll(".color-option:not(:disabled)");
+            const whatsapp = product.querySelector(".whatsapp");
+            const selection = {
+                size: "",
+                color: "",
+            };
+            const addCartButton = product.querySelector(".add-cart-button");
+
+            galleryButtons.forEach((button) => {
+                button.addEventListener("click", () => {
+                    if (!mainImage) {
+                        return;
+                    }
+
+                    galleryButtons.forEach((item) => {
+                        item.classList.remove("active");
+                        item.setAttribute("aria-pressed", "false");
+                    });
+
+                    button.classList.add("active");
+                    button.setAttribute("aria-pressed", "true");
+                    mainImage.src = button.dataset.image;
+                    mainImage.alt = button.dataset.alt;
+                });
+            });
+
+            if (!whatsapp || whatsapp.tagName !== "A") {
+                return;
+            }
+
+            const refreshWhatsapp = () => {
+                const productName = whatsapp.dataset.product;
+                const trackUrl = whatsapp.dataset.trackUrl;
+                const needsSize = whatsapp.dataset.needsSize === "true" && sizeButtons.length > 0;
+                const needsColor = whatsapp.dataset.needsColor === "true" && colorButtons.length > 0;
+                const hasSize = !needsSize || selection.size;
+                const hasColor = !needsColor || selection.color;
+
+                if (!needsSize && whatsapp.dataset.needsSize === "true") {
+                    whatsapp.textContent = "Tamanhos esgotados";
+                    whatsapp.classList.add("whatsapp--unavailable");
+                    return;
+                }
+                if (!needsColor && whatsapp.dataset.needsColor === "true") {
+                    whatsapp.textContent = "Cores esgotadas";
+                    whatsapp.classList.add("whatsapp--unavailable");
+                    return;
+                }
+
+                if (!hasSize || !hasColor) {
+                    if (needsSize && needsColor) {
+                        whatsapp.textContent = "Escolha tamanho e cor";
+                    } else if (needsSize) {
+                        whatsapp.textContent = "Escolha o tamanho";
+                    } else {
+                        whatsapp.textContent = "Escolha a cor";
+                    }
+                    whatsapp.classList.add("whatsapp--requires-choice");
+                    return;
+                }
+
+                const details = [];
+                if (selection.size) {
+                    details.push(`tamanho ${selection.size}`);
+                }
+                if (selection.color) {
+                    details.push(`cor ${selection.color}`);
+                }
+                const message = `Ola! Tenho interesse na peca: ${productName}, ${details.join(", ")}`;
+                const labelDetails = [selection.size, selection.color].filter(Boolean).join(" / ");
+
+                const params = new URLSearchParams();
+                if (selection.size) {
+                    params.set("tamanho", selection.size);
+                }
+                if (selection.color) {
+                    params.set("cor", selection.color);
+                }
+
+                whatsapp.href = params.toString() ? `${trackUrl}?${params.toString()}` : trackUrl;
+                whatsapp.textContent = labelDetails ? `${whatsapp.dataset.baseLabel} - ${labelDetails}` : whatsapp.dataset.baseLabel;
+                whatsapp.classList.remove("whatsapp--requires-choice");
+                whatsapp.classList.remove("whatsapp--unavailable");
+                whatsapp.removeAttribute("aria-disabled");
+            };
+
+            sizeButtons.forEach((button) => {
+                button.addEventListener("click", () => {
+                    sizeButtons.forEach((item) => {
+                        item.classList.remove("active");
+                        item.setAttribute("aria-pressed", "false");
+                    });
+
+                    button.classList.add("active");
+                    button.setAttribute("aria-pressed", "true");
+                    selection.size = button.dataset.size;
+                    refreshWhatsapp();
+                });
+            });
+
+            colorButtons.forEach((button) => {
+                button.addEventListener("click", () => {
+                    colorButtons.forEach((item) => {
+                        item.classList.remove("active");
+                        item.setAttribute("aria-pressed", "false");
+                    });
+
+                    button.classList.add("active");
+                    button.setAttribute("aria-pressed", "true");
+                    selection.color = button.dataset.color;
+                    refreshWhatsapp();
+                });
+            });
+
+            whatsapp.addEventListener("click", (event) => {
+                if (whatsapp.classList.contains("whatsapp--requires-choice") || whatsapp.classList.contains("whatsapp--unavailable")) {
+                    event.preventDefault();
+                    const nextChoice = product.querySelector(".choice-option:not(.active):not(:disabled)");
+                    if (nextChoice) {
+                        nextChoice.focus();
+                    }
+                }
+            });
+
+            addCartButton?.addEventListener("click", () => {
+                const name = addCartButton.dataset.cartProduct;
+                const price = addCartButton.dataset.cartPrice;
+                const needsSize = whatsapp.dataset.needsSize === "true" && sizeButtons.length > 0;
+                const needsColor = whatsapp.dataset.needsColor === "true" && colorButtons.length > 0;
+
+                if ((needsSize && !selection.size) || (needsColor && !selection.color)) {
+                    const nextChoice = product.querySelector(".choice-option:not(.active):not(:disabled)");
+                    if (nextChoice) {
+                        nextChoice.focus();
+                    }
+                    return;
+                }
+
+                window.ModalinkCart.add({
+                    name,
+                    price,
+                    size: selection.size,
+                    color: selection.color,
+                });
+            });
+
+            refreshWhatsapp();
+        });
+
+        window.ModalinkCart = (() => {
+            const items = [];
+            const count = document.querySelector("[data-cart-count]");
+            const list = document.querySelector("[data-cart-items]");
+            const send = document.querySelector("[data-cart-send]");
+            const clear = document.querySelector("[data-cart-clear]");
+            const box = document.querySelector(".cart-box");
+            const toggle = document.querySelector(".cart-toggle");
+            const customerName = document.querySelector("[data-cart-customer-name]");
+            const customerPhone = document.querySelector("[data-cart-customer-phone]");
+            const cartNote = document.querySelector("[data-cart-note]");
+            const cartTrackUrl = "{% url 'whatsapp_carrinho' loja.slug %}";
+
+            const render = () => {
+                count.textContent = items.length;
+                if (!items.length) {
+                    list.innerHTML = "<p>Nenhum produto adicionado.</p>";
+                    send.href = cartTrackUrl;
+                    return;
+                }
+                list.innerHTML = items.map((item, index) => `
+                    <article>
+                        <span>${item.name}</span>
+                        <small>${[item.size, item.color].filter(Boolean).join(" / ") || "Sem variacao"} - ${item.price}</small>
+                        <button type="button" data-remove-cart="${index}">Remover</button>
+                    </article>
+                `).join("");
+                const customer = customerName?.value.trim();
+                const customerContact = customerPhone?.value.trim();
+                const note = cartNote?.value.trim();
+                const message = [
+                    "Ola! Quero fazer um pedido:",
+                    customer ? `Nome: ${customer}` : "",
+                    customerContact ? `WhatsApp: ${customerContact}` : "",
+                    ...items.map((item, index) => `${index + 1}. ${item.name} - ${item.price}${item.size ? ` - tamanho ${item.size}` : ""}${item.color ? ` - cor ${item.color}` : ""}`),
+                    note ? `Observacao: ${note}` : "",
+                ].filter(Boolean).join("\n");
+                const params = new URLSearchParams({ mensagem: message });
+                if (customer) params.set("cliente_nome", customer);
+                if (customerContact) params.set("cliente_telefone", customerContact);
+                send.href = `${cartTrackUrl}?${params.toString()}`;
+            };
+
+            list.addEventListener("click", (event) => {
+                const button = event.target.closest("[data-remove-cart]");
+                if (!button) return;
+                items.splice(Number(button.dataset.removeCart), 1);
+                render();
+            });
+
+            clear.addEventListener("click", () => {
+                items.splice(0, items.length);
+                render();
+            });
+
+            toggle.addEventListener("click", () => {
+                box.hidden = !box.hidden;
+            });
+            customerName?.addEventListener("input", render);
+            customerPhone?.addEventListener("input", render);
+            cartNote?.addEventListener("input", render);
+
+            return {
+                add(item) {
+                    items.push(item);
+                    box.hidden = false;
+                    render();
+                },
+            };
+        })();
+    </script>
+</body>
+</html>

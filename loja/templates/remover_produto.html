@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Remover - {{ produto.nome }}</title>
+    <link rel="stylesheet" href="/static/css/catalogo.css">
+</head>
+<body>
+    <header class="panel-header">
+        <div>
+            <p class="eyebrow">Remover produto</p>
+            <h1>{{ produto.nome }}</h1>
+        </div>
+        <nav class="panel-nav">
+            <span>{{ request.user.username }}</span>
+            <a href="{% url 'painel_loja' loja.slug %}">Voltar ao painel</a>
+            <form method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit">Sair</button>
+            </form>
+        </nav>
+    </header>
+
+    <main class="panel-shell">
+        <section class="panel-section">
+            <h2>Confirmar remoção</h2>
+            <p>Tem certeza que deseja remover <strong>{{ produto.nome }}</strong> do catálogo?</p>
+            <form class="panel-form" method="post">
+                {% csrf_token %}
+                <button class="danger-button" type="submit">Sim, remover produto</button>
+                <a class="panel-cancel" href="{% url 'painel_loja' loja.slug %}">Cancelar</a>
+            </form>
+        </section>
+    </main>
+</body>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Pagamento - {{ loja.nome }}</title>
+    <link rel="stylesheet" href="/static/css/catalogo.css?v=23">
+</head>
+<body class="plans-page">
+    <header class="lp-header">
+        <a class="lp-logo" href="{% url 'painel_loja' loja.slug %}">VestLink</a>
+        <nav>
+            <a href="{% url 'painel_loja' loja.slug %}">Painel</a>
+            <a href="{% url 'assinatura' loja.slug %}">Assinatura</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="checkout-shell checkout-shell--single">
+            <div class="checkout-copy">
+                {% if resultado == "success" %}
+                    <p class="lp-kicker">Pagamento aprovado</p>
+                    <h1>Premium ativado para {{ loja.nome }}.</h1>
+                    <p>O pagamento voltou como aprovado e a assinatura da loja foi atualizada.</p>
+                {% elif resultado == "pending" %}
+                    <p class="lp-kicker">Pagamento pendente</p>
+                    <h1>Estamos aguardando a confirmacao.</h1>
+                    <p>Assim que o Mercado Pago confirmar, o webhook atualiza a assinatura automaticamente.</p>
+                {% else %}
+                    <p class="lp-kicker">Pagamento nao concluido</p>
+                    <h1>O pagamento nao foi aprovado.</h1>
+                    <p>Voce pode voltar para a assinatura e tentar novamente.</p>
+                {% endif %}
+
+                {% if pagamento %}
+                    <div class="checkout-summary">
+                        <span>Status interno: <strong>{{ pagamento.get_status_display }}</strong></span>
+                        <span>Referencia: <strong>{{ pagamento.external_reference }}</strong></span>
+                        <span>Valor: <strong>R$ {{ pagamento.valor }}</strong></span>
+                    </div>
+                {% endif %}
+                <div class="lp-actions">
+                    <a class="lp-button" href="{% url 'painel_loja' loja.slug %}">Ir para o painel</a>
+                    <a class="lp-button lp-button--ghost" href="{% url 'assinatura' loja.slug %}">Ver assinatura</a>
+                </div>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Editar loja - {{ loja.nome }}</title>
+    <link rel="stylesheet" href="/static/css/catalogo.css?v=19">
+</head>
+<body class="merchant-dashboard">
+    <header class="panel-header panel-header--dashboard">
+        <div>
+            <p class="eyebrow">Configuracao</p>
+            <h1>Editar loja</h1>
+            <span class="panel-store-link">{{ loja.nome }}</span>
+        </div>
+        <nav class="panel-nav">
+            <a href="{% url 'painel_loja' loja.slug %}">Voltar ao painel</a>
+        </nav>
+    </header>
+    <main class="dashboard-shell dashboard-shell--narrow">
+        <section class="panel-section">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">Dados publicos</p>
+                    <h2>Informacoes da loja</h2>
+                </div>
+                <span>Marca</span>
+            </div>
+            <form class="panel-form" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit">Salvar alteracoes</button>
+            </form>
+        </section>
+    </main>
+</body>
+</html>

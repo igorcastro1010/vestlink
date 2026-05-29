@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Entrar - VestLink</title>
+    <link rel="stylesheet" href="/static/css/catalogo.css?v=24">
+</head>
+<body class="auth-page">
+    <main class="auth-layout">
+        <section class="auth-copy">
+            <a class="auth-logo" href="/">VestLink</a>
+            <p class="eyebrow">Painel do lojista</p>
+            <h1>Entre e atualize seu catalogo em minutos.</h1>
+            <p>Cadastre produtos, organize tamanhos e cores, e envie o link profissional da loja direto pelo WhatsApp.</p>
+            <div class="auth-highlights">
+                <span>Catalogo online</span>
+                <span>Venda pelo WhatsApp</span>
+                <span>Sem app para baixar</span>
+            </div>
+        </section>
+
+        <section class="auth-card">
+            <p class="eyebrow">Acesso seguro</p>
+            <h2>Entrar na conta</h2>
+            <form class="panel-form" method="post">
+                {% csrf_token %}
+                {{ form.non_field_errors }}
+                <p>
+                    {{ form.username.label_tag }}
+                    {{ form.username }}
+                    {{ form.username.errors }}
+                </p>
+                <p class="password-field">
+                    {{ form.password.label_tag }}
+                    <span class="password-input-wrap">
+                        {{ form.password }}
+                        <button class="password-toggle" type="button" aria-label="Mostrar senha" aria-pressed="false" data-password-toggle>
+                            <span class="password-toggle__icon" aria-hidden="true"></span>
+                        </button>
+                    </span>
+                    {{ form.password.errors }}
+                </p>
+                <label class="remember-me">
+                    <input type="checkbox" name="remember_me" value="1">
+                    <span>Manter conectado por 30 dias</span>
+                </label>
+                <button type="submit">Entrar</button>
+            </form>
+            <p class="auth-switch"><a href="{% url 'recuperar_senha' %}">Esqueci minha senha</a></p>
+            <p class="auth-switch">Ainda nao tem conta? <a href="{% url 'cadastro' %}">Criar cadastro</a></p>
+        </section>
+    </main>
+    <script>
+        const passwordToggle = document.querySelector("[data-password-toggle]");
+        const passwordInput = document.querySelector("#id_password");
+
+        if (passwordToggle && passwordInput) {
+            passwordToggle.addEventListener("click", () => {
+                const shouldShow = passwordInput.type === "password";
+                passwordInput.type = shouldShow ? "text" : "password";
+                passwordToggle.setAttribute("aria-pressed", String(shouldShow));
+                passwordToggle.setAttribute("aria-label", shouldShow ? "Ocultar senha" : "Mostrar senha");
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Excluir categoria - {{ categoria.nome }}</title>
+    <link rel="stylesheet" href="/static/css/catalogo.css?v=10">
+</head>
+<body class="merchant-dashboard">
+    <header class="panel-header panel-header--dashboard">
+        <div>
+            <p class="eyebrow">Categoria</p>
+            <h1>Excluir categoria</h1>
+            <span class="panel-store-link">{{ loja.nome }}</span>
+        </div>
+        <nav class="panel-nav">
+            <a href="{% url 'painel_loja' loja.slug %}">Cancelar</a>
+        </nav>
+    </header>
+    <main class="dashboard-shell dashboard-shell--narrow">
+        <section class="panel-section danger-zone">
+            <h2>Excluir "{{ categoria.nome }}"?</h2>
+            <p>Os produtos dessa categoria nao serao excluidos, apenas ficarao sem categoria.</p>
+            <form method="post">
+                {% csrf_token %}
+                <button class="danger-button" type="submit">Excluir categoria</button>
+                <a class="panel-cancel" href="{% url 'painel_loja' loja.slug %}">Voltar</a>
+            </form>
+        </section>
+    </main>
+</body>
+</html>
