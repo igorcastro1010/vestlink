@@ -32,7 +32,7 @@ from .legal import LEAD_RETENTION_DAYS, PRIVACY_VERSION, TERMS_VERSION
 from .models import AceiteLegal, Categoria, Cupom, Lead, Loja, Pagamento, Produto, Vendedor
 from .payments import MercadoPagoError
 from .validators import limpar_telefone
-from .services import billing, lead, store, catalog
+from .services import billing, lead, store, catalog, products
 
 
 logger = logging.getLogger(__name__)
@@ -592,9 +592,7 @@ def painel_loja(request, slug):
         return redirect(f"{reverse('painel_loja', kwargs={'slug': loja.slug})}#vendedores")
 
     elif request.method == "POST" and request.POST.get("acao") == "publicar_produto":
-        produto = get_object_or_404(Produto, id=request.POST.get("produto_id"), loja=loja)
-        produto.publicado = True
-        produto.save(update_fields=["publicado"])
+        products.publicar_produto(loja, request.POST.get("produto_id"))
         return redirect(f"{reverse('painel_loja', kwargs={'slug': loja.slug})}#produtos")
 
     elif request.method == "POST" and request.POST.get("acao") == "atualizar_lead_status":
@@ -610,7 +608,7 @@ def painel_loja(request, slug):
         return redirect("assinatura", slug=loja.slug)
 
     elif request.method == "POST" and form.is_valid():
-        form.save()
+        products.cadastrar_produto(loja, form)
         return redirect(f"{reverse('painel_loja', kwargs={'slug': loja.slug})}#produtos")
 
     # Restringe leads_base para vendedor logado, se necessário
@@ -907,7 +905,7 @@ def editar_produto(request, slug, produto_id):
     form = ProdutoForm(request.POST or None, request.FILES or None, instance=produto, loja=loja)
 
     if request.method == "POST" and form.is_valid():
-        form.save()
+        products.editar_produto(loja, produto, form)
         return redirect(f"{reverse('painel_loja', kwargs={'slug': loja.slug})}#produtos")
 
     contexto = {
@@ -921,12 +919,10 @@ def editar_produto(request, slug, produto_id):
 @login_required
 def remover_produto(request, slug, produto_id):
     loja = _loja_do_usuario(request, slug)
-    if request.user != loja.usuario:
-        raise PermissionDenied("Apenas o proprietário da loja pode excluir produtos.")
     produto = get_object_or_404(Produto, id=produto_id, loja=loja)
 
     if request.method == "POST":
-        produto.delete()
+        products.remover_produto(loja, produto, request.user)
         return redirect(f"{reverse('painel_loja', kwargs={'slug': loja.slug})}#produtos")
 
     contexto = {
