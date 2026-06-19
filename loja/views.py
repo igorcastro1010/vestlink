@@ -6,32 +6,23 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.models import User
-from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
 from django.core.exceptions import PermissionDenied
-from django.core.mail import send_mail
-from django.core.paginator import Paginator
-from django.db import transaction
-from django.db.models import Count, F, Q
-from django.db.models.functions import ExtractHour, TruncDate
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
-from django.utils.encoding import force_bytes, force_str
-from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
-from django.utils.text import slugify
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
-from urllib.parse import quote, urlencode
+from django.db.models import Q
+from urllib.parse import quote
 
 from . import supabase_auth
 from .forms import CadastroForm, CategoriaForm, LojaForm, ProdutoForm, VendedorForm
 from .legal import LEAD_RETENTION_DAYS, PRIVACY_VERSION, TERMS_VERSION
-from .models import AceiteLegal, Categoria, Cupom, Lead, Loja, Pagamento, Produto, Vendedor
+from .models import Categoria, Cupom, Lead, Loja, Pagamento, Produto, Vendedor
 from .payments import MercadoPagoError
-from .validators import limpar_telefone
 from .services import billing, lead, store, catalog, products, auth
 
 
