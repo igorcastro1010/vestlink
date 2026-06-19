@@ -812,7 +812,7 @@ class CatalogoTests(TestCase):
     def test_webhook_mercado_pago_atualiza_pagamento(self):
         pagamento = Pagamento.objects.create(loja=self.loja, usuario=self.user, status=Pagamento.STATUS_PENDENTE)
 
-        with patch("loja.views.atualizar_pagamento_mercado_pago", return_value=pagamento) as atualizar:
+        with patch("loja.views.billing.processar_webhook_pagamento", return_value=pagamento) as atualizar:
             response = self.client.post(
                 reverse("mercado_pago_webhook"),
                 data='{"data": {"id": "pay_456"}}',

@@ -32,8 +32,9 @@ from . import supabase_auth
 from .forms import CadastroForm, CategoriaForm, LojaForm, ProdutoForm, VendedorForm
 from .legal import LEAD_RETENTION_DAYS, PRIVACY_VERSION, TERMS_VERSION
 from .models import AceiteLegal, Categoria, Cupom, Lead, Loja, Pagamento, Produto, Vendedor
-from .payments import MercadoPagoError, atualizar_pagamento_mercado_pago, criar_preferencia_premium
+from .payments import MercadoPagoError
 from .validators import limpar_telefone
+from .services import billing
 
 
 logger = logging.getLogger(__name__)
@@ -992,48 +993,34 @@ def checkout_premium(request, slug):
     if request.user != loja.usuario:
         raise PermissionDenied("Apenas o proprietário da loja pode gerenciar pagamentos.")
     cupom_codigo = (request.POST.get("cupom") or request.GET.get("cupom") or "").strip().upper()
-    cupom = Cupom.objects.filter(codigo__iexact=cupom_codigo, ativo=True).first() if cupom_codigo else None
-    valor = Pagamento._meta.get_field("valor").default
-    valor_final = cupom.aplicar(valor) if cupom else valor
+    dados = billing.obter_dados_checkout(cupom_codigo)
 
     if request.method == "POST":
-        if getattr(settings, "MERCADO_PAGO_ACCESS_TOKEN", ""):
-            try:
-                pagamento = criar_preferencia_premium(request, loja, request.user, cupom=cupom)
-                if pagamento.checkout_url:
-                    return redirect(pagamento.checkout_url)
-            except MercadoPagoError as error:
-                return render(
-                    request,
-                    "checkout_premium.html",
-                    {"loja": loja, "erro_pagamento": str(error), "cupom": cupom, "cupom_codigo": cupom_codigo},
-                )
-
-        checkout_url = getattr(settings, "VESTLINK_CHECKOUT_URL", "") or getattr(settings, "MODALINK_CHECKOUT_URL", "")
-        if checkout_url:
-            parametros = urlencode(
+        try:
+            redirect_url = billing.processar_checkout(request, loja, request.user, dados["cupom"])
+            if redirect_url:
+                return redirect(redirect_url)
+        except MercadoPagoError as error:
+            return render(
+                request,
+                "checkout_premium.html",
                 {
-                    "loja": loja.slug,
-                    "plano": Loja.PLANO_PREMIUM,
-                    "email": request.user.email or request.user.username,
-                    "cupom": cupom.codigo if cupom else "",
-                }
+                    "loja": loja,
+                    "erro_pagamento": str(error),
+                    "cupom": dados["cupom"],
+                    "cupom_codigo": dados["cupom_codigo"],
+                },
             )
-            separador = "&" if "?" in checkout_url else "?"
-            return redirect(f"{checkout_url}{separador}{parametros}")
 
-    return render(
-        request,
-        "checkout_premium.html",
-        {
-            "loja": loja,
-            "cupom": cupom,
-            "cupom_codigo": cupom_codigo,
-            "valor": valor,
-            "valor_final": valor_final,
-            "mercado_pago_configurado": bool(getattr(settings, "MERCADO_PAGO_ACCESS_TOKEN", "")),
-        },
-    )
+    contexto = {
+        "loja": loja,
+        "cupom": dados["cupom"],
+        "cupom_codigo": dados["cupom_codigo"],
+        "valor": dados["valor"],
+        "valor_final": dados["valor_final"],
+        "mercado_pago_configurado": dados["mercado_pago_configurado"],
+    }
+    return render(request, "checkout_premium.html", contexto)
 
 
 @login_required
@@ -1042,24 +1029,10 @@ def pagamento_retorno(request, slug, resultado):
     external_reference = request.GET.get("external_reference", "")
     payment_id = request.GET.get("payment_id", "")
     status = request.GET.get("status", "")
-    pagamento = None
-    if external_reference:
-        pagamento = Pagamento.objects.filter(loja=loja, external_reference=external_reference).first()
-    if not pagamento and payment_id:
-        pagamento = Pagamento.objects.filter(loja=loja, payment_id=payment_id).first()
-
-    if pagamento and (resultado == "success" or status == "approved"):
-        pagamento.marcar_aprovado(payment_id=payment_id)
-    elif pagamento and resultado == "pending":
-        pagamento.status = Pagamento.STATUS_PENDENTE
-        if payment_id:
-            pagamento.payment_id = payment_id
-        pagamento.save(update_fields=["status", "payment_id", "atualizado_em"])
-    elif pagamento and resultado == "failure":
-        pagamento.status = Pagamento.STATUS_RECUSADO
-        if payment_id:
-            pagamento.payment_id = payment_id
-        pagamento.save(update_fields=["status", "payment_id", "atualizado_em"])
+    
+    pagamento = billing.processar_pagamento_retorno(
+        loja, external_reference, payment_id, status, resultado
+    )
 
     return render(
         request,
@@ -1086,10 +1059,11 @@ def mercado_pago_webhook(request):
     if not payment_id:
         return JsonResponse({"ok": False, "erro": "payment_id ausente"}, status=400)
     try:
-        pagamento = atualizar_pagamento_mercado_pago(str(payment_id))
+        pagamento = billing.processar_webhook_pagamento(payment_id)
     except Exception as error:
         return JsonResponse({"ok": False, "erro": str(error)}, status=400)
     return JsonResponse({"ok": True, "pagamento": pagamento.id, "status": pagamento.status})
+
 
 
 @login_required
