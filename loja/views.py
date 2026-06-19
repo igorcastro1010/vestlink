@@ -32,7 +32,7 @@ from .legal import LEAD_RETENTION_DAYS, PRIVACY_VERSION, TERMS_VERSION
 from .models import AceiteLegal, Categoria, Cupom, Lead, Loja, Pagamento, Produto, Vendedor
 from .payments import MercadoPagoError
 from .validators import limpar_telefone
-from .services import billing, lead, store
+from .services import billing, lead, store, catalog
 
 
 logger = logging.getLogger(__name__)
@@ -128,13 +128,6 @@ def _legal_back_label(request):
     return "Voltar para o login" if _legal_back_target(request) == "login" else "Voltar para o cadastro"
 
 
-def _vendedor_por_codigo(loja, codigo):
-    codigo = (codigo or "").strip().lower()
-    if not codigo:
-        return None
-    return loja.vendedores.filter(codigo__iexact=codigo, ativo=True).first()
-
-
 def catalogo(request, slug=None):
     if hasattr(request, "loja"):
         loja = request.loja
@@ -142,80 +135,38 @@ def catalogo(request, slug=None):
         loja = get_object_or_404(Loja, slug=slug)
     if not loja.assinatura_esta_ativa:
         return render(request, "catalogo_bloqueado.html", {"loja": loja}, status=402)
+
     categoria_id = request.GET.get("categoria")
     busca = request.GET.get("q", "").strip()
     filtro = request.GET.get("filtro", "").strip()
     produto_id = request.GET.get("produto", "").strip()
     vendedor_codigo = request.GET.get("vendedor", "").strip().lower()
-    vendedor_ref = _vendedor_por_codigo(loja, vendedor_codigo)
-
     ordenacao = request.GET.get("ordenacao", "").strip()
+    page = request.GET.get("page", 1)
 
-    produtos = loja.produtos.select_related("categoria").prefetch_related("imagens", "variacoes").filter(publicado=True)
-    if produto_id:
-        produtos = produtos.filter(id=produto_id)
-    if categoria_id:
-        produtos = produtos.filter(categoria_id=categoria_id)
-    if filtro == "novos":
-        produtos = produtos.filter(destaque=True)
-    elif filtro == "promocoes":
-        produtos = produtos.filter(promocao=True)
-    elif filtro == "disponiveis":
-        produtos = produtos.filter(esgotado=False)
-    if busca:
-        produtos = produtos.filter(
-            Q(nome__icontains=busca)
-            | Q(descricao__icontains=busca)
-            | Q(cores__icontains=busca)
-            | Q(tamanhos__icontains=busca)
-        )
-
-    # Ordenação dos produtos
-    if ordenacao == "preco_asc":
-        produtos = produtos.order_by("esgotado", "preco", "nome")
-    elif ordenacao == "preco_desc":
-        produtos = produtos.order_by("esgotado", "-preco", "nome")
-    elif ordenacao == "nome":
-        produtos = produtos.order_by("esgotado", "nome")
-    else:
-        # Ordenação padrão
-        produtos = produtos.order_by("esgotado", "ordem", "-destaque", "-criado_em")
-
-    # Paginação dos produtos
-    itens_por_pagina = 12
-    paginator = Paginator(produtos, itens_por_pagina)
-    page_number = request.GET.get("page", 1)
-    page_obj = paginator.get_page(page_number)
-
-    from django.core.cache import cache
-    cache_version = cache.get_or_set(f"loja_cache_version_{loja.id}", 1)
+    contexto = catalog.obter_contexto_catalogo(
+        request=request,
+        loja=loja,
+        categoria_id=categoria_id,
+        busca=busca,
+        filtro=filtro,
+        produto_id=produto_id,
+        vendedor_codigo=vendedor_codigo,
+        ordenacao=ordenacao,
+        page=page,
+    )
 
     # Verifica se é uma requisição AJAX para retornar apenas o fragmento HTML
     if request.headers.get("x-requested-with") == "XMLHttpRequest" or request.GET.get("fragment") == "1":
         return render(request, "includes/produto_grid.html", {
-            "loja": loja,
-            "produtos": page_obj,
-            "cache_version": cache_version,
-            "vendedor_ref": vendedor_ref,
-            "vendedor_codigo": vendedor_ref.codigo if vendedor_ref else "",
-            "ordenacao": ordenacao,
+            "loja": contexto["loja"],
+            "produtos": contexto["produtos"],
+            "cache_version": contexto["cache_version"],
+            "vendedor_ref": contexto["vendedor_ref"],
+            "vendedor_codigo": contexto["vendedor_codigo"],
+            "ordenacao": contexto["ordenacao"],
         })
 
-    contexto = {
-        "loja": loja,
-        "categorias": loja.categorias.all(),
-        "produtos": page_obj,
-        "categoria_ativa": categoria_id,
-        "busca": busca,
-        "filtro": filtro,
-        "ordenacao": ordenacao,
-        "produto_ativo": produto_id,
-        "tem_proxima_pagina": page_obj.has_next(),
-        "proxima_pagina": page_obj.next_page_number() if page_obj.has_next() else None,
-        "cache_version": cache_version,
-        "vendedor_ref": vendedor_ref,
-        "vendedor_codigo": vendedor_ref.codigo if vendedor_ref else "",
-    }
     return render(request, "catalogo.html", contexto)
 
 
@@ -230,18 +181,13 @@ def produto_detalhe(request, slug=None, produto_id=None):
         loja = get_object_or_404(Loja, slug=slug)
     if not loja.assinatura_esta_ativa:
         return render(request, "catalogo_bloqueado.html", {"loja": loja}, status=402)
-    produto = get_object_or_404(
-        loja.produtos.select_related("categoria").prefetch_related("imagens", "variacoes").filter(publicado=True),
-        id=produto_id,
+
+    vendedor_codigo = request.GET.get("vendedor", "")
+    contexto = catalog.obter_contexto_produto_detalhe(
+        loja=loja,
+        produto_id=produto_id,
+        vendedor_codigo=vendedor_codigo,
     )
-    vendedor_ref = _vendedor_por_codigo(loja, request.GET.get("vendedor", ""))
-    contexto = {
-        "loja": loja,
-        "produto": produto,
-        "categorias": loja.categorias.all(),
-        "vendedor_ref": vendedor_ref,
-        "vendedor_codigo": vendedor_ref.codigo if vendedor_ref else "",
-    }
     return render(request, "produto_detalhe.html", contexto)
 
 
