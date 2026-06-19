@@ -43,7 +43,7 @@ class CatalogoTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Teste Moda")
         self.assertContains(response, "Blusa Preta")
-        self.assertContains(response, "Quero esse")
+        self.assertContains(response, "Comprar pelo WhatsApp")
         self.assertContains(response, 'class="choice-option size-option"')
         self.assertContains(response, 'data-size="M"')
         self.assertContains(response, 'class="choice-option color-option"')
