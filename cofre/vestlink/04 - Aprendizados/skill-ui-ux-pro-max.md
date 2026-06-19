@@ -38,5 +38,7 @@ por agentes sem acoplar o projeto a arquivos específicos do Claude.
 
 ## Relacionados
 
-- [[../01 - Arquitetura/arquitetura-do-sistema]]
-- [[../01 - Arquitetura/endpoints-e-superficies]]
+- [[padrao-visual-ui-ux]]
+- [[arquitetura-do-sistema]]
+- [[endpoints-e-superficies]]
+- [[dividas-abertas]]

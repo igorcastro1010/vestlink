@@ -4,11 +4,11 @@
     "type": "split",
     "children": [
       {
-        "id": "fb677b1bcab826d3",
+        "id": "c56c291d4b12feff",
         "type": "tabs",
         "children": [
           {
-            "id": "c8c65b3e68d98ee6",
+            "id": "835f4db4369a9ccb",
             "type": "leaf",
             "state": {
               "type": "graph",
@@ -176,8 +176,9 @@
       "bases:Criar nova base": false
     }
   },
-  "active": "c8c65b3e68d98ee6",
+  "active": "835f4db4369a9ccb",
   "lastOpenFiles": [
+    "04 - Aprendizados/skill-ui-ux-pro-max.md",
     "03 - Decisões/indice-de-decisoes.md",
     "00 - Contexto/glossario.md",
     "Sem título.canvas",

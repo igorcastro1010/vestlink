@@ -1,7 +1,7 @@
 ---
 tipo: arquitetura
 status: ativo
-revisado_em: 2026-06-16
+revisado_em: 2026-06-19
 fontes:
   - ../../../config/urls.py
   - ../../../config/urls_tenant.py
@@ -42,5 +42,14 @@ fontes:
 ## Integrações
 
 - `/api/pagamentos/mercado-pago/webhook/`: webhook de pagamento; aceita apenas POST e consulta o gateway pelo ID.
-- `/api/tasks/cron/`: verificação de trials e anonimização de leads antigos; exige `CRON_SECRET` fora de debug.
+- `/api/tasks/cron/`: verificação de trials e anonimização de leads antigos; exige `CRON_SECRET` fora de debug. Configurado em produção na Vercel (retorna `200 OK` quando autenticado com token `Bearer` e `401 Unauthorized` sem autenticação).
 - `/gerenciador-vestlink/`: Django Admin.
+
+## Relacionados
+
+- [[visao-geral]] resume as telas e capacidades que aparecem nessas rotas.
+- [[fluxos-principais]] descreve a jornada por trás das superfícies.
+- [[arquitetura-do-sistema]] mostra onde essas rotas entram no monólito.
+- [[integracoes]] aprofunda webhook, cron, Supabase, e-mail e pagamentos.
+- [[ADR-004 - Tenant por slug e dominio]] explica a troca de URLConf por host.
+- [[dividas-abertas]] lista riscos ligados a rotas, webhook, tenant e segurança.

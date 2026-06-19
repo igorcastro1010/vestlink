@@ -76,3 +76,12 @@ valores e resposta bruta. Aprovação ativa a assinatura da loja.
 - Vendedor em lead: `SET_NULL`.
 - Usuário em pagamento/vendedor: `SET_NULL`; usuário em loja: cascata.
 - Usuário em `AceiteLegal`: cascata.
+
+## Relacionados
+
+- [[glossario]] define os nomes de domínio usados neste modelo.
+- [[visao-geral]] mostra as capacidades de produto sustentadas por estas entidades.
+- [[fluxos-principais]] explica quando cada entidade é criada ou atualizada.
+- [[arquitetura-do-sistema]] aponta `loja/models.py` como camada de domínio.
+- [[ADR-002 - Supabase como backend principal]] conecta o schema ao PostgreSQL de produção.
+- [[dividas-abertas]] lista riscos sobre LGPD, exclusão em cascata, webhook e acoplamento.

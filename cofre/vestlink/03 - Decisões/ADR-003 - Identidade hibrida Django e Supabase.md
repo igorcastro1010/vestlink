@@ -26,3 +26,12 @@ localizar/criar um `User` Django e abrir a sessão Django.
 - Usuários Google recebem senha inutilizável.
 - Mudanças de e-mail e exclusão exigem estratégia de sincronização entre os
   dois sistemas.
+
+## Relacionados
+
+- [[fluxos-principais]]
+- [[integracoes]]
+- [[modelo-de-dados]]
+- [[ADR-002 - Supabase como backend principal]]
+- [[gotchas-de-producao]]
+- [[dividas-abertas]]

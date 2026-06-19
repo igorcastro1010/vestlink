@@ -26,3 +26,13 @@ fontes:
 - **Assinatura:** catálogos vencidos são bloqueados; cron atualiza trials.
 - **Encoding:** já houve texto mojibake em fontes; editar sempre em UTF-8.
 - **Deploy:** mudanças locais não publicam até `vercel --prod`.
+
+## Relacionados
+
+- [[integracoes]] detalha os serviços onde esses problemas aparecem.
+- [[arquitetura-do-sistema]] explica o runtime serverless e os adaptadores.
+- [[fluxos-principais]] mostra callbacks, webhook, cron, e-mail e WhatsApp em uso.
+- [[ADR-001 - Django monolitico na Vercel]] contextualiza a decisão de deploy.
+- [[ADR-002 - Supabase como backend principal]] contextualiza banco, Auth e Storage.
+- [[ADR-004 - Tenant por slug e dominio]] contextualiza host, tenant e domínio próprio.
+- [[dividas-abertas]] transforma gotchas em trabalho pendente.

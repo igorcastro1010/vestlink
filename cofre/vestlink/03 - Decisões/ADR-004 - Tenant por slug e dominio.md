@@ -26,3 +26,12 @@ global em `reverse()` remove o slug de rotas públicas dentro do tenant.
 - Domínios precisam apontar para a Vercel e estar autorizados.
 - O monkeypatch global de `django.urls.reverse` aumenta o risco de efeitos
   colaterais em upgrades e testes.
+
+## Relacionados
+
+- [[glossario]]
+- [[endpoints-e-superficies]]
+- [[arquitetura-do-sistema]]
+- [[modelo-de-dados]]
+- [[gotchas-de-producao]]
+- [[dividas-abertas]]

@@ -25,3 +25,11 @@ Usar Django com templates, uma aplicação `loja` e uma função WSGI na Vercel.
 - Runtime serverless exige banco, mídia e cache persistentes externos.
 - Crescimento pode exigir divisão das views e serviços, não necessariamente
   criação precoce de microsserviços.
+
+## Relacionados
+
+- [[arquitetura-do-sistema]]
+- [[endpoints-e-superficies]]
+- [[ADR-002 - Supabase como backend principal]]
+- [[gotchas-de-producao]]
+- [[dividas-abertas]]

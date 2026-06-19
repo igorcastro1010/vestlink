@@ -27,3 +27,12 @@ runtime stateless da Vercel.
 - Configuração Supabase é parte crítica de deploy e recuperação.
 - Código de fallback legado deve ser tratado como dívida, não como arquitetura
   de produção recomendada.
+
+## Relacionados
+
+- [[integracoes]]
+- [[modelo-de-dados]]
+- [[ADR-001 - Django monolitico na Vercel]]
+- [[ADR-003 - Identidade hibrida Django e Supabase]]
+- [[gotchas-de-producao]]
+- [[dividas-abertas]]

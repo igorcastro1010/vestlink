@@ -33,3 +33,11 @@ TL;DR: O VestLink usa Django com templates HTML, CSS global em `static/css/catal
 - Em telas escuras, nunca usar cores herdadas escuras como `#111` em cards escuros; reforcar titulos com `--uix-text-strong` e textos secundarios com `--uix-text-muted`.
 - Chips, badges, abas e CTAs precisam ter pares de cor para claro e escuro.
 - Verificar visualmente pelo menos landing, login/cadastro, painel de lojas, dashboard da loja, catalogo publico e assinatura apos grandes mudancas visuais.
+
+## Relacionados
+
+- [[visao-geral]] mostra as telas e jornadas que precisam manter consistência visual.
+- [[arquitetura-do-sistema]] confirma o stack Django/templates/CSS global.
+- [[endpoints-e-superficies]] ajuda a escolher as superfícies para teste visual.
+- [[skill-ui-ux-pro-max]] descreve a skill local usada como guia de UI/UX.
+- [[dividas-abertas]] acompanha a dívida de CSS global extenso.

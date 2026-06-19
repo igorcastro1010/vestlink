@@ -53,3 +53,13 @@ fontes:
 - Termos de Uso e Política de Privacidade implementados no produto.
 - Aplicativo móvel nativo.
 - Checkout completo de produtos; a conversão final ocorre no WhatsApp.
+
+## Relacionados
+
+- [[glossario]] define os termos usados em produto, painel, catálogo e assinatura.
+- [[arquitetura-do-sistema]] explica como o monólito Django entrega essas capacidades.
+- [[endpoints-e-superficies]] mapeia landing, auth, painel, catálogo e integrações.
+- [[fluxos-principais]] detalha cadastro, Google OAuth, WhatsApp, vendedores e assinatura.
+- [[modelo-de-dados]] descreve as entidades por trás das capacidades atuais.
+- [[integracoes]] resume Vercel, Supabase, Mercado Pago, e-mail e WhatsApp.
+- [[dividas-abertas]] lista riscos antes de escalar comercialmente.

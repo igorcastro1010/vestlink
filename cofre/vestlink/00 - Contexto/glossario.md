@@ -28,3 +28,11 @@ fontes:
 | Assinatura | Estado comercial da loja: trial, ativa, vencida ou cancelada. |
 | Pagamento | Registro de cobrança do SaaS pelo Mercado Pago. |
 | Tenant | Loja resolvida pelo host no `TenantMiddleware`. |
+
+## Relacionados
+
+- [[visao-geral]] mostra como esses termos aparecem no produto.
+- [[modelo-de-dados]] liga os termos às entidades persistidas.
+- [[fluxos-principais]] usa os termos nos fluxos de cadastro, vendedor, WhatsApp e assinatura.
+- [[endpoints-e-superficies]] mostra onde cada conceito aparece nas rotas.
+- [[ADR-004 - Tenant por slug e dominio]] aprofunda `Tenant`, slug e domínio.

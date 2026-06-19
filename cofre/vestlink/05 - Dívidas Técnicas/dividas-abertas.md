@@ -2,7 +2,7 @@
 tipo: divida
 status: ativo
 prioridade: alta
-revisado_em: 2026-06-16
+revisado_em: 2026-06-19
 fontes:
   - ../../../config/settings.py
   - ../../../loja/apps.py
@@ -18,9 +18,10 @@ fontes:
 
 | Prioridade | Dívida | Risco / próximo passo |
 |---|---|---|
+| Alta | Configuração de e-mail transacional (Resend) | `RESEND_API_KEY` e `RESEND_FROM_EMAIL` pendentes na Vercel para habilitar confirmação de cadastro em prod. |
 | Alta | Revisão jurídica dos Termos e Privacidade | Textos base e aceite versionado existem; falta validação com profissional jurídico. |
 | Alta | Direitos LGPD operacionais | Leads antigos são anonimizados; ainda faltam fluxo de exportação/exclusão por titular e canal formal. |
-| Alta | Assinatura real do webhook Mercado Pago | Webhook aceita só POST e consulta o gateway; ainda falta validar assinatura oficial do Mercado Pago. |
+| Alta | Assinatura real do webhook Mercado Pago e Variáveis | `MERCADO_PAGO_ACCESS_TOKEN` e `MERCADO_PAGO_USE_SANDBOX` ausentes na Vercel (default atual: sandbox; checkout real desativado). Webhook consulta a API oficial mas não valida `X-Signature`. Risco: DoS/rate-limit de consultas se webhook for atacado. Correção futura: validar assinatura antes de consultar a API. |
 | Alta | Exclusão em cascata da loja | Garantir confirmação forte, autorização e política de recuperação. |
 | Média | `loja/views.py` concentra muitos casos de uso | Extrair serviços por auth, catálogo, leads e billing. |
 | Média | Monkeypatch global de `reverse()` | Substituir por helpers/URLConf explícitos e testes de tenant. |
@@ -40,3 +41,13 @@ fontes:
 - Cadastro e novos usuários via Google registram `AceiteLegal` versionado.
 - Leads antigos podem ser anonimizados pela rotina cron via `LEAD_RETENTION_DAYS`.
 - Sentry deixou de enviar PII por padrão (`SENTRY_SEND_DEFAULT_PII=0`).
+
+## Relacionados
+
+- [[visao-geral]] ajuda a priorizar dívidas pelo impacto no produto.
+- [[arquitetura-do-sistema]] aponta acoplamentos e limites do monólito.
+- [[endpoints-e-superficies]] ajuda a localizar superfícies afetadas por segurança e UX.
+- [[fluxos-principais]] conecta LGPD, webhook, assinatura, vendedor e auth.
+- [[modelo-de-dados]] mostra entidades envolvidas em exclusão, anonimização e pagamentos.
+- [[integracoes]] liga dívidas a Supabase, Mercado Pago, e-mail, Redis e Sentry.
+- [[gotchas-de-producao]] registra sintomas práticos dessas dívidas.

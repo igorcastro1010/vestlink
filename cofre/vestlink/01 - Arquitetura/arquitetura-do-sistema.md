@@ -53,3 +53,13 @@ flowchart LR
 - `vercel.json` encaminha todas as rotas para `api/index.py`.
 - A função Python é stateless; banco e mídia locais não são persistência válida.
 - Cron diário chama `/api/tasks/cron/` às 02:00 UTC.
+
+## Relacionados
+
+- [[visao-geral]] dá o contexto de produto que esta arquitetura suporta.
+- [[endpoints-e-superficies]] detalha as superfícies expostas pelo monólito.
+- [[modelo-de-dados]] descreve a persistência usada pelas views e models.
+- [[integracoes]] detalha os serviços externos do diagrama.
+- [[ADR-001 - Django monolitico na Vercel]] registra a decisão de manter Django server-rendered.
+- [[ADR-002 - Supabase como backend principal]] explica a escolha de persistência externa.
+- [[gotchas-de-producao]] registra riscos práticos do runtime serverless.

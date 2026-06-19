@@ -59,3 +59,13 @@ fontes:
 3. Webhook consulta o pagamento pelo ID.
 4. Aprovação ativa a assinatura da loja.
 5. Cron marca trials expirados como vencidos e anonimiza leads antigos.
+
+## Relacionados
+
+- [[glossario]] padroniza nomes como Lead, Sacolinha, Vendedor, Trial e Pagamento.
+- [[endpoints-e-superficies]] mostra as rotas que executam estes fluxos.
+- [[modelo-de-dados]] descreve `Loja`, `Vendedor`, `Lead`, `AceiteLegal` e `Pagamento`.
+- [[integracoes]] detalha Supabase Auth, Google OAuth, Mercado Pago, Resend/SMTP e WhatsApp.
+- [[ADR-003 - Identidade hibrida Django e Supabase]] explica a identidade local + externa.
+- [[gotchas-de-producao]] lista armadilhas de callback, e-mail, webhook e cron.
+- [[dividas-abertas]] acompanha pendências de LGPD, webhook e acoplamento.
