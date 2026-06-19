@@ -1,9 +1,7 @@
 import json
 import logging
-from io import BytesIO
 from datetime import timedelta
 
-import qrcode
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login
@@ -34,7 +32,7 @@ from .legal import LEAD_RETENTION_DAYS, PRIVACY_VERSION, TERMS_VERSION
 from .models import AceiteLegal, Categoria, Cupom, Lead, Loja, Pagamento, Produto, Vendedor
 from .payments import MercadoPagoError
 from .validators import limpar_telefone
-from .services import billing, lead
+from .services import billing, lead, store
 
 
 logger = logging.getLogger(__name__)
@@ -669,8 +667,6 @@ def painel_loja(request, slug):
         form.save()
         return redirect(f"{reverse('painel_loja', kwargs={'slug': loja.slug})}#produtos")
 
-    produtos_base = loja.produtos.select_related("categoria").prefetch_related("imagens", "variacoes").all()
-    
     # Restringe leads_base para vendedor logado, se necessário
     vendedor_logado = None
     if request.user != loja.usuario:
@@ -679,211 +675,33 @@ def painel_loja(request, slug):
         except Vendedor.DoesNotExist:
             pass
 
-    leads_base = loja.leads.select_related("produto", "vendedor").all()
-    if vendedor_logado:
-        leads_base = leads_base.filter(vendedor=vendedor_logado)
-
-    vendedores_base = loja.vendedores.all()
-    produtos = produtos_base
     busca = request.GET.get("q", "").strip()
     status = request.GET.get("status", "").strip()
     categoria_id = request.GET.get("categoria", "").strip()
-
-    if busca:
-        produtos = produtos.filter(Q(nome__icontains=busca) | Q(descricao__icontains=busca))
-    if categoria_id:
-        produtos = produtos.filter(categoria_id=categoria_id)
-    if status == "esgotado":
-        produtos = produtos.filter(esgotado=True)
-    elif status == "novo":
-        produtos = produtos.filter(destaque=True)
-    elif status == "promocao":
-        produtos = produtos.filter(promocao=True)
-    elif status == "rascunho":
-        produtos = produtos.filter(publicado=False)
-    elif status == "disponivel":
-        produtos = produtos.filter(esgotado=False)
-
-    produtos_sem_foto_extra = produtos_base.filter(imagens__isnull=True).count()
-    avisos = []
-    if not loja.telefone:
-        avisos.append("Configure o WhatsApp da loja para os clientes conseguirem chamar você.")
-    if total_produtos := produtos_base.count():
-        if produtos_sem_foto_extra:
-            avisos.append(f"{produtos_sem_foto_extra} produto(s) ainda tem apenas a foto principal.")
-    else:
-        avisos.append("Cadastre seu primeiro produto para publicar a vitrine.")
-    if loja.categorias.count() == 0:
-        avisos.append("Crie pelo menos uma categoria para facilitar a navegacao do cliente.")
-    if not loja.banner_titulo and not loja.banner_imagem:
-        avisos.append("Personalize o banner do catálogo para destacar novidades ou promoções.")
-    if not loja.assinatura_esta_ativa:
-        avisos.append("Seu teste expirou ou a assinatura está inativa. Regularize para manter o catálogo profissional no ar.")
-    rascunhos = produtos_base.filter(publicado=False).count()
-    if rascunhos:
-        avisos.append(f"{rascunhos} produto(s) estão como rascunho e não aparecem no catálogo.")
-    total_leads_global = leads_base.count()
-    pedidos_novos_global = leads_base.filter(status=Lead.STATUS_NOVO).count()
-
     leads_filtrados = _obter_leads_filtrados(request, loja)
-    total_leads = leads_filtrados.count()
-    pedidos_novos = leads_filtrados.filter(status=Lead.STATUS_NOVO).count()
-    pedidos_atendimento = leads_filtrados.filter(status=Lead.STATUS_ATENDIMENTO).count()
-    pedidos_concluidos = leads_filtrados.filter(status=Lead.STATUS_CONCLUIDO).count()
-    total_cliques = sum(produto.cliques_whatsapp for produto in produtos_base)
-    produtos_mais_clicados = produtos_base.order_by("-cliques_whatsapp", "nome")[:5]
-    vendedores_resumo = vendedores_base.annotate(
-        total_leads=Count("leads"),
-        leads_concluidos=Count("leads", filter=Q(leads__status=Lead.STATUS_CONCLUIDO)),
+
+    contexto = store.obter_contexto_dashboard(
+        request=request,
+        loja=loja,
+        usuario_logado=request.user,
+        vendedor_logado=vendedor_logado,
+        busca=busca,
+        status=status,
+        categoria_id=categoria_id,
+        leads_filtrados=leads_filtrados,
     )
-    leads_por_dia = (
-        leads_base.annotate(dia=TruncDate("criado_em"))
-        .values("dia")
-        .annotate(total=Count("id"))
-        .order_by("-dia")[:7]
-    )
-    horarios_pico = (
-        leads_base.annotate(hora=ExtractHour("criado_em"))
-        .values("hora")
-        .annotate(total=Count("id"))
-        .order_by("-total", "hora")[:5]
-    )
-    taxa_conversao = round((pedidos_concluidos / total_leads) * 100) if total_leads else 0
-    taxa_interesse = round((total_leads / total_cliques) * 100) if total_cliques else 0
-    ticket_estimado = sum(produto.preco for produto in produtos_base.filter(leads__isnull=False).distinct())
-    catalogo_url = request.build_absolute_uri(reverse("catalogo_curto", kwargs={"slug": loja.slug}))
-    if loja.dominio_limpo:
-        catalogo_url = f"https://{loja.dominio_limpo}/"
-    mensagem_compartilhar = quote(
-        f"Oi! Confira o catálogo da {loja.nome}: {catalogo_url}"
-    )
+    contexto["form"] = form
+    contexto["categoria_form"] = categoria_form
+    contexto["vendedor_form"] = vendedor_form
 
-    # Serialização de dados para gráficos (Chart.js)
-    leads_por_dia_cronologico = list(leads_por_dia)[::-1]
-    chart_leads_labels = json.dumps([item["dia"].strftime("%d/%m") if item["dia"] else "" for item in leads_por_dia_cronologico])
-    chart_leads_valores = json.dumps([item["total"] for item in leads_por_dia_cronologico])
-
-    horarios_pico_cronologico = sorted(list(horarios_pico), key=lambda x: x["hora"] if x["hora"] is not None else 0)
-    chart_horarios_labels = json.dumps([f"{item['hora']}h" if item["hora"] is not None else "" for item in horarios_pico_cronologico])
-    chart_horarios_valores = json.dumps([item["total"] for item in horarios_pico_cronologico])
-
-    chart_produtos_labels = json.dumps([p.nome for p in produtos_mais_clicados])
-    chart_produtos_valores = json.dumps([p.cliques_whatsapp for p in produtos_mais_clicados])
-
-    # Serialização do gráfico de vendedores (Doughnut Chart)
-    leads_sem_vendedor = leads_base.filter(vendedor__isnull=True).count()
-    vendedores_labels = [v.nome for v in vendedores_resumo if v.total_leads > 0]
-    vendedores_valores = [v.total_leads for v in vendedores_resumo if v.total_leads > 0]
-    if leads_sem_vendedor > 0:
-        vendedores_labels.append("Sem Vendedor (Direto)")
-        vendedores_valores.append(leads_sem_vendedor)
-    chart_vendedores_labels = json.dumps(vendedores_labels)
-    chart_vendedores_valores = json.dumps(vendedores_valores)
-
-    onboarding = [
-        {
-            "numero": "1",
-            "titulo": "Loja criada",
-            "descricao": "Seu link público já está pronto.",
-            "feito": True,
-        },
-        {
-            "numero": "2",
-            "titulo": "Primeiro produto",
-            "descricao": "Cadastre foto, preço, tamanho e cor.",
-            "feito": total_produtos > 0,
-        },
-        {
-            "numero": "3",
-            "titulo": "Link compartilhado",
-            "descricao": "Copie o link curto para usar na bio e no WhatsApp.",
-            "feito": total_produtos > 0,
-        },
-        {
-            "numero": "4",
-            "titulo": "WhatsApp testado",
-            "descricao": "Clique em um produto como se fosse cliente.",
-            "feito": total_leads > 0,
-        },
-    ]
-    onboarding_concluidos = sum(1 for passo in onboarding if passo["feito"])
-    contexto = {
-        "loja": loja,
-        "is_owner": request.user == loja.usuario,
-        "form": form,
-        "categoria_form": categoria_form,
-        "vendedor_form": vendedor_form,
-        "produtos": produtos,
-        "total_produtos": total_produtos,
-        "total_esgotados": produtos_base.filter(esgotado=True).count(),
-        "total_categorias": loja.categorias.count(),
-        "total_fotos": sum(1 + produto.imagens.count() for produto in produtos_base),
-        "total_cliques": total_cliques,
-        "total_leads_global": total_leads_global,
-        "pedidos_novos_global": pedidos_novos_global,
-        "total_leads": total_leads,
-        "leads_produto": leads_filtrados.filter(origem=Lead.ORIGEM_PRODUTO).count(),
-        "leads_sacolinha": leads_filtrados.filter(origem=Lead.ORIGEM_SACOLINHA).count(),
-        "leads_recentes": leads_filtrados[:50],
-        "vendedores": vendedores_resumo,
-        "total_vendedores": vendedores_base.count(),
-        "vendedores_ativos": vendedores_base.filter(ativo=True).count(),
-        "pedidos_novos": pedidos_novos,
-        "pedidos_atendimento": pedidos_atendimento,
-        "pedidos_concluidos": pedidos_concluidos,
-        "status_lead_choices": Lead.STATUS_CHOICES,
-        "produtos_mais_clicados": produtos_mais_clicados,
-        "leads_por_dia": leads_por_dia,
-        "horarios_pico": horarios_pico,
-        "taxa_conversao": taxa_conversao,
-        "taxa_interesse": taxa_interesse,
-        "ticket_estimado": ticket_estimado,
-        "catalogo_url": catalogo_url,
-        "mensagem_compartilhar": mensagem_compartilhar,
-        "avisos": avisos,
-        "busca_painel": busca,
-        "status_painel": status,
-        "categoria_painel": categoria_id,
-        "busca_leads": request.GET.get("q_leads", "").strip(),
-        "vendedor_leads_ativo": request.GET.get("vendedor_leads", "").strip(),
-        "status_leads_ativo": request.GET.get("status_leads", "").strip(),
-        "onboarding": onboarding,
-        "onboarding_concluidos": onboarding_concluidos,
-        "onboarding_total": len(onboarding),
-        "onboarding_percentual": round(onboarding_concluidos / len(onboarding) * 100),
-        "chart_leads_labels": chart_leads_labels,
-        "chart_leads_valores": chart_leads_valores,
-        "chart_horarios_labels": chart_horarios_labels,
-        "chart_horarios_valores": chart_horarios_valores,
-        "chart_produtos_labels": chart_produtos_labels,
-        "chart_produtos_valores": chart_produtos_valores,
-        "chart_vendedores_labels": chart_vendedores_labels,
-        "chart_vendedores_valores": chart_vendedores_valores,
-    }
     return render(request, "painel_loja.html", contexto)
 
 
 @login_required
 def baixar_qr_code(request, slug):
     loja = _loja_do_usuario(request, slug)
-    catalogo_url = request.build_absolute_uri(reverse("catalogo_curto", kwargs={"slug": loja.slug}))
-    if loja.dominio_limpo:
-        catalogo_url = f"https://{loja.dominio_limpo}/"
-
-    qr_code = qrcode.QRCode(
-        version=None,
-        error_correction=qrcode.constants.ERROR_CORRECT_M,
-        box_size=10,
-        border=4,
-    )
-    qr_code.add_data(catalogo_url)
-    qr_code.make(fit=True)
-
-    image = qr_code.make_image(fill_color="#151129", back_color="#ffffff")
-    image_buffer = BytesIO()
-    image.save(image_buffer, format="PNG")
-
-    response = HttpResponse(image_buffer.getvalue(), content_type="image/png")
+    image_bytes = store.gerar_qrcode(loja, request)
+    response = HttpResponse(image_bytes, content_type="image/png")
     response["Content-Disposition"] = f'attachment; filename="qr-code-{loja.slug}.png"'
     return response
 
