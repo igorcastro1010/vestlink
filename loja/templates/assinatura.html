@@ -4,7 +4,13 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Assinatura - {{ loja.nome }}</title>
-    <link rel="stylesheet" href="/static/css/catalogo.css?v=22">
+    <link rel="stylesheet" href="/static/css/catalogo.css?v=75">
+    <script>
+        (function() {
+            const theme = localStorage.getItem("theme") || "light";
+            document.documentElement.setAttribute("data-theme", theme);
+        })();
+    </script>
 </head>
 <body class="plans-page">
     <header class="lp-header">
@@ -13,11 +19,15 @@
             <a href="{% url 'painel_loja' loja.slug %}">Painel</a>
             <a href="{% url 'checkout_premium' loja.slug %}">Checkout</a>
             <a href="{% url 'planos' %}">Planos</a>
+            <button class="dark-mode-toggle" type="button" aria-label="Alternar tema" style="background:transparent; border:none; cursor:pointer; padding:6px; display:inline-flex; align-items:center; justify-content:center; color:var(--lp-muted, currentColor);">
+                <svg class="theme-icon-light" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:none; color:var(--lp-purple, currentColor);"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                <svg class="theme-icon-dark" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:none; color:var(--lp-purple, currentColor);"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+            </button>
         </nav>
     </header>
 
     <main>
-        <section class="plans-hero">
+        <section class="plans-hero subscription-hero">
             <p class="lp-kicker">Assinatura</p>
             <h1>Controle do Premium da {{ loja.nome }}.</h1>
             <p>Acompanhe teste, status da assinatura e o caminho de pagamento da loja.</p>
@@ -27,15 +37,15 @@
             <article class="subscription-status-card">
                 <span class="plan-tag">{{ loja.assinatura_status_label }}</span>
                 <h2>Plano Premium</h2>
-                <strong>R$ 39,90<span>/mes</span></strong>
+                <strong>R$ 39,90<span>/mês</span></strong>
                 {% if loja.assinatura_status == "trial" and loja.trial_dias_restantes > 0 %}
                     <p>Teste ativo por mais {{ loja.trial_dias_restantes }} dia(s). Depois disso, conecte o pagamento para manter a loja regularizada.</p>
                 {% elif loja.assinatura_status == "ativa" %}
-                    <p>Assinatura ativa. A loja esta pronta para vender com catalogo profissional.</p>
+                    <p>Assinatura ativa. A loja está pronta para vender com catálogo profissional.</p>
                 {% elif loja.assinatura_status == "cancelada" %}
-                    <p>Assinatura cancelada. Voce pode reativar quando quiser.</p>
+                    <p>Assinatura cancelada. Você pode reativar quando quiser.</p>
                 {% else %}
-                    <p>O teste expirou. Reative o Premium para manter o catalogo com uma experiencia profissional.</p>
+                    <p>O teste expirou. Reative o Premium para manter o catálogo com uma experiência profissional.</p>
                 {% endif %}
 
                 <dl class="subscription-facts">
@@ -45,7 +55,7 @@
                     </div>
                     <div>
                         <dt>Fim do teste</dt>
-                        <dd>{% if loja.trial_termina_em %}{{ loja.trial_termina_em|date:"d/m/Y H:i" }}{% else %}Nao definido{% endif %}</dd>
+                        <dd>{% if loja.trial_termina_em %}{{ loja.trial_termina_em|date:"d/m/Y H:i" }}{% else %}Não definido{% endif %}</dd>
                     </div>
                     <div>
                         <dt>Pagamento</dt>
@@ -79,7 +89,7 @@
                 <p class="lp-kicker">Incluido</p>
                 <h2>O que a loja recebe</h2>
                 <ul>
-                    <li>Catalogo profissional com link curto.</li>
+                    <li>Catálogo profissional com link curto.</li>
                     <li>Produtos com varias fotos, tamanhos e cores.</li>
                     <li>Controle de esgotados e produtos publicados.</li>
                     <li>Leads e cliques do WhatsApp no painel.</li>
@@ -109,12 +119,13 @@
                     <article>
                         <div>
                             <strong>Nenhum pagamento criado ainda.</strong>
-                            <span>Ao clicar no checkout, o VestLink cria uma preferencia no Mercado Pago.</span>
+                            <span>Ao clicar no checkout, o VestLink cria uma preferência no Mercado Pago.</span>
                         </div>
                     </article>
                 {% endfor %}
             </div>
         </section>
     </main>
+    <script src="/static/js/theme.js" defer></script>
 </body>
 </html>

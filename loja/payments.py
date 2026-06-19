@@ -43,9 +43,9 @@ def _post_json(url, payload):
             return json.loads(response.read().decode("utf-8"))
     except HTTPError as error:
         body = error.read().decode("utf-8", errors="replace")
-        raise MercadoPagoError(f"Mercado Pago recusou a preferencia: {body}") from error
+        raise MercadoPagoError(f"Mercado Pago recusou a preferência: {body}") from error
     except URLError as error:
-        raise MercadoPagoError(f"Nao foi possivel conectar ao Mercado Pago: {error.reason}") from error
+        raise MercadoPagoError(f"Não foi possível conectar ao Mercado Pago: {error.reason}") from error
 
 
 def _get_json(url):
@@ -55,9 +55,9 @@ def _get_json(url):
             return json.loads(response.read().decode("utf-8"))
     except HTTPError as error:
         body = error.read().decode("utf-8", errors="replace")
-        raise MercadoPagoError(f"Nao foi possivel consultar pagamento: {body}") from error
+        raise MercadoPagoError(f"Não foi possível consultar pagamento: {body}") from error
     except URLError as error:
-        raise MercadoPagoError(f"Nao foi possivel conectar ao Mercado Pago: {error.reason}") from error
+        raise MercadoPagoError(f"Não foi possível conectar ao Mercado Pago: {error.reason}") from error
 
 
 def criar_preferencia_premium(request, loja, usuario, cupom=None):
@@ -78,7 +78,7 @@ def criar_preferencia_premium(request, loja, usuario, cupom=None):
             {
                 "id": f"vestlink-premium-{loja.id}",
                 "title": f"VestLink Premium - {loja.nome}",
-                "description": "Assinatura mensal do catalogo digital VestLink",
+                "description": "Assinatura mensal do catálogo digital VestLink",
                 "quantity": 1,
                 "currency_id": "BRL",
                 "unit_price": float(pagamento.valor_final),

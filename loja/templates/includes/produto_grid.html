@@ -1,0 +1,134 @@
+{% for produto in produtos %}
+    <article id="produto-{{ produto.id }}" class="product {% if produto.esgotado %}product--sold{% endif %}">
+        <button class="favorite-button" type="button" aria-label="Favoritar {{ produto.nome }}">♥</button>
+
+        <div class="product__media">
+            <img class="product__main-image" src="{{ produto.imagem.url }}" alt="{{ produto.nome }}">
+            <div class="badges">
+                {% if produto.destaque %}<span>Novo</span>{% endif %}
+                {% if produto.promocao %}<span>Promoção</span>{% endif %}
+                {% if produto.esgotado %}<span>Esgotado</span>{% endif %}
+            </div>
+        </div>
+
+        {% if produto.imagens.all %}
+            <div class="gallery" aria-label="Fotos de {{ produto.nome }}">
+                <button type="button"
+                        class="gallery-thumb active"
+                        data-image="{{ produto.imagem.url }}"
+                        data-alt="{{ produto.nome }}"
+                        aria-pressed="true">
+                    <img src="{{ produto.imagem.url }}" alt="{{ produto.nome }}">
+                </button>
+                {% for foto in produto.imagens.all %}
+                    <button type="button"
+                            class="gallery-thumb"
+                            data-image="{{ foto.imagem.url }}"
+                            data-alt="{{ produto.nome }} - foto {{ forloop.counter|add:1 }}"
+                            aria-pressed="false">
+                        <img src="{{ foto.imagem.url }}" alt="{{ produto.nome }} - foto {{ forloop.counter|add:1 }}">
+                    </button>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <div class="product__body">
+            <h2>{{ produto.nome }}</h2>
+            {% if produto.descricao %}<p>{{ produto.descricao }}</p>{% endif %}
+                            <a class="product-detail-link" href="{% url 'produto_detalhe_curto' loja.slug produto.id %}{% if vendedor_codigo %}?vendedor={{ vendedor_codigo }}{% endif %}">Ver detalhes</a>
+            <div class="price-stack">
+                {% if produto.preco_antigo %}
+                    <span>R$ {{ produto.preco_antigo }}</span>
+                {% endif %}
+                <strong>R$ {{ produto.preco }}</strong>
+            </div>
+
+            {% if produto.tamanhos_lista %}
+                <div class="option-group" aria-label="Tamanhos">
+                    <span class="option-label">Tamanho</span>
+                    {% for tamanho in produto.tamanhos_lista %}
+                        {% with tamanho_normalizado=tamanho|lower %}
+                        <button type="button"
+                                class="choice-option size-option{% if tamanho_normalizado in produto.tamanhos_esgotados_lista %} choice-option--sold{% endif %}"
+                                data-size="{{ tamanho }}"
+                                aria-pressed="false"
+                                {% if tamanho_normalizado in produto.tamanhos_esgotados_lista %}disabled aria-disabled="true" title="Tamanho esgotado"{% endif %}>
+                            {{ tamanho }}
+                        </button>
+                        {% endwith %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            {% if produto.cores_lista %}
+                <div class="option-group" aria-label="Cores">
+                    <span class="option-label">Cor</span>
+                    {% for cor in produto.cores_lista %}
+                        {% with cor_normalizada=cor|lower %}
+                        <button type="button"
+                                class="choice-option color-option{% if cor_normalizada in produto.cores_esgotadas_lista %} choice-option--sold{% endif %}"
+                                data-color="{{ cor }}"
+                                aria-pressed="false"
+                                {% if cor_normalizada in produto.cores_esgotadas_lista %}disabled aria-disabled="true" title="Cor esgotada"{% endif %}>
+                            {{ cor }}
+                        </button>
+                        {% endwith %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            {% if produto.variacoes.all %}
+                <div class="variant-stock-list">
+                    <span class="option-label">Estoque por variacao</span>
+                    {% for variacao in produto.variacoes.all %}
+                        <span class="{% if not variacao.disponivel %}sold{% endif %}">
+                            {{ variacao.cor }} / {{ variacao.tamanho }}: {% if variacao.disponivel %}{{ variacao.estoque }} un.{% else %}esgotado{% endif %}
+                        </span>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            {% if produto.esgotado %}
+                <button class="whatsapp" disabled>Esgotado</button>
+            {% else %}
+                <button class="add-cart-button"
+                        type="button"
+                        data-cart-product="{{ produto.nome }}"
+                        data-cart-price="R$ {{ produto.preco }}">
+                    Adicionar a sacolinha
+                </button>
+                <label class="product-customer-name">
+                    Seu nome
+                    <input type="text" data-product-customer-name placeholder="Ex.: Ana">
+                </label>
+                <a class="whatsapp {% if produto.tamanhos_lista or produto.cores_lista %}whatsapp--requires-choice{% endif %}"
+                   href="{% url 'whatsapp_produto' loja.slug produto.id %}"
+                   data-phone="55{{ loja.telefone }}"
+                   data-product="{{ produto.nome }}"
+                   data-track-url="{% url 'whatsapp_produto' loja.slug produto.id %}"
+                   data-seller-code="{{ vendedor_codigo|default:'' }}"
+                   data-base-label="Comprar pelo WhatsApp"
+                   data-needs-size="{% if produto.tamanhos_lista %}true{% else %}false{% endif %}"
+                   data-needs-color="{% if produto.cores_lista %}true{% else %}false{% endif %}"
+                   target="_blank"
+                   rel="noopener">
+                    {% if produto.tamanhos_lista and produto.cores_lista %}
+                        Escolha tamanho e cor
+                    {% elif produto.tamanhos_lista %}
+                        Escolha o tamanho
+                    {% elif produto.cores_lista %}
+                        Escolha a cor
+                    {% else %}
+                        Comprar pelo WhatsApp
+                    {% endif %}
+                </a>
+            {% endif %}
+        </div>
+    </article>
+{% empty %}
+    <p class="empty">Nenhum produto encontrado.</p>
+{% endfor %}
+
+{% if produtos.has_next %}
+    <div id="next-page-indicator" data-next-page="{{ produtos.next_page_number }}" style="display: none;"></div>
+{% endif %}

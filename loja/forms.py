@@ -1,8 +1,10 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from django.utils.text import slugify
 
-from .models import Categoria, Loja, Produto, ProdutoImagem, ProdutoVariacao
+from .models import Categoria, Loja, Produto, ProdutoImagem, ProdutoVariacao, Vendedor
+from .validators import limpar_telefone, validar_whatsapp
 
 
 class MultipleFileInput(forms.ClearableFileInput):
@@ -41,22 +43,27 @@ class LojaForm(forms.ModelForm):
         labels = {
             "slug": "Link da loja",
             "telefone": "WhatsApp",
-            "descricao": "Descricao",
+            "descricao": "Descrição",
             "instagram": "Instagram",
-            "dominio_personalizado": "Dominio personalizado",
+            "dominio_personalizado": "Domínio personalizado",
             "cor_principal": "Cor principal",
             "tema": "Tema da loja",
             "logo": "Logo da loja",
-            "banner_titulo": "Titulo do banner",
+            "banner_titulo": "Título do banner",
             "banner_texto": "Texto do banner",
             "banner_imagem": "Imagem do banner",
         }
         widgets = {
             "cor_principal": forms.TextInput(attrs={"type": "color"}),
             "banner_titulo": forms.TextInput(attrs={"placeholder": "Ex.: Novidades da semana"}),
-            "banner_texto": forms.TextInput(attrs={"placeholder": "Ex.: Pecas novas com pronta entrega"}),
+            "banner_texto": forms.TextInput(attrs={"placeholder": "Ex.: Peças novas com pronta entrega"}),
             "dominio_personalizado": forms.TextInput(attrs={"placeholder": "catalogo.sualoja.com.br"}),
         }
+
+    def clean_telefone(self):
+        telefone = self.cleaned_data.get("telefone", "").strip()
+        validar_whatsapp(telefone)
+        return limpar_telefone(telefone)
 
 
 class CategoriaForm(forms.ModelForm):
@@ -73,12 +80,103 @@ class CategoriaForm(forms.ModelForm):
         }
 
 
+class VendedorForm(forms.ModelForm):
+    username = forms.CharField(
+        label="Usuário (login)",
+        required=False,
+        widget=forms.TextInput(attrs={"placeholder": "Ex.: maria_vendas"}),
+    )
+    password = forms.CharField(
+        label="Senha",
+        required=False,
+        widget=forms.PasswordInput(attrs={"placeholder": "Defina uma senha"}),
+    )
+
+    class Meta:
+        model = Vendedor
+        fields = ["nome", "codigo", "telefone", "ativo"]
+        labels = {
+            "nome": "Nome do vendedor",
+            "codigo": "Código do link",
+            "telefone": "WhatsApp do vendedor",
+            "ativo": "Ativo",
+        }
+        widgets = {
+            "nome": forms.TextInput(attrs={"placeholder": "Ex.: Maria"}),
+            "codigo": forms.TextInput(attrs={"placeholder": "maria"}),
+            "telefone": forms.TextInput(attrs={"placeholder": "85999999999"}),
+        }
+
+    def __init__(self, *args, loja=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.loja = loja
+        self.fields["codigo"].required = False
+
+    def clean_telefone(self):
+        telefone = self.cleaned_data.get("telefone", "").strip()
+        if not telefone:
+            return ""
+        validar_whatsapp(telefone)
+        return limpar_telefone(telefone)
+
+    def clean_username(self):
+        username = self.cleaned_data.get("username", "").strip()
+        if username:
+            if User.objects.filter(username__iexact=username).exists():
+                raise forms.ValidationError("Este nome de usuário já está em uso.")
+        return username
+
+    def clean(self):
+        cleaned_data = super().clean()
+        username = cleaned_data.get("username")
+        password = cleaned_data.get("password")
+
+        if username and not password:
+            self.add_error("password", "Defina uma senha para o usuário.")
+        if password and not username:
+            self.add_error("username", "Defina o usuário para a senha informada.")
+        return cleaned_data
+
+    def clean_codigo(self):
+        codigo = self.cleaned_data.get("codigo", "").strip().lower()
+        if not codigo:
+            codigo = slugify(self.cleaned_data.get("nome", ""))
+        if not codigo:
+            raise forms.ValidationError("Informe um nome ou código para gerar o link.")
+        qs = Vendedor.objects.filter(loja=self.loja, codigo__iexact=codigo)
+        if self.instance.pk:
+            qs = qs.exclude(pk=self.instance.pk)
+        if qs.exists():
+            raise forms.ValidationError("Esse código já está em uso nesta loja.")
+        return codigo
+
+    def save(self, commit=True):
+        vendedor = super().save(commit=False)
+        vendedor.loja = self.loja
+
+        username = self.cleaned_data.get("username")
+        password = self.cleaned_data.get("password")
+        if username and password:
+            user = User.objects.create_user(username=username, password=password)
+            vendedor.usuario = user
+
+        if commit:
+            vendedor.save()
+            self.save_m2m()
+        return vendedor
+
+
 class CadastroForm(UserCreationForm):
-    email = forms.EmailField(label="E-mail", required=False)
-    loja_nome = forms.CharField(label="Nome da loja", required=False)
-    loja_slug = forms.SlugField(label="Link da loja", required=False)
-    loja_telefone = forms.CharField(label="WhatsApp da loja", required=False)
+    email = forms.EmailField(label="E-mail", required=True)
+    loja_nome = forms.CharField(label="Nome da loja", required=True)
+    loja_slug = forms.SlugField(label="Link da loja", required=True)
+    loja_telefone = forms.CharField(label="WhatsApp da loja", required=True)
     loja_instagram = forms.CharField(label="Instagram", required=False)
+    aceite_termos = forms.BooleanField(
+        label="Li e aceito os Termos de Uso e a Política de Privacidade.",
+        required=True,
+        error_messages={"required": "Você precisa aceitar os Termos de Uso e a Política de Privacidade para criar a conta."},
+    )
 
     class Meta:
         model = User
@@ -91,9 +189,10 @@ class CadastroForm(UserCreationForm):
             "loja_slug",
             "loja_telefone",
             "loja_instagram",
+            "aceite_termos",
         ]
         labels = {
-            "username": "Usuario",
+            "username": "Usuário",
             "password1": "Senha",
             "password2": "Confirmar senha",
             "loja_nome": "Nome da loja",
@@ -108,6 +207,34 @@ class CadastroForm(UserCreationForm):
             "loja_instagram": forms.TextInput(attrs={"placeholder": "sualoja"}),
         }
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["password1"].widget.attrs.update({
+            "data-password-primary": "",
+            "aria-describedby": "password-requirements",
+        })
+        self.fields["password2"].widget.attrs.update({
+            "data-password-confirm": "",
+            "aria-describedby": "password-requirements",
+        })
+
+    def clean_email(self):
+        email = self.cleaned_data["email"].strip().lower()
+        if User.objects.filter(email__iexact=email).exists():
+            raise forms.ValidationError("Ja existe uma conta com este e-mail.")
+        return email
+
+    def clean_loja_slug(self):
+        slug = self.cleaned_data["loja_slug"].strip().lower()
+        if Loja.objects.filter(slug__iexact=slug).exists():
+            raise forms.ValidationError("Esse link de loja ja esta em uso. Tente outro, como salombrashop2.")
+        return slug
+
+    def clean_loja_telefone(self):
+        telefone = self.cleaned_data.get("loja_telefone", "").strip()
+        validar_whatsapp(telefone)
+        return limpar_telefone(telefone)
+
 
 class ProdutoForm(forms.ModelForm):
     nova_categoria = forms.CharField(
@@ -118,7 +245,7 @@ class ProdutoForm(forms.ModelForm):
     fotos_adicionais = MultipleFileField(
         label="Fotos adicionais",
         required=False,
-        help_text="Voce pode selecionar varias fotos de uma vez.",
+        help_text="Você pode selecionar várias fotos de uma vez.",
     )
     variacoes_estoque = forms.CharField(
         label="Estoque por variacao",
@@ -152,9 +279,9 @@ class ProdutoForm(forms.ModelForm):
         labels = {
             "categoria": "Categoria existente",
             "nome": "Nome do produto",
-            "descricao": "Descricao",
-            "preco": "Preco",
-            "preco_antigo": "Preco antigo",
+            "descricao": "Descrição",
+            "preco": "Preço",
+            "preco_antigo": "Preço antigo",
             "imagem": "Foto principal",
             "fotos_adicionais": "Fotos adicionais",
             "tamanhos": "Tamanhos",
@@ -163,9 +290,9 @@ class ProdutoForm(forms.ModelForm):
             "cores_esgotadas": "Cores esgotadas",
             "esgotado": "Esgotado",
             "destaque": "Novo",
-            "promocao": "Promocao",
-            "publicado": "Publicado no catalogo",
-            "ordem": "Ordem no catalogo",
+            "promocao": "Promoção",
+            "publicado": "Publicado no catálogo",
+            "ordem": "Ordem no catálogo",
         }
         widgets = {
             "descricao": forms.Textarea(attrs={"rows": 3}),
@@ -194,6 +321,10 @@ class ProdutoForm(forms.ModelForm):
                 f"{variacao.cor}, {variacao.tamanho}, {variacao.estoque}"
                 for variacao in self.instance.variacoes.all()
             )
+
+    def clean_ordem(self):
+        ordem = self.cleaned_data.get("ordem")
+        return ordem if ordem is not None else 0
 
     def _variacoes_informadas(self):
         linhas = self.cleaned_data.get("variacoes_estoque", "").splitlines()

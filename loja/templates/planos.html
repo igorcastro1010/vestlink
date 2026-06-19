@@ -4,45 +4,57 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Planos - VestLink</title>
-    <link rel="stylesheet" href="/static/css/catalogo.css?v=16">
+    <link rel="stylesheet" href="/static/css/catalogo.css?v=75">
 </head>
 <body class="plans-page">
     <header class="lp-header">
         <a class="lp-logo" href="/">VestLink</a>
         <nav>
-            <a href="/">Inicio</a>
-            <a href="{% url 'login' %}">Entrar</a>
+            <a href="/">Início</a>
+            {% if request.user.is_authenticated %}
+                <a href="{% url 'painel' %}">Meu painel</a>
+            {% else %}
+                <a href="{% url 'login' %}">Entrar</a>
+            {% endif %}
         </nav>
-        <a class="lp-header__cta" href="{% url 'cadastro' %}">Testar 7 dias</a>
+        {% if request.user.is_authenticated %}
+            <a class="lp-header__cta" href="{% url 'painel' %}">Meu painel</a>
+        {% else %}
+            <a class="lp-header__cta" href="{% url 'cadastro' %}">Testar 7 dias</a>
+        {% endif %}
     </header>
 
     <main>
         <section class="plans-hero">
             <p class="lp-kicker">Planos simples</p>
             <h1>Um plano Premium simples para sua loja vender melhor.</h1>
-            <p>Tenha um catalogo profissional com link proprio, produtos organizados e venda direta pelo WhatsApp. Teste por 7 dias antes de pagar.</p>
+            <p>Tenha um catálogo profissional com link próprio, produtos organizados e venda direta pelo WhatsApp. Teste por 7 dias antes de pagar.</p>
         </section>
 
         <section class="plans-grid" aria-label="Planos do VestLink">
             <article class="plan-card plan-card--featured">
-                <span class="plan-tag">7 dias gratis</span>
+                <span class="plan-tag">7 dias grátis</span>
                 <h2>Plano Premium</h2>
-                <strong>R$ 39,90<span>/mes</span></strong>
+                <strong>R$ 39,90<span>/mês</span></strong>
                 <p>Para lojas que querem vender com uma vitrine completa e mais profissional.</p>
                 <ul>
-                    <li>Catalogo profissional com link proprio</li>
+                    <li>Catálogo profissional com link próprio</li>
                     <li>Fotos extras por produto</li>
                     <li>Cores, tamanhos e estoque parcial</li>
                     <li>Leads e cliques do WhatsApp no painel</li>
                     <li>Sem fidelidade</li>
                 </ul>
-                <a href="{% url 'cadastro' %}">Testar por 7 dias</a>
+                {% if request.user.is_authenticated %}
+                    <a href="{% url 'painel' %}">Acessar meu painel</a>
+                {% else %}
+                    <a href="{% url 'cadastro' %}">Testar por 7 dias</a>
+                {% endif %}
             </article>
         </section>
 
         <section class="plans-note">
             <h2>Feito para loja que vende no Instagram e WhatsApp.</h2>
-            <p>Voce continua vendendo pelo WhatsApp, mas agora com uma vitrine organizada para o cliente escolher sem receber fotos soltas.</p>
+            <p>Você continua vendendo pelo WhatsApp, mas agora com uma vitrine organizada para o cliente escolher sem receber fotos soltas.</p>
         </section>
     </main>
 </body>

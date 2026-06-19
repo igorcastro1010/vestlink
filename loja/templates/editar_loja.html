@@ -4,12 +4,12 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Editar loja - {{ loja.nome }}</title>
-    <link rel="stylesheet" href="/static/css/catalogo.css?v=19">
+    <link rel="stylesheet" href="/static/css/catalogo.css?v=75">
 </head>
 <body class="merchant-dashboard">
     <header class="panel-header panel-header--dashboard">
         <div>
-            <p class="eyebrow">Configuracao</p>
+            <p class="eyebrow">Configuração</p>
             <h1>Editar loja</h1>
             <span class="panel-store-link">{{ loja.nome }}</span>
         </div>
@@ -21,15 +21,42 @@
         <section class="panel-section">
             <div class="section-heading">
                 <div>
-                    <p class="eyebrow">Dados publicos</p>
-                    <h2>Informacoes da loja</h2>
+                    <p class="eyebrow">Dados públicos</p>
+                    <h2>Informações da loja</h2>
                 </div>
                 <span>Marca</span>
             </div>
             <form class="panel-form" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
-                {{ form.as_p }}
-                <button type="submit">Salvar alteracoes</button>
+                {% for field in form %}
+                    <p>
+                        {{ field.label_tag }}
+                        {{ field }}
+                        {% if field.help_text %}
+                            <span class="helptext" style="display: block; margin-top: 4px; font-size: 0.8rem; color: #a0aec0;">{{ field.help_text|safe }}</span>
+                        {% endif %}
+                        {% if field.errors %}
+                            <span class="errorlist" style="display: block; color: #fc8181; font-size: 0.8rem; margin-top: 4px;">{{ field.errors.0 }}</span>
+                        {% endif %}
+                    </p>
+                    {% if field.name == 'dominio_personalizado' %}
+                        <div class="custom-domain-info-card" style="margin-top: -8px; margin-bottom: 20px; padding: 16px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; font-size: 0.875rem; color: #a0aec0; line-height: 1.5; backdrop-filter: blur(10px); box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+                            <div style="display: flex; align-items: center; margin-bottom: 8px; color: #63b3ed; font-weight: 600;">
+                                <svg style="width: 18px; height: 18px; margin-right: 8px; fill: currentColor;" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                                </svg>
+                                Como configurar seu Domínio Próprio:
+                            </div>
+                            <p style="margin: 0 0 8px 0; color: #e2e8f0;">
+                                <strong>Na Internet (Produção):</strong> Configure um apontamento do tipo <strong>CNAME</strong> no seu provedor de domínio (como Registro.br ou GoDaddy) com Nome <code>catalogo</code> apontando para o endereço da sua aplicação (ex: <code>vestlink.vercel.app</code>).
+                            </p>
+                            <p style="margin: 0; color: #e2e8f0; font-size: 0.8rem; background: rgba(0, 0, 0, 0.25); padding: 8px; border-radius: 6px; border-left: 3px solid #dd6b20;">
+                                💡 <strong>Nota de desenvolvimento local:</strong> Domínios reais não resolvem localmente sem configurações do Windows. Para testar o painel local da sua loja de forma rápida, acesse usando: <strong><code>http://{{ loja.slug }}.localhost:8000</code></strong>
+                            </p>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+                <button type="submit">Salvar alterações</button>
             </form>
         </section>
     </main>

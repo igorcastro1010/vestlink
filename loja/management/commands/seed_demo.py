@@ -3,6 +3,7 @@ from pathlib import Path
 from django.conf import settings
 from django.core.files.base import ContentFile
 from django.core.management.base import BaseCommand
+from django.utils.text import slugify
 from PIL import Image, ImageDraw
 
 from loja.models import Categoria, Loja, Produto
@@ -13,12 +14,12 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         loja, _ = Loja.objects.update_or_create(
-            slug="minha-loja",
+            slug="bela-meunier",
             defaults={
-                "nome": "Minha Loja",
+                "nome": "Bela Meunier",
                 "telefone": "85999999999",
                 "descricao": "Novidades selecionadas para comprar pelo WhatsApp.",
-                "instagram": "minhaloja",
+                "instagram": "belameunier",
                 "cor_principal": "#191716",
             },
         )
@@ -53,9 +54,9 @@ class Command(BaseCommand):
                 },
             )
             if created or not produto.imagem:
-                produto.imagem.save(f"{produto.nome.lower().replace(' ', '-')}.png", self._image(nome, cor), save=True)
+                produto.imagem.save(f"{slugify(produto.nome)}.png", self._image(nome, cor), save=True)
 
-        self.stdout.write(self.style.SUCCESS("Demo criada: http://127.0.0.1:8000/loja/minha-loja/"))
+        self.stdout.write(self.style.SUCCESS("Demo criada: http://127.0.0.1:8000/c/bela-meunier/"))
 
     def _image(self, label, background):
         image = Image.new("RGB", (900, 1125), background)

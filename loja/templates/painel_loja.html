@@ -4,33 +4,50 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Painel - {{ loja.nome }}</title>
-    <link rel="stylesheet" href="/static/css/catalogo.css?v=27">
+    <link rel="stylesheet" href="/static/css/catalogo.css?v=75">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
+    <script>
+        (function() {
+            const theme = localStorage.getItem("theme") || "light";
+            document.documentElement.setAttribute("data-theme", theme);
+        })();
+    </script>
 </head>
-<body class="merchant-dashboard">
+<body class="merchant-dashboard" style="--brand: {{ loja.cor_principal|default:'#5e35b1' }};">
     <header class="panel-header panel-header--dashboard">
-        <div>
-            <p class="eyebrow">Painel do lojista</p>
-            <h1>{{ loja.nome }}</h1>
-            <span class="panel-store-link">{{ request.get_host }}{% url 'catalogo_curto' loja.slug %}</span>
+        <div class="panel-header-brand">
+            <div>
+                <p class="eyebrow">Painel do lojista</p>
+                <h1>{{ loja.nome }}</h1>
+            </div>
+            <a href="{% url 'catalogo' loja.slug %}" target="_blank" class="panel-store-link">{{ request.get_host }}{% url 'catalogo_curto' loja.slug %}</a>
         </div>
-        <nav class="panel-nav">
-            <span>{{ request.user.username }}</span>
-            <a href="{% url 'painel' %}">Lojas</a>
-            <a href="{% url 'catalogo' loja.slug %}">Ver catalogo</a>
-            <form method="post" action="{% url 'logout' %}">
-                {% csrf_token %}
-                <button type="submit">Sair</button>
-            </form>
+        
+        <nav class="panel-header-nav">
+            <a href="{% url 'painel' %}" class="nav-link">Lojas</a>
+            <a href="{% url 'catalogo' loja.slug %}" target="_blank" class="nav-link">Ver catálogo</a>
         </nav>
+        
+        <div class="panel-header-user">
+            <button class="dark-mode-toggle" type="button" aria-label="Ativar modo escuro" title="Alternar tema">
+                <svg class="theme-icon-light" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                <svg class="theme-icon-dark" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+            </button>
+            <span class="user-name">
+                <svg class="user-avatar-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.8;">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                {{ request.user.username }}
+            </span>
+            <form method="post" action="{% url 'logout' %}" class="logout-form">
+                {% csrf_token %}
+                <button type="submit" class="logout-btn">Sair</button>
+            </form>
+        </div>
     </header>
 
     <main class="dashboard-shell dashboard-shell--redesign">
-        <nav class="mobile-action-bar" aria-label="Acoes rapidas">
-            <a href="#novo-produto">Produto</a>
-            <a href="#leads">Leads</a>
-            <a href="#categorias">Categorias</a>
-        </nav>
-
         <section class="store-status-bar" aria-label="Status da loja">
             <div>
                 <span class="store-status-dot {% if loja.assinatura_esta_ativa %}active{% else %}warning{% endif %}"></span>
@@ -41,45 +58,102 @@
                         Loja precisa regularizar
                     {% endif %}
                 </strong>
-                {% if loja.assinatura_status == "trial" and loja.trial_dias_restantes > 0 %}
-                    <small>Teste acaba em {{ loja.trial_dias_restantes }} dia(s)</small>
-                {% elif loja.assinatura_status == "ativa" %}
-                    <small>Premium ativo</small>
-                {% else %}
-                    <small>{{ loja.assinatura_status_label }}</small>
+                {% if is_owner %}
+                    {% if loja.assinatura_status == "trial" and loja.trial_dias_restantes > 0 %}
+                        <small>Teste acaba em {{ loja.trial_dias_restantes }} dia(s)</small>
+                    {% elif loja.assinatura_status == "ativa" %}
+                        <small>Premium ativo</small>
+                    {% else %}
+                        <small>{{ loja.assinatura_status_label }}</small>
+                    {% endif %}
                 {% endif %}
             </div>
             <div>
-                <a href="{% url 'assinatura' loja.slug %}">Ver assinatura</a>
+                {% if is_owner %}
+                    <a href="{% url 'assinatura' loja.slug %}">Ver assinatura</a>
+                {% endif %}
                 <button type="button" data-tour-start>Iniciar tour</button>
             </div>
         </section>
 
-        <section class="dashboard-command-center">
-        <section class="dashboard-hero">
+        <!-- Barra de Abas (Segmented Control) -->
+        <div class="panel-tabs-container">
+            <nav class="panel-tabs" aria-label="Abas do painel">
+                <button type="button" class="tab-btn active" data-tab-target="dashboard">
+                    <svg class="tab-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="14" width="7" height="7"></rect>
+                        <rect x="3" y="14" width="7" height="7"></rect>
+                    </svg>
+                    <span>Dashboard</span>
+                </button>
+                <button type="button" class="tab-btn" data-tab-target="produtos">
+                    <svg class="tab-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                        <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                        <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                    </svg>
+                    <span>Produtos & Categorias</span>
+                </button>
+                <button type="button" class="tab-btn" data-tab-target="leads">
+                    <svg class="tab-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
+                    <span>Leads e Pedidos</span>
+                    {% if pedidos_novos_global %}
+                        <span class="tab-badge" id="leads-new-badge">{{ pedidos_novos_global }}</span>
+                    {% endif %}
+                </button>
+                {% if is_owner %}
+                <button type="button" class="tab-btn" data-tab-target="vendedores">
+                    <svg class="tab-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                    </svg>
+                    <span>Vendedores</span>
+                </button>
+                <button type="button" class="tab-btn" data-tab-target="configuracoes">
+                    <svg class="tab-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.5 1z"></path>
+                    </svg>
+                    <span>Configurações</span>
+                </button>
+                {% endif %}
+            </nav>
+        </div>
+
+        <div class="tab-pane active" id="tab-dashboard" data-tab-content="dashboard">
+            <section class="dashboard-command-center">
+            <section class="dashboard-hero">
             <div>
-                <p class="eyebrow">Visao geral</p>
+                    <p class="eyebrow">Visão geral</p>
                 <h2>Organize sua vitrine e venda melhor pelo WhatsApp.</h2>
-                <p>Edite dados da loja, organize categorias, acompanhe cliques e copie links diretos para vender mais rapido.</p>
+                <p>Edite dados da loja, organize categorias, acompanhe cliques e copie links diretos para vender mais rápido.</p>
             </div>
             <div class="dashboard-actions">
-                <a href="{% url 'catalogo' loja.slug %}">Abrir catalogo</a>
+                <a href="{% url 'catalogo' loja.slug %}">Abrir catálogo</a>
                 <button class="copy-link-button secondary" type="button" data-copy-url="{{ request.scheme }}://{{ request.get_host }}{% url 'catalogo_curto' loja.slug %}">Copiar link</button>
-                <a class="secondary" href="https://wa.me/?text={{ mensagem_compartilhar }}" target="_blank" rel="noopener">Compartilhar catalogo</a>
+                <a class="secondary" href="https://wa.me/?text={{ mensagem_compartilhar }}" target="_blank" rel="noopener">Compartilhar catálogo</a>
                 <button class="secondary" type="button" data-tour-start>Ver tour</button>
                 <a class="secondary" href="#novo-produto">Adicionar produto</a>
             </div>
         </section>
 
             <aside class="dashboard-side-stack" aria-label="Atalhos da loja">
+        {% if is_owner %}
         <section class="plan-strip">
             <div>
                 <span>Assinatura</span>
                 <strong>{{ loja.assinatura_status_label }}</strong>
                 {% if loja.assinatura_status == "trial" and loja.trial_dias_restantes > 0 %}
-                    <small>Teste gratis: {{ loja.trial_dias_restantes }} dia(s) restantes. Depois R$39,90/mes.</small>
+                    <small>Teste grátis: {{ loja.trial_dias_restantes }} dia(s) restantes. Depois R$39,90/mês.</small>
                 {% elif loja.assinatura_status == "ativa" %}
-                    <small>Premium ativo por R$39,90/mes, sem fidelidade.</small>
+                    <small>Premium ativo por R$39,90/mês, sem fidelidade.</small>
                 {% elif loja.assinatura_status == "cancelada" %}
                     <small>Assinatura cancelada. Reative quando quiser.</small>
                 {% else %}
@@ -88,12 +162,13 @@
             </div>
             <a href="{% url 'assinatura' loja.slug %}">Ver assinatura</a>
         </section>
+        {% endif %}
 
         <section class="store-identity-card store-identity-card--compact">
             <div>
                 <p class="eyebrow">Link personalizado</p>
                 <h2>{% if loja.dominio_limpo %}{{ loja.dominio_limpo }}{% else %}{{ request.get_host }}{% url 'catalogo_curto' loja.slug %}{% endif %}</h2>
-                <p>Use na bio, Stories, WhatsApp e cartao da loja.</p>
+                <p>Use na bio, Stories, WhatsApp e cartão da loja.</p>
             </div>
             <button class="copy-link-button" type="button" data-copy-url="{{ catalogo_url }}">Copiar</button>
         </section>
@@ -101,10 +176,16 @@
         <section class="store-identity-card qr-card">
             <div>
                 <p class="eyebrow">QR Code</p>
-                <h2>Codigo para vitrine e embalagem</h2>
-                <p>Use este QR Code em cartoes, sacolas, provador ou vitrine fisica para levar clientes ao catalogo.</p>
+                <h2>Código para vitrine e embalagem</h2>
+                <p>Use este QR Code em cartões, sacolas, provador ou vitrine física para levar clientes ao catálogo.</p>
             </div>
-            <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data={{ request.scheme }}://{{ request.get_host }}{% url 'catalogo_curto' loja.slug %}" alt="QR Code do catalogo {{ loja.nome }}">
+            <div class="qr-card__actions">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data={{ request.scheme }}://{{ request.get_host }}{% url 'catalogo_curto' loja.slug %}" alt="QR Code do catálogo {{ loja.nome }}">
+                <a class="qr-download-button" href="{% url 'baixar_qr_code' loja.slug %}" download>
+                    <span aria-hidden="true">↓</span>
+                    Baixar QR Code
+                </a>
+            </div>
         </section>
 
         <section class="store-identity-card theme-card">
@@ -123,22 +204,22 @@
             </aside>
         </section>
 
-        {% if pedidos_novos %}
+        {% if pedidos_novos_global %}
             <section class="lead-alert">
                 <div>
                     <p class="eyebrow">Novos interesses</p>
-                    <h2>{{ pedidos_novos }} lead(s) novo(s) esperando atendimento.</h2>
-                    <p>Responda rapido para aumentar a chance de fechar a venda.</p>
+                    <h2>{{ pedidos_novos_global }} lead(s) novo(s) esperando atendimento.</h2>
+                    <p>Responda rápido para aumentar a chance de fechar a venda.</p>
                 </div>
                 <a href="#leads">Ver leads</a>
             </section>
         {% endif %}
 
-        {% if avisos %}
+        {% if is_owner and avisos %}
             <section class="notification-panel" aria-label="Avisos do painel">
                 <div class="section-heading">
                     <div>
-                        <p class="eyebrow">Atencao</p>
+                        <p class="eyebrow">Atenção</p>
                         <h2>O que melhorar agora</h2>
                     </div>
                     <span>{{ avisos|length }} aviso(s)</span>
@@ -151,6 +232,7 @@
             </section>
         {% endif %}
 
+        {% if is_owner %}
         <section class="onboarding-steps onboarding-steps--guided" aria-label="Primeiros passos">
             <div class="onboarding-header">
                 <div>
@@ -172,11 +254,11 @@
             <div class="onboarding-actions">
                 <a class="onboarding-action onboarding-action--primary" href="#novo-produto">Cadastrar produto</a>
                 <button class="copy-link-button" type="button" data-copy-url="{{ catalogo_url }}">Copiar link</button>
-                <a class="onboarding-action onboarding-action--catalog" href="{% url 'catalogo_curto' loja.slug %}">Abrir catalogo</a>
+                <a class="onboarding-action onboarding-action--catalog" href="{% url 'catalogo_curto' loja.slug %}">Abrir catálogo</a>
             </div>
         </section>
+        {% endif %}
 
-        <section class="dashboard-insights-grid">
         <section class="metric-grid" aria-label="Resumo da loja">
             <article>
                 <span>Produtos</span>
@@ -196,89 +278,12 @@
             </article>
             <article>
                 <span>Leads</span>
-                <strong>{{ total_leads }}</strong>
+                <strong>{{ total_leads_global }}</strong>
             </article>
-        </section>
-
-        <section class="leads-dashboard panel-section" id="leads">
-            <div class="section-heading">
-                <div>
-                    <p class="eyebrow">Leads</p>
-                    <h2>Interesses recebidos</h2>
-                </div>
-                <span>{{ total_leads }} lead(s)</span>
-            </div>
-
-            <div class="lead-summary">
-                <article>
-                    <span>Produto</span>
-                    <strong>{{ leads_produto }}</strong>
-                </article>
-                <article>
-                    <span>Sacolinha</span>
-                    <strong>{{ leads_sacolinha }}</strong>
-                </article>
-                <article>
-                    <span>Total</span>
-                    <strong>{{ total_leads }}</strong>
-                </article>
-                <article>
-                    <span>Novos</span>
-                    <strong>{{ pedidos_novos }}</strong>
-                </article>
-                <article>
-                    <span>Atendimento</span>
-                    <strong>{{ pedidos_atendimento }}</strong>
-                </article>
-                <article>
-                    <span>Concluidos</span>
-                    <strong>{{ pedidos_concluidos }}</strong>
-                </article>
-            </div>
-
-            <div class="lead-list">
-                {% for lead in leads_recentes %}
-                    <article>
-                        <div>
-                            <strong>
-                                {% if lead.produto %}
-                                    {{ lead.produto.nome }}
-                                {% else %}
-                                    Pedido pela sacolinha
-                                {% endif %}
-                            </strong>
-                            <span>{{ lead.get_origem_display }} - {{ lead.criado_em|date:"d/m/Y H:i" }}</span>
-                        </div>
-                        <p>
-                            {% if lead.cliente_nome %}Cliente: {{ lead.cliente_nome }}{% endif %}
-                            {% if lead.cliente_telefone %}{% if lead.cliente_nome %} - {% endif %}WhatsApp: {{ lead.cliente_telefone }}{% endif %}
-                            {% if lead.cliente_nome or lead.cliente_telefone %}<br>{% endif %}
-                            {% if lead.tamanho %}Tamanho: {{ lead.tamanho }}{% endif %}
-                            {% if lead.cor %}{% if lead.tamanho %} - {% endif %}Cor: {{ lead.cor }}{% endif %}
-                            {% if not lead.tamanho and not lead.cor %}{{ lead.mensagem|truncatechars:120 }}{% endif %}
-                            {% if lead.observacao %}<br><strong>Obs. interna:</strong> {{ lead.observacao|truncatechars:100 }}{% endif %}
-                        </p>
-                        <form class="lead-status-form" method="post">
-                            {% csrf_token %}
-                            <input type="hidden" name="acao" value="atualizar_lead_status">
-                            <input type="hidden" name="lead_id" value="{{ lead.id }}">
-                            <select name="status" aria-label="Status do pedido">
-                                {% for valor, rotulo in status_lead_choices %}
-                                    <option value="{{ valor }}" {% if lead.status == valor %}selected{% endif %}>{{ rotulo }}</option>
-                                {% endfor %}
-                            </select>
-                            <input type="text" name="observacao" value="{{ lead.observacao }}" placeholder="Observacao interna">
-                            <button type="submit">Atualizar</button>
-                        </form>
-                    </article>
-                {% empty %}
-                    <div class="empty-dashboard">
-                        <strong>Nenhum lead ainda.</strong>
-                        <p>Quando clientes clicarem no WhatsApp ou enviarem a sacolinha, eles aparecem aqui.</p>
-                    </div>
-                {% endfor %}
-            </div>
-        </section>
+            <article>
+                <span>Vendedores</span>
+                <strong>{{ vendedores_ativos }}</strong>
+            </article>
         </section>
 
         <section class="panel-section whatsapp-template-panel">
@@ -291,19 +296,19 @@
             </div>
             <div class="template-grid">
                 <article>
-                    <strong>Catalogo novo</strong>
-                    <p>Oi! Nosso catalogo esta atualizado com as pecas disponiveis. Veja aqui: {{ catalogo_url }}</p>
-                    <button class="copy-link-button" type="button" data-copy-url="Oi! Nosso catalogo esta atualizado com as pecas disponiveis. Veja aqui: {{ catalogo_url }}">Copiar mensagem</button>
+                    <strong>Catálogo novo</strong>
+                    <p>Oi! Nosso catálogo está atualizado com as peças disponíveis. Veja aqui: {{ catalogo_url }}</p>
+                    <button class="copy-link-button" type="button" data-copy-url="Oi! Nosso catálogo está atualizado com as peças disponíveis. Veja aqui: {{ catalogo_url }}">Copiar mensagem</button>
                 </article>
                 <article>
-                    <strong>Promocao</strong>
-                    <p>Tem promocao nova na {{ loja.nome }}. Escolha sua peca pelo catalogo e me chama no WhatsApp: {{ catalogo_url }}</p>
-                    <button class="copy-link-button" type="button" data-copy-url="Tem promocao nova na {{ loja.nome }}. Escolha sua peca pelo catalogo e me chama no WhatsApp: {{ catalogo_url }}">Copiar mensagem</button>
+                    <strong>Promoção</strong>
+                    <p>Tem promoção nova na {{ loja.nome }}. Escolha sua peça pelo catálogo e me chama no WhatsApp: {{ catalogo_url }}</p>
+                    <button class="copy-link-button" type="button" data-copy-url="Tem promoção nova na {{ loja.nome }}. Escolha sua peça pelo catálogo e me chama no WhatsApp: {{ catalogo_url }}">Copiar mensagem</button>
                 </article>
                 <article>
-                    <strong>Colecao nova</strong>
-                    <p>Acabaram de chegar novidades na {{ loja.nome }}. Veja tamanhos, cores e valores no catalogo: {{ catalogo_url }}</p>
-                    <button class="copy-link-button" type="button" data-copy-url="Acabaram de chegar novidades na {{ loja.nome }}. Veja tamanhos, cores e valores no catalogo: {{ catalogo_url }}">Copiar mensagem</button>
+                    <strong>Coleção nova</strong>
+                    <p>Acabaram de chegar novidades na {{ loja.nome }}. Veja tamanhos, cores e valores no catálogo: {{ catalogo_url }}</p>
+                    <button class="copy-link-button" type="button" data-copy-url="Acabaram de chegar novidades na {{ loja.nome }}. Veja tamanhos, cores e valores no catálogo: {{ catalogo_url }}">Copiar mensagem</button>
                 </article>
             </div>
         </section>
@@ -317,15 +322,12 @@
                     </div>
                     <span>Top 5</span>
                 </div>
-                <div class="ranking-list">
-                    {% for produto in produtos_mais_clicados %}
-                        <article>
-                            <strong>{{ produto.nome }}</strong>
-                            <span>{{ produto.cliques_whatsapp }} clique(s)</span>
-                        </article>
-                    {% empty %}
-                        <p class="empty">Cadastre produtos para acompanhar cliques.</p>
-                    {% endfor %}
+                <div class="chart-container" style="position: relative; min-height: 220px; width: 100%;">
+                    {% if total_cliques %}
+                        <canvas id="chartProdutos"></canvas>
+                    {% else %}
+                        <p class="empty">Nenhum clique registrado nos produtos ainda.</p>
+                    {% endif %}
                 </div>
             </section>
 
@@ -335,35 +337,32 @@
                         <p class="eyebrow">Movimento</p>
                         <h2>Leads por dia</h2>
                     </div>
-                    <span>Ultimos dias</span>
+                    <span>Últimos dias</span>
                 </div>
-                <div class="ranking-list">
-                    {% for item in leads_por_dia %}
-                        <article>
-                            <strong>{{ item.dia|date:"d/m" }}</strong>
-                            <span>{{ item.total }} lead(s)</span>
-                        </article>
-                    {% empty %}
-                        <p class="empty">Os leads aparecem aqui quando clientes chamarem no WhatsApp.</p>
-                    {% endfor %}
+                <div class="chart-container" style="position: relative; min-height: 220px; width: 100%;">
+                    {% if total_leads %}
+                        <canvas id="chartLeads"></canvas>
+                    {% else %}
+                        <p class="empty">Nenhum lead recebido nos últimos dias.</p>
+                    {% endif %}
                 </div>
             </section>
 
             <section class="panel-section">
                 <div class="section-heading">
                     <div>
-                        <p class="eyebrow">Conversao</p>
+                        <p class="eyebrow">Conversão</p>
                         <h2>Resumo comercial</h2>
                     </div>
                     <span>Vendas</span>
                 </div>
                 <div class="conversion-grid">
                     <article>
-                        <span>Leads concluidos</span>
+                        <span>Leads concluídos</span>
                         <strong>{{ pedidos_concluidos }}</strong>
                     </article>
                     <article>
-                        <span>Conversao dos leads</span>
+                        <span>Conversão dos leads</span>
                         <strong>{{ taxa_conversao }}%</strong>
                     </article>
                     <article>
@@ -380,30 +379,47 @@
             <section class="panel-section">
                 <div class="section-heading">
                     <div>
-                        <p class="eyebrow">Horarios</p>
+                        <p class="eyebrow">Horários</p>
                         <h2>Picos de interesse</h2>
                     </div>
                     <span>Top 5</span>
                 </div>
-                <div class="ranking-list">
-                    {% for item in horarios_pico %}
-                        <article>
-                            <strong>{{ item.hora }}h</strong>
-                            <span>{{ item.total }} lead(s)</span>
-                        </article>
-                    {% empty %}
-                        <p class="empty">Ainda nao ha horario de pico.</p>
-                    {% endfor %}
+                <div class="chart-container" style="position: relative; min-height: 220px; width: 100%;">
+                    {% if total_leads %}
+                        <canvas id="chartHorarios"></canvas>
+                    {% else %}
+                        <p class="empty">Ainda não há dados de horário de pico.</p>
+                    {% endif %}
                 </div>
             </section>
+
+            {% if total_vendedores %}
+            <section class="panel-section">
+                <div class="section-heading">
+                    <div>
+                        <p class="eyebrow">Equipe</p>
+                        <h2>Leads por vendedor</h2>
+                    </div>
+                    <span>Geral</span>
+                </div>
+                <div class="chart-container" style="position: relative; min-height: 220px; width: 100%;">
+                    {% if total_leads %}
+                        <canvas id="chartVendedores"></canvas>
+                    {% else %}
+                        <p class="empty">Nenhum lead recebido ainda.</p>
+                    {% endif %}
+                </div>
+            </section>
+            {% endif %}
         </section>
 
+        {% if is_owner %}
         <section class="management-grid">
             <section class="panel-section" id="categorias">
                 <div class="section-heading">
                     <div>
                         <p class="eyebrow">Dados da loja</p>
-                        <h2>Configuracao</h2>
+                        <h2>Configuração</h2>
                     </div>
                     <span>Marca</span>
                 </div>
@@ -412,231 +428,587 @@
                     <a class="danger-link" href="{% url 'remover_loja' loja.slug %}">Excluir loja</a>
                 </div>
             </section>
+        </section>
+        {% endif %}
+        </div> <!-- Fim da Aba Dashboard -->
 
-            <section class="panel-section">
+        <!-- Aba Produtos & Categorias -->
+        <div class="tab-pane" id="tab-produtos" data-tab-content="produtos">
+            <section class="management-grid">
+                <section class="panel-section" id="categorias" style="grid-column: 1 / -1;">
+                    <div class="section-heading">
+                        <div>
+                            <p class="eyebrow">Categorias</p>
+                            <h2>Organizar catálogo</h2>
+                        </div>
+                        <span>{{ total_categorias }} categoria(s)</span>
+                    </div>
+                    <form class="panel-form compact-form" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="acao" value="criar_categoria">
+                        {{ categoria_form.as_p }}
+                        <button type="submit">Adicionar categoria</button>
+                    </form>
+                    <div class="category-list">
+                        {% for categoria in loja.categorias.all %}
+                            <article>
+                                <strong>{{ categoria.nome }}</strong>
+                                <span>Ordem {{ categoria.ordem }}</span>
+                                <div>
+                                    <a href="{% url 'editar_categoria' loja.slug categoria.id %}">Editar</a>
+                                    {% if is_owner %}
+                                    <a class="danger-link" href="{% url 'remover_categoria' loja.slug categoria.id %}">Excluir</a>
+                                    {% endif %}
+                                </div>
+                            </article>
+                        {% empty %}
+                            <p class="empty">Crie categorias como Vestidos, Camisas e Promoções.</p>
+                        {% endfor %}
+                    </div>
+                </section>
+            </section>
+
+            <section class="dashboard-grid" style="margin-top: 20px;">
+                <div class="panel-section product-form-card" id="novo-produto">
+                    <div class="section-heading">
+                        <div>
+                            <p class="eyebrow">Novo item</p>
+                            <h2>Adicionar produto</h2>
+                        </div>
+                        <span>Cadastro focado</span>
+                    </div>
+                    <div class="product-form-intro">
+                        <div>
+                            <strong>Preencha o essencial primeiro.</strong>
+                            <p>Nome, preço e foto principal já bastam para publicar. Tamanhos, cores e status deixam a vitrine mais profissional.</p>
+                        </div>
+                        <div class="product-form-steps" aria-label="Etapas do cadastro">
+                            <span>1 Dados</span>
+                            <span>2 Fotos</span>
+                            <span>3 Variacoes</span>
+                            <span>4 Status</span>
+                        </div>
+                    </div>
+                    <div class="product-form-layout">
+                        {% if not loja.assinatura_esta_ativa %}
+                            <div class="limit-warning product-blocked-warning">
+                                <strong>Assinatura inativa</strong>
+                                {% if is_owner %}
+                                    <p>Regularize o Premium para cadastrar novos produtos e manter o catálogo publicado.</p>
+                                    <a href="{% url 'assinatura' loja.slug %}">Regularizar assinatura</a>
+                                {% else %}
+                                    <p>Consulte o proprietário da loja para regularizar a assinatura e liberar o cadastro de produtos.</p>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                        <form class="panel-form" method="post" enctype="multipart/form-data" data-product-form>
+                            {% csrf_token %}
+                            <div class="form-block form-block--basic">
+                                <h3>Informacoes basicas</h3>
+                                {{ form.non_field_errors }}
+                                {{ form.categoria.as_field_group }}
+                                {{ form.nova_categoria.as_field_group }}
+                                {{ form.nome.as_field_group }}
+                                {{ form.descricao.as_field_group }}
+                                {{ form.preco.as_field_group }}
+                                {{ form.preco_antigo.as_field_group }}
+                                {{ form.ordem.as_field_group }}
+                            </div>
+                            <div class="form-block form-block--media">
+                                <h3>Fotos do produto</h3>
+                                {{ form.imagem.as_field_group }}
+                                {{ form.fotos_adicionais.as_field_group }}
+                            </div>
+                            <div class="form-block form-block--variants">
+                                <h3>Variacoes</h3>
+                                <div class="variant-field-grid">
+                                    <p>
+                                        {{ form.tamanhos.label_tag }}
+                                        {{ form.tamanhos }}
+                                        {% if form.tamanhos.help_text %}<span class="helptext">{{ form.tamanhos.help_text }}</span>{% endif %}
+                                        {{ form.tamanhos.errors }}
+                                    </p>
+                                    <p>
+                                        {{ form.tamanhos_esgotados.label_tag }}
+                                        {{ form.tamanhos_esgotados }}
+                                        {% if form.tamanhos_esgotados.help_text %}<span class="helptext">{{ form.tamanhos_esgotados.help_text }}</span>{% endif %}
+                                        {{ form.tamanhos_esgotados.errors }}
+                                    </p>
+                                    <p>
+                                        {{ form.cores.label_tag }}
+                                        {{ form.cores }}
+                                        {% if form.cores.help_text %}<span class="helptext">{{ form.cores.help_text }}</span>{% endif %}
+                                        {{ form.cores.errors }}
+                                    </p>
+                                    <p>
+                                        {{ form.cores_esgotadas.label_tag }}
+                                        {{ form.cores_esgotadas }}
+                                        {% if form.cores_esgotadas.help_text %}<span class="helptext">{{ form.cores_esgotadas.help_text }}</span>{% endif %}
+                                        {{ form.cores_esgotadas.errors }}
+                                    </p>
+                                </div>
+                                <div class="stock-builder" data-stock-builder>
+                                    <div>
+                                        <strong>Estoque visual por variacao</strong>
+                                        <small>Digite tamanhos e cores acima, depois gere a grade para preencher as quantidades.</small>
+                                    </div>
+                                    <button type="button" data-build-stock>Gerar grade</button>
+                                    <div class="stock-builder__grid" data-stock-grid></div>
+                                </div>
+                                <p class="variant-stock-field">
+                                    {{ form.variacoes_estoque.label_tag }}
+                                    {{ form.variacoes_estoque }}
+                                    {% if form.variacoes_estoque.help_text %}<span class="helptext">{{ form.variacoes_estoque.help_text }}</span>{% endif %}
+                                    {{ form.variacoes_estoque.errors }}
+                                </p>
+                            </div>
+                            <div class="form-block form-block--status">
+                                <h3>Status do produto</h3>
+                                <label class="status-toggle" for="{{ form.destaque.id_for_label }}">
+                                    <span>
+                                        <strong>Novo</strong>
+                                        <small>Mostra o produto como novidade no catálogo.</small>
+                                    </span>
+                                    {{ form.destaque }}
+                                </label>
+                                <label class="status-toggle" for="{{ form.promocao.id_for_label }}">
+                                    <span>
+                                        <strong>Promoção</strong>
+                                        <small>Destaca o item nas ofertas da loja.</small>
+                                    </span>
+                                    {{ form.promocao }}
+                                </label>
+                                <label class="status-toggle" for="{{ form.publicado.id_for_label }}">
+                                    <span>
+                                        <strong>Publicado</strong>
+                                        <small>Deixa o produto visível para clientes.</small>
+                                    </span>
+                                    {{ form.publicado }}
+                                </label>
+                                <label class="status-toggle" for="{{ form.esgotado.id_for_label }}">
+                                    <span>
+                                        <strong>Esgotado</strong>
+                                        <small>Bloqueia a compra quando acabar tudo.</small>
+                                    </span>
+                                    {{ form.esgotado }}
+                                </label>
+                            </div>
+                            <div class="product-form-submit">
+                                <span>Depois de salvar, o produto aparece na lista abaixo.</span>
+                                <button type="submit">Salvar produto</button>
+                            </div>
+                        </form>
+
+                        <aside class="product-preview">
+                            <p class="eyebrow">Prévia no catálogo</p>
+                            <div class="product-preview__image" data-preview-image>Foto</div>
+                            <strong data-preview-name>Nome do produto</strong>
+                            <span data-preview-price>R$ 0,00</span>
+                            <p data-preview-description>Descrição curta do produto.</p>
+                            <div data-preview-options></div>
+                        </aside>
+                    </div>
+                </div>
+
+                <section class="panel-section product-list-card">
+                    <div class="section-heading">
+                        <div>
+                            <p class="eyebrow">Catálogo</p>
+                            <h2>Produtos cadastrados</h2>
+                        </div>
+                        <span>{{ produtos|length }} exibido(s)</span>
+                    </div>
+
+                    <form class="panel-filters" method="get">
+                        <input type="search" name="q" value="{{ busca_painel }}" placeholder="Buscar produto">
+                        <select name="categoria">
+                            <option value="">Todas categorias</option>
+                            {% for categoria in loja.categorias.all %}
+                                <option value="{{ categoria.id }}" {% if categoria_painel == categoria.id|stringformat:"s" %}selected{% endif %}>{{ categoria.nome }}</option>
+                            {% endfor %}
+                        </select>
+                        <select name="status">
+                            <option value="">Todos status</option>
+                            <option value="disponivel" {% if status_painel == "disponivel" %}selected{% endif %}>Disponíveis</option>
+                            <option value="esgotado" {% if status_painel == "esgotado" %}selected{% endif %}>Esgotados</option>
+                            <option value="novo" {% if status_painel == "novo" %}selected{% endif %}>Novos</option>
+                            <option value="promocao" {% if status_painel == "promocao" %}selected{% endif %}>Promoções</option>
+                            <option value="rascunho" {% if status_painel == "rascunho" %}selected{% endif %}>Rascunhos</option>
+                        </select>
+                        <button type="submit">Filtrar</button>
+                    </form>
+
+                    <div class="dashboard-products">
+                        {% for produto in produtos %}
+                            <article>
+                                <img src="{{ produto.imagem.url }}" alt="{{ produto.nome }}">
+                                <div class="dashboard-product-info">
+                                    <div>
+                                        <strong>{{ produto.nome }}</strong>
+                                        <span>R$ {{ produto.preco }}</span>
+                                    </div>
+                                    <small>
+                                        {% if produto.categoria %}{{ produto.categoria.nome }}{% else %}Sem categoria{% endif %}
+                                        - ordem {{ produto.ordem }}
+                                        - {{ produto.imagens.count }} foto(s) adicional(is)
+                                        - {{ produto.cliques_whatsapp }} clique(s)
+                                    </small>
+                                    <div class="product-status-row">
+                                        {% if produto.esgotado %}
+                                            <span class="status-pill sold">Esgotado</span>
+                                        {% elif produto.tamanhos_esgotados or produto.cores_esgotadas %}
+                                            <span class="status-pill warning">Parcial</span>
+                                        {% else %}
+                                            <span class="status-pill active">Disponivel</span>
+                                        {% endif %}
+                                        {% if produto.destaque %}<span class="status-pill">Novo</span>{% endif %}
+                                        {% if produto.promocao %}<span class="status-pill">Promoção</span>{% endif %}
+                                        {% if not produto.publicado %}<span class="status-pill warning">Rascunho</span>{% endif %}
+                                    </div>
+                                    <div class="panel-product-actions">
+                                        {% if not produto.publicado %}
+                                            <form method="post" class="inline-product-form">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="acao" value="publicar_produto">
+                                                <input type="hidden" name="produto_id" value="{{ produto.id }}">
+                                                <button class="publish-button" type="submit">Publicar no catálogo</button>
+                                            </form>
+                                        {% endif %}
+                                        <a href="{% url 'editar_produto' loja.slug produto.id %}">Editar</a>
+                                        <a href="{% url 'produto_detalhe_curto' loja.slug produto.id %}">Detalhes</a>
+                                        <a href="{% url 'catalogo_curto' loja.slug %}?produto={{ produto.id }}#produto-{{ produto.id }}">Ver</a>
+                                        <button class="copy-link-button" type="button" data-copy-url="{{ request.scheme }}://{{ request.get_host }}{% url 'catalogo_curto' loja.slug %}?produto={{ produto.id }}#produto-{{ produto.id }}">Copiar produto</button>
+                                        {% if is_owner %}
+                                        <a class="danger" href="{% url 'remover_produto' loja.slug produto.id %}">Remover</a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </article>
+                        {% empty %}
+                            <div class="empty-dashboard">
+                                <strong>Nenhum produto encontrado.</strong>
+                                <p>Cadastre ou ajuste os filtros para encontrar os produtos da loja.</p>
+                                <a href="#novo-produto">Adicionar primeiro produto</a>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </section>
+            </section>
+        </div>
+
+        <!-- Aba Vendedores -->
+        {% if is_owner %}
+        <div class="tab-pane" id="tab-vendedores" data-tab-content="vendedores">
+            <section class="panel-section sales-panel" id="vendedores">
                 <div class="section-heading">
                     <div>
-                        <p class="eyebrow">Categorias</p>
-                        <h2>Organizar catalogo</h2>
+                        <p class="eyebrow">Painel de vendas</p>
+                        <h2>Vendedores e links de referência</h2>
+                        <p>Cadastre cada vendedor e copie o link individual para separar os leads no mesmo catálogo.</p>
                     </div>
-                    <span>{{ total_categorias }} categoria(s)</span>
+                    <span>{{ total_vendedores }} vendedor(es)</span>
                 </div>
-                <form class="panel-form compact-form" method="post">
+
+                <form class="seller-form" method="post">
                     {% csrf_token %}
-                    <input type="hidden" name="acao" value="criar_categoria">
-                    {{ categoria_form.as_p }}
-                    <button type="submit">Adicionar categoria</button>
+                    <input type="hidden" name="acao" value="criar_vendedor">
+                    <div class="seller-form-row">
+                        <div>
+                            {{ vendedor_form.nome.label_tag }}
+                            {{ vendedor_form.nome }}
+                            {{ vendedor_form.nome.errors }}
+                        </div>
+                        <div style="position: relative;">
+                            {{ vendedor_form.codigo.label_tag }}
+                            {{ vendedor_form.codigo }}
+                            {{ vendedor_form.codigo.errors }}
+                            <small class="helper-text">Opcional. Se deixar vazio, usamos o nome.</small>
+                        </div>
+                        <div>
+                            {{ vendedor_form.telefone.label_tag }}
+                            {{ vendedor_form.telefone }}
+                            {{ vendedor_form.telefone.errors }}
+                        </div>
+                    </div>
+                    <div class="seller-form-row seller-access-row">
+                        <div>
+                            {{ vendedor_form.username.label_tag }}
+                            {{ vendedor_form.username }}
+                            {{ vendedor_form.username.errors }}
+                        </div>
+                        <div>
+                            {{ vendedor_form.password.label_tag }}
+                            {{ vendedor_form.password }}
+                            {{ vendedor_form.password.errors }}
+                        </div>
+                    </div>
+                    <div class="seller-form-actions">
+                        <label class="seller-active-field">
+                            {{ vendedor_form.ativo }}
+                            {{ vendedor_form.ativo.label }}
+                        </label>
+                        <button type="submit">Adicionar vendedor</button>
+                    </div>
                 </form>
-                <div class="category-list">
-                    {% for categoria in loja.categorias.all %}
+
+                <div class="seller-list">
+                    {% for vendedor in vendedores %}
+                        {% with vendedor_link=catalogo_url|add:"?vendedor="|add:vendedor.codigo %}
                         <article>
-                            <strong>{{ categoria.nome }}</strong>
-                            <span>Ordem {{ categoria.ordem }}</span>
                             <div>
-                                <a href="{% url 'editar_categoria' loja.slug categoria.id %}">Editar</a>
-                                <a class="danger-link" href="{% url 'remover_categoria' loja.slug categoria.id %}">Excluir</a>
+                                <strong>{{ vendedor.nome }}</strong>
+                                <span>{% if vendedor.ativo %}Ativo{% else %}Inativo{% endif %} - {{ vendedor.total_leads }} lead(s) - {{ vendedor.leads_concluidos }} concluído(s)</span>
+                                {% if vendedor.telefone %}<small>WhatsApp: {{ vendedor.telefone }}</small>{% endif %}
+                            </div>
+                            <code>{{ vendedor_link }}</code>
+                            <div class="seller-actions">
+                                <button class="copy-link-button" type="button" data-copy-url="{{ vendedor_link }}">Copiar link</button>
+                                <form method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="acao" value="alternar_vendedor">
+                                    <input type="hidden" name="vendedor_id" value="{{ vendedor.id }}">
+                                    <button type="submit">{% if vendedor.ativo %}Desativar{% else %}Ativar{% endif %}</button>
+                                </form>
+                                <form method="post" onsubmit="return confirm('Remover este vendedor? Os leads antigos continuam no painel, mas sem o cadastro ativo.');">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="acao" value="remover_vendedor">
+                                    <input type="hidden" name="vendedor_id" value="{{ vendedor.id }}">
+                                    <button class="danger" type="submit">Remover</button>
+                                </form>
                             </div>
                         </article>
+                        {% endwith %}
                     {% empty %}
-                        <p class="empty">Crie categorias como Vestidos, Camisas e Promocoes.</p>
+                        <div class="empty-dashboard">
+                            <strong>Nenhum vendedor cadastrado.</strong>
+                            <p>Cadastre vendedores para separar os leads recebidos pelo mesmo catálogo.</p>
+                        </div>
                     {% endfor %}
                 </div>
             </section>
-        </section>
+        </div>
+        {% endif %}
 
-        <section class="dashboard-grid">
-            <div class="panel-section product-form-card" id="novo-produto">
-                <div class="section-heading">
+        <!-- Aba Leads -->
+        <div class="tab-pane" id="tab-leads" data-tab-content="leads">
+            <section class="leads-dashboard panel-section" id="leads">
+                <div class="section-heading" style="display: flex; justify-content: space-between; align-items: center; gap: 15px; flex-wrap: wrap; margin-bottom: 2rem;">
                     <div>
-                        <p class="eyebrow">Novo item</p>
-                        <h2>Adicionar produto</h2>
+                        <p class="eyebrow">Leads</p>
+                        <h2>Interesses recebidos</h2>
                     </div>
-                    <span>Cadastro focado</span>
-                </div>
-                <div class="product-form-intro">
-                    <div>
-                        <strong>Preencha o essencial primeiro.</strong>
-                        <p>Nome, preco e foto principal ja bastam para publicar. Tamanhos, cores e status deixam a vitrine mais profissional.</p>
-                    </div>
-                    <div class="product-form-steps" aria-label="Etapas do cadastro">
-                        <span>1 Dados</span>
-                        <span>2 Fotos</span>
-                        <span>3 Variacoes</span>
-                        <span>4 Status</span>
+                    <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                        <a href="{% url 'exportar_leads_csv' loja.slug %}?q_leads={{ busca_leads }}&vendedor_leads={{ vendedor_leads_ativo }}&status_leads={{ status_leads_ativo }}" class="panel-cancel" style="background: var(--brand, #5e35b1); color: #ffffff; text-decoration: none; padding: 10px 14px; border-radius: 8px; font-weight: 700; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 6px;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right: 2px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                            Exportar CSV (Excel)
+                        </a>
+                        <a href="{% url 'exportar_leads_impressao' loja.slug %}?q_leads={{ busca_leads }}&vendedor_leads={{ vendedor_leads_ativo }}&status_leads={{ status_leads_ativo }}" target="_blank" class="panel-cancel secondary" style="background: var(--surface); color: var(--ink); border: 1px solid var(--line); text-decoration: none; padding: 10px 14px; border-radius: 8px; font-weight: 700; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 6px;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right: 2px;"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+                            Imprimir / PDF
+                        </a>
+                        <span style="font-size: 0.9rem; font-weight: 700; padding: 10px 12px; background: var(--line); color: var(--ink); border-radius: 8px; display: inline-block;">{{ total_leads }} lead(s)</span>
                     </div>
                 </div>
-                <div class="product-form-layout">
-                    {% if not loja.assinatura_esta_ativa %}
-                        <div class="limit-warning product-blocked-warning">
-                            <strong>Assinatura inativa</strong>
-                            <p>Regularize o Premium para cadastrar novos produtos e manter o catalogo publicado.</p>
-                            <a href="{% url 'assinatura' loja.slug %}">Regularizar assinatura</a>
-                        </div>
+
+                <form class="panel-filters" method="get" action="?#leads" style="margin-bottom: 24px;">
+                    <input type="search" name="q_leads" value="{{ busca_leads }}" placeholder="Buscar por cliente, WhatsApp ou produto">
+                    {% if is_owner %}
+                        <select name="vendedor_leads">
+                            <option value="">Todos vendedores</option>
+                            <option value="sem_vendedor" {% if vendedor_leads_ativo == "sem_vendedor" %}selected{% endif %}>Sem vendedor (Direto)</option>
+                            {% for vend in vendedores %}
+                                <option value="{{ vend.id }}" {% if vendedor_leads_ativo == vend.id|stringformat:"s" %}selected{% endif %}>{{ vend.nome }}</option>
+                            {% endfor %}
+                        </select>
                     {% endif %}
-                    <form class="panel-form" method="post" enctype="multipart/form-data" data-product-form>
-                        {% csrf_token %}
-                        <div class="form-block form-block--basic">
-                            <h3>Informacoes basicas</h3>
-                            {{ form.non_field_errors }}
-                            {{ form.categoria.as_field_group }}
-                            {{ form.nova_categoria.as_field_group }}
-                            {{ form.nome.as_field_group }}
-                            {{ form.descricao.as_field_group }}
-                            {{ form.preco.as_field_group }}
-                            {{ form.preco_antigo.as_field_group }}
-                            {{ form.ordem.as_field_group }}
-                        </div>
-                        <div class="form-block form-block--media">
-                            <h3>Fotos do produto</h3>
-                            {{ form.imagem.as_field_group }}
-                            {{ form.fotos_adicionais.as_field_group }}
-                        </div>
-                        <div class="form-block form-block--variants">
-                            <h3>Variacoes</h3>
-                            {{ form.tamanhos.as_field_group }}
-                            {{ form.tamanhos_esgotados.as_field_group }}
-                            {{ form.cores.as_field_group }}
-                            {{ form.cores_esgotadas.as_field_group }}
-                            <div class="stock-builder" data-stock-builder>
-                                <div>
-                                    <strong>Estoque visual por variacao</strong>
-                                    <small>Digite tamanhos e cores acima, depois gere a grade para preencher as quantidades.</small>
-                                </div>
-                                <button type="button" data-build-stock>Gerar grade</button>
-                                <div class="stock-builder__grid" data-stock-grid></div>
-                            </div>
-                            {{ form.variacoes_estoque.as_field_group }}
-                        </div>
-                        <div class="form-block form-block--status">
-                            <h3>Status do produto</h3>
-                            <label class="status-toggle" for="{{ form.destaque.id_for_label }}">
-                                <span>
-                                    <strong>Novo</strong>
-                                    <small>Mostra o produto como novidade no catalogo.</small>
-                                </span>
-                                {{ form.destaque }}
-                            </label>
-                            <label class="status-toggle" for="{{ form.promocao.id_for_label }}">
-                                <span>
-                                    <strong>Promocao</strong>
-                                    <small>Destaca o item nas ofertas da loja.</small>
-                                </span>
-                                {{ form.promocao }}
-                            </label>
-                            <label class="status-toggle" for="{{ form.publicado.id_for_label }}">
-                                <span>
-                                    <strong>Publicado</strong>
-                                    <small>Deixa o produto visivel para clientes.</small>
-                                </span>
-                                {{ form.publicado }}
-                            </label>
-                            <label class="status-toggle" for="{{ form.esgotado.id_for_label }}">
-                                <span>
-                                    <strong>Esgotado</strong>
-                                    <small>Bloqueia a compra quando acabar tudo.</small>
-                                </span>
-                                {{ form.esgotado }}
-                            </label>
-                        </div>
-                        <div class="product-form-submit">
-                            <span>Depois de salvar, o produto aparece na lista abaixo.</span>
-                            <button type="submit">Salvar produto</button>
-                        </div>
-                    </form>
-
-                    <aside class="product-preview">
-                        <p class="eyebrow">Previa no catalogo</p>
-                        <div class="product-preview__image" data-preview-image>Foto</div>
-                        <strong data-preview-name>Nome do produto</strong>
-                        <span data-preview-price>R$ 0,00</span>
-                        <p data-preview-description>Descricao curta do produto.</p>
-                        <div data-preview-options></div>
-                    </aside>
-                </div>
-            </div>
-
-            <section class="panel-section product-list-card">
-                <div class="section-heading">
-                    <div>
-                        <p class="eyebrow">Catalogo</p>
-                        <h2>Produtos cadastrados</h2>
-                    </div>
-                    <span>{{ produtos|length }} exibido(s)</span>
-                </div>
-
-                <form class="panel-filters" method="get">
-                    <input type="search" name="q" value="{{ busca_painel }}" placeholder="Buscar produto">
-                    <select name="categoria">
-                        <option value="">Todas categorias</option>
-                        {% for categoria in loja.categorias.all %}
-                            <option value="{{ categoria.id }}" {% if categoria_painel == categoria.id|stringformat:"s" %}selected{% endif %}>{{ categoria.nome }}</option>
-                        {% endfor %}
-                    </select>
-                    <select name="status">
+                    <select name="status_leads">
                         <option value="">Todos status</option>
-                        <option value="disponivel" {% if status_painel == "disponivel" %}selected{% endif %}>Disponiveis</option>
-                        <option value="esgotado" {% if status_painel == "esgotado" %}selected{% endif %}>Esgotados</option>
-                        <option value="novo" {% if status_painel == "novo" %}selected{% endif %}>Novos</option>
-                        <option value="promocao" {% if status_painel == "promocao" %}selected{% endif %}>Promocoes</option>
-                        <option value="rascunho" {% if status_painel == "rascunho" %}selected{% endif %}>Rascunhos</option>
+                        {% for valor, rotulo in status_lead_choices %}
+                            <option value="{{ valor }}" {% if status_leads_ativo == valor %}selected{% endif %}>{{ rotulo }}</option>
+                        {% endfor %}
                     </select>
                     <button type="submit">Filtrar</button>
                 </form>
 
-                <div class="dashboard-products">
-                    {% for produto in produtos %}
+                <div class="lead-summary">
+                    <article>
+                        <span>Produto</span>
+                        <strong>{{ leads_produto }}</strong>
+                    </article>
+                    <article>
+                        <span>Sacolinha</span>
+                        <strong>{{ leads_sacolinha }}</strong>
+                    </article>
+                    <article>
+                        <span>Total</span>
+                        <strong>{{ total_leads }}</strong>
+                    </article>
+                    <article>
+                        <span>Novos</span>
+                        <strong>{{ pedidos_novos }}</strong>
+                    </article>
+                    <article>
+                        <span>Atendimento</span>
+                        <strong>{{ pedidos_atendimento }}</strong>
+                    </article>
+                    <article>
+                        <span>Concluídos</span>
+                        <strong>{{ pedidos_concluidos }}</strong>
+                    </article>
+                </div>
+
+                <div class="lead-list">
+                    {% for lead in leads_recentes %}
                         <article>
-                            <img src="{{ produto.imagem.url }}" alt="{{ produto.nome }}">
-                            <div class="dashboard-product-info">
-                                <div>
-                                    <strong>{{ produto.nome }}</strong>
-                                    <span>R$ {{ produto.preco }}</span>
-                                </div>
-                                <small>
-                                    {% if produto.categoria %}{{ produto.categoria.nome }}{% else %}Sem categoria{% endif %}
-                                    - ordem {{ produto.ordem }}
-                                    - {{ produto.imagens.count }} foto(s) adicional(is)
-                                    - {{ produto.cliques_whatsapp }} clique(s)
-                                </small>
-                                <div class="product-status-row">
-                                    {% if produto.esgotado %}
-                                        <span class="status-pill sold">Esgotado</span>
-                                    {% elif produto.tamanhos_esgotados or produto.cores_esgotadas %}
-                                        <span class="status-pill warning">Parcial</span>
+                            <div>
+                                <strong>
+                                    {% if lead.produto %}
+                                        {{ lead.produto.nome }}
                                     {% else %}
-                                        <span class="status-pill active">Disponivel</span>
+                                        Pedido pela sacolinha
                                     {% endif %}
-                                    {% if produto.destaque %}<span class="status-pill">Novo</span>{% endif %}
-                                    {% if produto.promocao %}<span class="status-pill">Promocao</span>{% endif %}
-                                    {% if not produto.publicado %}<span class="status-pill warning">Rascunho</span>{% endif %}
-                                </div>
-                                <div class="panel-product-actions">
-                                    {% if not produto.publicado %}
-                                        <form method="post" class="inline-product-form">
-                                            {% csrf_token %}
-                                            <input type="hidden" name="acao" value="publicar_produto">
-                                            <input type="hidden" name="produto_id" value="{{ produto.id }}">
-                                            <button class="publish-button" type="submit">Publicar no catalogo</button>
-                                        </form>
+                                </strong>
+                                <span>
+                                    {{ lead.get_origem_display }} - {{ lead.criado_em|date:"d/m/Y H:i" }}
+                                    {% if lead.status == "concluido" %}
+                                        <span class="status-pill active" style="margin-left: 8px;">Concluído</span>
+                                    {% else %}
+                                        <span class="status-pill warning" style="margin-left: 8px;">Pendente</span>
                                     {% endif %}
-                                    <a href="{% url 'editar_produto' loja.slug produto.id %}">Editar</a>
-                                    <a href="{% url 'produto_detalhe_curto' loja.slug produto.id %}">Detalhes</a>
-                                    <a href="{% url 'catalogo_curto' loja.slug %}?produto={{ produto.id }}#produto-{{ produto.id }}">Ver</a>
-                                    <button class="copy-link-button" type="button" data-copy-url="{{ request.scheme }}://{{ request.get_host }}{% url 'catalogo_curto' loja.slug %}?produto={{ produto.id }}#produto-{{ produto.id }}">Copiar produto</button>
-                                    <a class="danger" href="{% url 'remover_produto' loja.slug produto.id %}">Remover</a>
-                                </div>
+                                </span>
                             </div>
+                            <p>
+                                {% if lead.cliente_nome %}Cliente: {{ lead.cliente_nome }}{% endif %}
+                                {% if lead.cliente_telefone %}{% if lead.cliente_nome %} - {% endif %}WhatsApp: {{ lead.cliente_telefone }}{% endif %}
+                                {% if lead.cliente_nome or lead.cliente_telefone %}<br>{% endif %}
+                                {% if lead.vendedor %}Vendedor: {{ lead.vendedor.nome }}<br>{% endif %}
+                                {% if lead.tamanho %}Tamanho: {{ lead.tamanho }}{% endif %}
+                                {% if lead.cor %}{% if lead.tamanho %} - {% endif %}Cor: {{ lead.cor }}{% endif %}
+                                {% if not lead.tamanho and not lead.cor %}{{ lead.mensagem|truncatechars:120 }}{% endif %}
+                                {% if lead.tipo_entrega %}
+                                    <br><strong>Recebimento:</strong>
+                                    {% if lead.tipo_entrega == 'entrega' %}
+                                        <span class="delivery-badge delivery-badge-ship">
+                                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="vertical-align: -1px; margin-right: 2px;"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>Entrega
+                                        </span>
+                                    {% else %}
+                                        <span class="delivery-badge delivery-badge-pickup">
+                                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="vertical-align: -1px; margin-right: 2px;"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>Retirada
+                                        </span>
+                                    {% endif %}
+                                    {% if lead.endereco_completo %}
+                                        <br><strong>Endereço:</strong> <span style="font-size: 0.9rem;">{{ lead.endereco_completo }}</span>
+                                        <button type="button" class="btn-copy-address" data-address="{{ lead.endereco_completo }}" title="Copiar Endereço" style="background: none; border: 0; padding: 2px; cursor: pointer; color: var(--muted, #6b7280); vertical-align: middle; margin-left: 4px; display: inline-flex; align-items: center; justify-content: center; transition: all 0.15s;">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="pointer-events: none;"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" style="pointer-events: none;"></path></svg>
+                                        </button>
+                                    {% endif %}
+                                {% endif %}
+                                {% if lead.observacao %}<br><strong>Obs. interna:</strong> {{ lead.observacao|truncatechars:100 }}{% endif %}
+                            </p>
+                            <form class="lead-status-form" method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="acao" value="atualizar_lead_status">
+                                <input type="hidden" name="lead_id" value="{{ lead.id }}">
+                                <select name="status" aria-label="Status do pedido">
+                                    {% for valor, rotulo in status_lead_choices %}
+                                        <option value="{{ valor }}" {% if lead.status == valor %}selected{% endif %}>{{ rotulo }}</option>
+                                    {% endfor %}
+                                </select>
+                                <input type="text" name="observacao" value="{{ lead.observacao }}" placeholder="Observação interna">
+                                <button type="submit">Atualizar</button>
+                            </form>
                         </article>
                     {% empty %}
                         <div class="empty-dashboard">
-                            <strong>Nenhum produto encontrado.</strong>
-                            <p>Cadastre ou ajuste os filtros para encontrar os produtos da loja.</p>
-                            <a href="#novo-produto">Adicionar primeiro produto</a>
+                            <strong>Nenhum lead ainda.</strong>
+                            <p>Quando clientes clicarem no WhatsApp ou enviarem a sacolinha, eles aparecem aqui.</p>
                         </div>
                     {% endfor %}
                 </div>
             </section>
-        </section>
+        </div>
+
+        <!-- Aba Configurações -->
+        {% if is_owner %}
+        <div class="tab-pane" id="tab-configuracoes" data-tab-content="configuracoes">
+            <section class="management-grid">
+                <section class="panel-section" id="dados-da-loja" style="grid-column: 1 / -1;">
+                    <div class="section-heading">
+                        <div>
+                            <p class="eyebrow">Dados da loja</p>
+                            <h2>Configuração Geral</h2>
+                        </div>
+                        <span>Ações da marca</span>
+                    </div>
+                    <div class="quick-actions" style="display: flex; gap: 12px; margin-top: 14px;">
+                        <a href="{% url 'editar_loja' loja.slug %}" class="panel-cancel" style="background: var(--brand, #5e35b1); color: #ffffff; text-decoration: none;">Editar dados da loja</a>
+                        <a href="{% url 'remover_loja' loja.slug %}" class="panel-cancel danger" style="background: #b42318; color: #ffffff; text-decoration: none;">Excluir loja</a>
+                    </div>
+                </section>
+            </section>
+
+            <section class="dashboard-command-center" style="margin-top: 20px;">
+                <div class="dashboard-side-stack config-cards-grid">
+                    {% if is_owner %}
+                    <section class="plan-strip" style="grid-column: 1 / -1;">
+                        <div>
+                            <span>Assinatura</span>
+                            <strong>{{ loja.assinatura_status_label }}</strong>
+                            {% if loja.assinatura_status == "trial" and loja.trial_dias_restantes > 0 %}
+                                <small>Teste grátis: {{ loja.trial_dias_restantes }} dia(s) restantes. Depois R$39,90/mês.</small>
+                            {% elif loja.assinatura_status == "ativa" %}
+                                <small>Premium ativo por R$39,90/mês, sem fidelidade.</small>
+                            {% elif loja.assinatura_status == "cancelada" %}
+                                <small>Assinatura cancelada. Reative quando quiser.</small>
+                            {% else %}
+                                <small>Teste expirado. Regularize para manter a loja profissional.</small>
+                            {% endif %}
+                        </div>
+                        <a href="{% url 'assinatura' loja.slug %}" style="background: #ffffff; color: #211846; font-weight: 800; padding: 10px 14px; border-radius: 8px; text-decoration: none; align-self: center;">Ver assinatura</a>
+                    </section>
+                    {% endif %}
+
+                    <section class="store-identity-card store-identity-card--compact">
+                        <div>
+                            <p class="eyebrow">Link personalizado</p>
+                            <h2>{% if loja.dominio_limpo %}{{ loja.dominio_limpo }}{% else %}{{ request.get_host }}{% url 'catalogo_curto' loja.slug %}{% endif %}</h2>
+                            <p>Use na bio, Stories, WhatsApp e cartão da loja.</p>
+                        </div>
+                        <button class="copy-link-button" type="button" data-copy-url="{{ catalogo_url }}" style="background: #1f1844; color: #ffffff; border: 0; border-radius: 8px; font-weight: 800; padding: 10px 14px; cursor: pointer;">Copiar</button>
+                    </section>
+
+                    <section class="store-identity-card qr-card">
+                        <div>
+                            <p class="eyebrow">QR Code</p>
+                            <h2>Código para vitrine e embalagem</h2>
+                            <p>Use este QR Code em cartões, sacolas, provador ou vitrine física para levar clientes ao catálogo.</p>
+                        </div>
+                        <div class="qr-card__actions">
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data={{ request.scheme }}://{{ request.get_host }}{% url 'catalogo_curto' loja.slug %}" alt="QR Code do catálogo {{ loja.nome }}" style="height: 120px; width: 120px; background: #ffffff; padding: 6px; border: 1px solid var(--line); border-radius: 8px;">
+                            <a class="qr-download-button" href="{% url 'baixar_qr_code' loja.slug %}" download>
+                                <span aria-hidden="true">↓</span>
+                                Baixar QR Code
+                            </a>
+                        </div>
+                    </section>
+
+                    <section class="store-identity-card theme-card">
+                        <div>
+                            <p class="eyebrow">Tema da loja</p>
+                            <h2>{{ loja.get_tema_display }}</h2>
+                            <p>Altere em “Editar dados da loja” para escolher entre elegante, minimalista, boutique e streetwear.</p>
+                        </div>
+                        <div class="theme-swatches" aria-hidden="true" style="display: flex; gap: 6px;">
+                            <span class="theme-dot theme-dot--elegante" style="height: 24px; width: 24px; border-radius: 50%; display: inline-block; background: #5e35b1;"></span>
+                            <span class="theme-dot theme-dot--minimalista" style="height: 24px; width: 24px; border-radius: 50%; display: inline-block; background: #303030;"></span>
+                            <span class="theme-dot theme-dot--boutique" style="height: 24px; width: 24px; border-radius: 50%; display: inline-block; background: #d94695;"></span>
+                            <span class="theme-dot theme-dot--streetwear" style="height: 24px; width: 24px; border-radius: 50%; display: inline-block; background: #d7ff3f;"></span>
+                        </div>
+                    </section>
+                </div>
+            </section>
+        </div>
+        {% endif %}
     </main>
     <div class="tour-overlay" data-tour-overlay hidden>
         <div class="tour-card" role="dialog" aria-modal="true" aria-live="polite">
@@ -645,12 +1017,94 @@
             <p data-tour-text>Veja os principais pontos do painel.</p>
             <div class="tour-actions">
                 <button type="button" data-tour-prev>Voltar</button>
-                <button type="button" data-tour-next>Proximo</button>
+                <button type="button" data-tour-next>Próximo</button>
                 <button type="button" data-tour-close>Fechar</button>
             </div>
         </div>
     </div>
     <script>
+        // ==========================================================================
+        // Lógica de Abas do Painel
+        // ==========================================================================
+        const tabButtons = document.querySelectorAll(".tab-btn");
+        const tabPanes = document.querySelectorAll(".tab-pane");
+
+        const switchTab = (tabId) => {
+            tabButtons.forEach(btn => {
+                if (btn.dataset.tabTarget === tabId) {
+                    btn.classList.add("active");
+                } else {
+                    btn.classList.remove("active");
+                }
+            });
+
+            tabPanes.forEach(pane => {
+                if (pane.dataset.tabContent === tabId) {
+                    pane.classList.add("active");
+                } else {
+                    pane.classList.remove("active");
+                }
+            });
+        };
+
+        tabButtons.forEach(btn => {
+            btn.addEventListener("click", () => {
+                const target = btn.dataset.tabTarget;
+                switchTab(target);
+                history.pushState(null, null, `#${target}`);
+            });
+        });
+
+        // Trata cliques em links âncora para trocar de aba automaticamente
+        document.addEventListener("click", (e) => {
+            const link = e.target.closest("a");
+            if (!link) return;
+            const href = link.getAttribute("href");
+            if (href && href.startsWith("#")) {
+                const targetId = href.substring(1);
+                if (targetId === "leads" || targetId === "vendedores" || targetId === "configuracoes") {
+                    switchTab(targetId);
+                    setTimeout(() => {
+                        document.getElementById(targetId)?.scrollIntoView({ behavior: "smooth" });
+                    }, 50);
+                } else if (targetId === "novo-produto" || targetId === "categorias" || targetId === "produtos") {
+                    switchTab("produtos");
+                    setTimeout(() => {
+                        document.getElementById(targetId)?.scrollIntoView({ behavior: "smooth" });
+                    }, 50);
+                } else if (targetId === "dados-da-loja") {
+                    switchTab("configuracoes");
+                    setTimeout(() => {
+                        document.getElementById(targetId)?.scrollIntoView({ behavior: "smooth" });
+                    }, 50);
+                }
+            }
+        });
+
+        // Ao carregar a página, verifica se há uma âncora na URL
+        const initHashTab = () => {
+            const hash = window.location.hash.substring(1);
+            if (hash === "leads" || hash === "vendedores" || hash === "configuracoes") {
+                switchTab(hash);
+                setTimeout(() => {
+                    document.getElementById(hash)?.scrollIntoView({ behavior: "smooth" });
+                }, 100);
+            } else if (hash === "novo-produto" || hash === "categorias" || hash === "produtos") {
+                switchTab("produtos");
+                setTimeout(() => {
+                    document.getElementById(hash)?.scrollIntoView({ behavior: "smooth" });
+                }, 100);
+            } else if (hash === "dados-da-loja") {
+                switchTab("configuracoes");
+                setTimeout(() => {
+                    document.getElementById(hash)?.scrollIntoView({ behavior: "smooth" });
+                }, 100);
+            }
+        };
+        window.addEventListener("hashchange", initHashTab);
+        window.addEventListener("load", initHashTab);
+        initHashTab();
+
         document.querySelectorAll("[data-copy-url]").forEach((button) => {
             button.addEventListener("click", async () => {
                 const originalText = button.dataset.copyLabel || button.textContent;
@@ -689,7 +1143,7 @@
             const updatePreview = () => {
                 const name = productForm.querySelector("#id_nome")?.value || "Nome do produto";
                 const price = productForm.querySelector("#id_preco")?.value || "0,00";
-                const description = productForm.querySelector("#id_descricao")?.value || "Descricao curta do produto.";
+                const description = productForm.querySelector("#id_descricao")?.value || "Descrição curta do produto.";
                 const sizes = productForm.querySelector("#id_tamanhos")?.value || "";
                 const colors = productForm.querySelector("#id_cores")?.value || "";
 
@@ -768,6 +1222,7 @@
                 syncStockTextarea();
             };
 
+            window.buildStockGrid = buildStockGrid;
             buildButton.addEventListener("click", buildStockGrid);
         }
 
@@ -777,27 +1232,27 @@
                 {
                     selector: ".store-status-bar",
                     title: "Status da loja",
-                    text: "Aqui voce ve se a loja esta ativa, em teste ou se precisa regularizar a assinatura.",
+                    text: "Aqui você vê se a loja está ativa, em teste ou se precisa regularizar a assinatura.",
                 },
                 {
                     selector: ".dashboard-command-center",
-                    title: "Acoes rapidas",
-                    text: "Abra o catalogo, copie o link, compartilhe no WhatsApp ou pule direto para cadastrar produto.",
+                    title: "Ações rápidas",
+                    text: "Abra o catálogo, copie o link, compartilhe no WhatsApp ou pule direto para cadastrar produto.",
                 },
                 {
                     selector: ".whatsapp-template-panel",
                     title: "Mensagens prontas",
-                    text: "Copie textos de divulgacao para mandar para clientes, grupos e listas de transmissao.",
+                    text: "Copie textos de divulgação para mandar para clientes, grupos e listas de transmissão.",
                 },
                 {
                     selector: "#leads",
                     title: "Leads e atendimento",
-                    text: "Todo interesse recebido pelo WhatsApp aparece aqui para voce acompanhar o status.",
+                    text: "Todo interesse recebido pelo WhatsApp aparece aqui para você acompanhar o status.",
                 },
                 {
                     selector: "#novo-produto",
                     title: "Cadastro de produto",
-                    text: "Cadastre foto, preco, tamanho, cor e estoque visual para publicar a vitrine.",
+                    text: "Cadastre foto, preço, tamanho, cor e estoque visual para publicar a vitrine.",
                 },
             ];
             let currentTourStep = 0;
@@ -812,15 +1267,29 @@
             const renderTour = () => {
                 clearHighlights();
                 const step = steps[currentTourStep];
+                
+                // Trata a troca de abas durante o tour
+                if (step.selector === "#leads") {
+                    switchTab("leads");
+                } else if (step.selector === "#vendedores") {
+                    switchTab("vendedores");
+                } else if (step.selector === "#novo-produto") {
+                    switchTab("produtos");
+                } else if (step.selector === ".dashboard-command-center" || step.selector === ".whatsapp-template-panel") {
+                    switchTab("dashboard");
+                }
+
                 const target = document.querySelector(step.selector);
                 title.textContent = step.title;
                 text.textContent = step.text;
                 count.textContent = `${currentTourStep + 1}/${steps.length}`;
                 prev.disabled = currentTourStep === 0;
-                next.textContent = currentTourStep === steps.length - 1 ? "Concluir" : "Proximo";
+                next.textContent = currentTourStep === steps.length - 1 ? "Concluir" : "Próximo";
                 if (target) {
                     target.classList.add("tour-highlight");
-                    target.scrollIntoView({ behavior: "smooth", block: "center" });
+                    setTimeout(() => {
+                        target.scrollIntoView({ behavior: "smooth", block: "center" });
+                    }, 50);
                 }
             };
             const openTour = () => {
@@ -851,5 +1320,340 @@
             });
         }
     </script>
+
+    <!-- Script de Inicialização dos Gráficos (Chart.js) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Helper para cor da loja com fallback
+            const storeColor = "{{ loja.cor_principal|default:'#5e35b1' }}";
+            
+            // Helper para gerar cores translúcidas para os gráficos
+            function hexToRgba(hex, alpha) {
+                hex = hex.replace('#', '');
+                if (hex.length === 3) {
+                    hex = hex.split('').map(char => char + char).join('');
+                }
+                const r = parseInt(hex.substring(0, 2), 16);
+                const g = parseInt(hex.substring(2, 4), 16);
+                const b = parseInt(hex.substring(4, 6), 16);
+                return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+            }
+
+            const primaryColor = storeColor;
+            const primaryColorLight = hexToRgba(primaryColor, 0.15);
+            const primaryColorBorder = hexToRgba(primaryColor, 0.85);
+
+            // Array para armazenar as instâncias dos gráficos
+            const charts = [];
+
+            // Helper para obter cores baseadas no tema ativo
+            function getThemeColors() {
+                const isDark = document.documentElement.getAttribute("data-theme") === "dark";
+                return {
+                    ticksColor: isDark ? "#9ba3af" : "#626262",
+                    prodTicksColor: isDark ? "#e3e3e6" : "#171717",
+                    gridColor: isDark ? "rgba(255, 255, 255, 0.08)" : "rgba(31, 24, 68, 0.05)",
+                    legendColor: isDark ? "#e3e3e6" : "#374151",
+                    doughnutBorder: isDark ? "#1e1b1a" : "#ffffff"
+                };
+            }
+
+            const activeColors = getThemeColors();
+
+            // Fonte e estilos comuns
+            const fontSettings = {
+                family: 'Arial, sans-serif',
+                size: 11,
+                weight: '600'
+            };
+
+            // 1. Gráfico de Leads por Dia (Line Chart)
+            const ctxLeads = document.getElementById('chartLeads');
+            if (ctxLeads) {
+                const leadsLabels = JSON.parse('{{ chart_leads_labels|escapejs }}');
+                const leadsData = JSON.parse('{{ chart_leads_valores|escapejs }}');
+
+                const chartLeads = new Chart(ctxLeads, {
+                    type: 'line',
+                    data: {
+                        labels: leadsLabels,
+                        datasets: [{
+                            label: 'Leads',
+                            data: leadsData,
+                            borderColor: primaryColorBorder,
+                            backgroundColor: primaryColorLight,
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.35,
+                            pointBackgroundColor: primaryColor,
+                            pointBorderColor: '#ffffff',
+                            pointBorderWidth: 2,
+                            pointRadius: 4,
+                            pointHoverRadius: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                backgroundColor: '#151515',
+                                titleFont: { size: 12, weight: 'bold' },
+                                bodyFont: { size: 12 },
+                                padding: 10,
+                                cornerRadius: 8,
+                                displayColors: false
+                            }
+                        },
+                        scales: {
+                            x: {
+                                grid: { display: false },
+                                ticks: { font: fontSettings, color: activeColors.ticksColor }
+                            },
+                            y: {
+                                grid: { color: activeColors.gridColor, drawBorder: false },
+                                ticks: {
+                                    font: fontSettings,
+                                    color: activeColors.ticksColor,
+                                    stepSize: 1,
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    }
+                });
+                charts.push(chartLeads);
+            }
+
+            // 2. Gráfico de Produtos mais Clicados (Horizontal Bar Chart)
+            const ctxProdutos = document.getElementById('chartProdutos');
+            if (ctxProdutos) {
+                const prodLabels = JSON.parse('{{ chart_produtos_labels|escapejs }}');
+                const prodData = JSON.parse('{{ chart_produtos_valores|escapejs }}');
+
+                const chartProdutos = new Chart(ctxProdutos, {
+                    type: 'bar',
+                    data: {
+                        labels: prodLabels,
+                        datasets: [{
+                            data: prodData,
+                            backgroundColor: primaryColorBorder,
+                            borderRadius: 6,
+                            borderSkipped: false,
+                            barThickness: 16
+                        }]
+                    },
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                backgroundColor: '#151515',
+                                padding: 10,
+                                cornerRadius: 8,
+                                displayColors: false
+                            }
+                        },
+                        scales: {
+                            x: {
+                                grid: { color: activeColors.gridColor, drawBorder: false },
+                                ticks: {
+                                    font: fontSettings,
+                                    color: activeColors.ticksColor,
+                                    stepSize: 1,
+                                    beginAtZero: true
+                                }
+                            },
+                            y: {
+                                grid: { display: false },
+                                ticks: {
+                                    font: fontSettings,
+                                    color: activeColors.prodTicksColor,
+                                    callback: function(value) {
+                                        const label = this.getLabelForValue(value);
+                                        return label.length > 15 ? label.substring(0, 15) + '...' : label;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+                charts.push(chartProdutos);
+            }
+
+            // 3. Gráfico de Horários de Pico (Vertical Bar Chart)
+            const ctxHorarios = document.getElementById('chartHorarios');
+            if (ctxHorarios) {
+                const horLabels = JSON.parse('{{ chart_horarios_labels|escapejs }}');
+                const horData = JSON.parse('{{ chart_horarios_valores|escapejs }}');
+
+                const chartHorarios = new Chart(ctxHorarios, {
+                    type: 'bar',
+                    data: {
+                        labels: horLabels,
+                        datasets: [{
+                            data: horData,
+                            backgroundColor: hexToRgba(primaryColor, 0.6),
+                            hoverBackgroundColor: primaryColor,
+                            borderRadius: 6,
+                            barThickness: 20
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                backgroundColor: '#151515',
+                                padding: 10,
+                                cornerRadius: 8,
+                                displayColors: false
+                            }
+                        },
+                        scales: {
+                            x: {
+                                grid: { display: false },
+                                ticks: { font: fontSettings, color: activeColors.ticksColor }
+                            },
+                            y: {
+                                grid: { color: activeColors.gridColor, drawBorder: false },
+                                ticks: {
+                                    font: fontSettings,
+                                    color: activeColors.ticksColor,
+                                    stepSize: 1,
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    }
+                });
+                charts.push(chartHorarios);
+            }
+
+            // 4. Gráfico de Leads por Vendedor (Doughnut Chart)
+            const ctxVendedores = document.getElementById('chartVendedores');
+            if (ctxVendedores) {
+                const vendLabels = JSON.parse('{{ chart_vendedores_labels|escapejs }}');
+                const vendData = JSON.parse('{{ chart_vendedores_valores|escapejs }}');
+
+                const baseColors = [
+                    primaryColorBorder,
+                    'rgba(54, 162, 235, 0.85)',
+                    'rgba(255, 206, 86, 0.85)',
+                    'rgba(75, 192, 192, 0.85)',
+                    'rgba(153, 102, 255, 0.85)',
+                    'rgba(255, 99, 132, 0.85)'
+                ];
+                const bgColors = baseColors.slice(0, vendLabels.length);
+
+                const chartVendedores = new Chart(ctxVendedores, {
+                    type: 'doughnut',
+                    data: {
+                        labels: vendLabels,
+                        datasets: [{
+                            data: vendData,
+                            backgroundColor: bgColors,
+                            borderWidth: 1,
+                            borderColor: activeColors.doughnutBorder
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'right',
+                                labels: {
+                                    font: fontSettings,
+                                    color: activeColors.legendColor,
+                                    boxWidth: 12
+                                }
+                            },
+                            tooltip: {
+                                backgroundColor: '#151515',
+                                padding: 10,
+                                cornerRadius: 8,
+                                displayColors: true
+                            }
+                        }
+                    }
+                });
+                charts.push(chartVendedores);
+            }
+
+            // Função para atualizar as cores dos gráficos com base no tema ativo
+            function applyThemeToCharts() {
+                const colors = getThemeColors();
+                charts.forEach(chart => {
+                    if (chart.options.scales) {
+                        Object.keys(chart.options.scales).forEach(scaleId => {
+                            const scale = chart.options.scales[scaleId];
+                            if (scale.ticks) {
+                                if (chart.canvas.id === 'chartProdutos' && scaleId === 'y') {
+                                    scale.ticks.color = colors.prodTicksColor;
+                                } else {
+                                    scale.ticks.color = colors.ticksColor;
+                                }
+                            }
+                            if (scale.grid) {
+                                scale.grid.color = colors.gridColor;
+                            }
+                        });
+                    }
+                    if (chart.options.plugins && chart.options.plugins.legend && chart.options.plugins.legend.labels) {
+                        chart.options.plugins.legend.labels.color = colors.legendColor;
+                    }
+                    if (chart.config.type === 'doughnut') {
+                        chart.data.datasets.forEach(dataset => {
+                            dataset.borderColor = colors.doughnutBorder;
+                        });
+                    }
+                    chart.update();
+                });
+            }
+
+            // Monitorar mudanças no atributo data-theme do elemento root (html)
+            const themeObserver = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    if (mutation.attributeName === 'data-theme') {
+                        applyThemeToCharts();
+                    }
+                });
+            });
+            themeObserver.observe(document.documentElement, {
+                attributes: true,
+                attributeFilter: ['data-theme']
+            });
+
+            // Lógica de cópia de endereço de entrega com feedback visual
+            document.querySelectorAll(".btn-copy-address").forEach(btn => {
+                btn.addEventListener("click", () => {
+                    const address = btn.dataset.address;
+                    if (address) {
+                        navigator.clipboard.writeText(address).then(() => {
+                            const oldHtml = btn.innerHTML;
+                            btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+                            btn.style.color = "#10b981";
+                            setTimeout(() => {
+                                btn.innerHTML = oldHtml;
+                                btn.style.color = "";
+                            }, 1500);
+                        }).catch(err => {
+                            console.error("Erro ao copiar endereço:", err);
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+    <script src="/static/js/theme.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
+    <script src="/static/js/product_editor.js" defer></script>
 </body>
 </html>

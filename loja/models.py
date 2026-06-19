@@ -6,6 +6,7 @@ from django.conf import settings
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
+from .validators import validar_whatsapp
 
 
 def trial_padrao():
@@ -22,7 +23,7 @@ class Loja(models.Model):
     ASSINATURA_VENCIDA = "vencida"
     ASSINATURA_CANCELADA = "cancelada"
     ASSINATURAS = [
-        (ASSINATURA_TRIAL, "Teste gratis"),
+        (ASSINATURA_TRIAL, "Teste grátis"),
         (ASSINATURA_ATIVA, "Ativa"),
         (ASSINATURA_VENCIDA, "Vencida"),
         (ASSINATURA_CANCELADA, "Cancelada"),
@@ -46,7 +47,7 @@ class Loja(models.Model):
     )
     nome = models.CharField(max_length=120)
     slug = models.SlugField(unique=True)
-    telefone = models.CharField(max_length=20, help_text="Somente números com DDD.")
+    telefone = models.CharField(max_length=20, help_text="Somente números com DDD.", validators=[validar_whatsapp])
     descricao = models.CharField(max_length=160, blank=True)
     instagram = models.CharField(max_length=80, blank=True)
     dominio_personalizado = models.CharField(
@@ -77,9 +78,11 @@ class Loja(models.Model):
         return self.nome
 
     def get_absolute_url(self):
+        from django.urls import reverse
         return reverse("catalogo", kwargs={"slug": self.slug})
 
     def get_short_url(self):
+        from django.urls import reverse
         return reverse("catalogo_curto", kwargs={"slug": self.slug})
 
     @property
@@ -173,6 +176,19 @@ class Produto(models.Model):
     def __str__(self):
         return self.nome
 
+    def save(self, *args, **kwargs):
+        try:
+            old_instance = Produto.objects.get(pk=self.pk)
+            imagem_alterada = old_instance.imagem != self.imagem
+        except Produto.DoesNotExist:
+            imagem_alterada = True
+
+        if imagem_alterada and self.imagem:
+            from .utils import otimizar_imagem
+            otimizar_imagem(self.imagem)
+
+        super().save(*args, **kwargs)
+
     @property
     def tamanhos_lista(self):
         return [item.strip() for item in self.tamanhos.split(",") if item.strip()]
@@ -191,7 +207,7 @@ class Produto(models.Model):
 
     @property
     def whatsapp_texto(self):
-        return f"Ola! Tenho interesse na peca: {self.nome}"
+        return f"Olá! Tenho interesse na peça: {self.nome}"
 
 
 class ProdutoImagem(models.Model):
@@ -207,6 +223,19 @@ class ProdutoImagem(models.Model):
 
     def __str__(self):
         return f"Imagem de {self.produto.nome}"
+
+    def save(self, *args, **kwargs):
+        try:
+            old_instance = ProdutoImagem.objects.get(pk=self.pk)
+            imagem_alterada = old_instance.imagem != self.imagem
+        except ProdutoImagem.DoesNotExist:
+            imagem_alterada = True
+
+        if imagem_alterada and self.imagem:
+            from .utils import otimizar_imagem
+            otimizar_imagem(self.imagem)
+
+        super().save(*args, **kwargs)
 
 
 class ProdutoVariacao(models.Model):
@@ -226,6 +255,31 @@ class ProdutoVariacao(models.Model):
         return f"{self.produto.nome} - {self.cor} / {self.tamanho}"
 
 
+class Vendedor(models.Model):
+    loja = models.ForeignKey(Loja, on_delete=models.CASCADE, related_name="vendedores")
+    usuario = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="vendedor_perfil",
+    )
+    nome = models.CharField(max_length=120)
+    codigo = models.SlugField(max_length=80)
+    telefone = models.CharField(max_length=20, blank=True, validators=[validar_whatsapp])
+    ativo = models.BooleanField(default=True)
+    criado_em = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["nome"]
+        unique_together = ["loja", "codigo"]
+        verbose_name = "Vendedor"
+        verbose_name_plural = "Vendedores"
+
+    def __str__(self):
+        return self.nome
+
+
 class Lead(models.Model):
     ORIGEM_PRODUTO = "produto"
     ORIGEM_SACOLINHA = "sacolinha"
@@ -237,12 +291,19 @@ class Lead(models.Model):
     STATUS_ATENDIMENTO = "atendimento"
     STATUS_CONCLUIDO = "concluido"
     STATUS_CHOICES = [
-        (STATUS_NOVO, "Novo"),
-        (STATUS_ATENDIMENTO, "Em atendimento"),
-        (STATUS_CONCLUIDO, "Concluido"),
+        (STATUS_NOVO, "Pendente (Novo)"),
+        (STATUS_ATENDIMENTO, "Pendente (Em atendimento)"),
+        (STATUS_CONCLUIDO, "Concluído"),
     ]
 
     loja = models.ForeignKey(Loja, on_delete=models.CASCADE, related_name="leads")
+    vendedor = models.ForeignKey(
+        Vendedor,
+        on_delete=models.SET_NULL,
+        related_name="leads",
+        null=True,
+        blank=True,
+    )
     produto = models.ForeignKey(
         Produto,
         on_delete=models.SET_NULL,
@@ -256,10 +317,18 @@ class Lead(models.Model):
     cliente_nome = models.CharField(max_length=120, blank=True)
     cliente_telefone = models.CharField(max_length=40, blank=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=STATUS_NOVO)
+    tipo_entrega = models.CharField(
+        max_length=20,
+        choices=[("retirada", "Retirada na Loja"), ("entrega", "Entrega a Domicílio")],
+        default="retirada",
+        blank=True,
+    )
+    endereco_completo = models.TextField(blank=True)
     mensagem = models.TextField(blank=True)
     observacao = models.TextField(blank=True)
     ip = models.GenericIPAddressField(null=True, blank=True)
     navegador = models.CharField(max_length=255, blank=True)
+    anonimizado_em = models.DateTimeField(null=True, blank=True)
     criado_em = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -271,6 +340,55 @@ class Lead(models.Model):
         if self.produto:
             return f"Lead - {self.produto.nome}"
         return f"Lead - {self.loja.nome}"
+
+    @property
+    def anonimizado(self):
+        return self.anonimizado_em is not None
+
+    def anonimizar(self, commit=True):
+        self.cliente_nome = ""
+        self.cliente_telefone = ""
+        self.endereco_completo = ""
+        self.mensagem = ""
+        self.observacao = ""
+        self.ip = None
+        self.navegador = ""
+        self.anonimizado_em = timezone.now()
+        if commit:
+            self.save(
+                update_fields=[
+                    "cliente_nome",
+                    "cliente_telefone",
+                    "endereco_completo",
+                    "mensagem",
+                    "observacao",
+                    "ip",
+                    "navegador",
+                    "anonimizado_em",
+                ]
+            )
+
+
+class AceiteLegal(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="aceites_legais",
+    )
+    termos_versao = models.CharField(max_length=20)
+    privacidade_versao = models.CharField(max_length=20)
+    fonte = models.CharField(max_length=40, blank=True)
+    ip = models.GenericIPAddressField(null=True, blank=True)
+    navegador = models.CharField(max_length=255, blank=True)
+    criado_em = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-criado_em"]
+        verbose_name = "Aceite legal"
+        verbose_name_plural = "Aceites legais"
+
+    def __str__(self):
+        return f"Aceite legal - {self.user_id} - {self.termos_versao}"
 
 
 def pagamento_referencia_padrao():
@@ -366,3 +484,45 @@ class Pagamento(models.Model):
                 "pagamento_referencia",
             ]
         )
+
+
+# Sinais para invalidação do cache do catálogo da loja
+from django.db.models.signals import post_save, post_delete
+from django.dispatch import receiver
+from django.core.cache import cache
+
+def invalidar_cache_loja(loja_id):
+    if not loja_id:
+        return
+    key = f"loja_cache_version_{loja_id}"
+    try:
+        cache.incr(key)
+    except ValueError:
+        cache.set(key, 1)
+
+@receiver(post_save, sender=Loja)
+@receiver(post_delete, sender=Loja)
+def signal_loja(sender, instance, **kwargs):
+    invalidar_cache_loja(instance.id)
+
+@receiver(post_save, sender=Categoria)
+@receiver(post_delete, sender=Categoria)
+def signal_categoria(sender, instance, **kwargs):
+    invalidar_cache_loja(instance.loja_id)
+
+@receiver(post_save, sender=Produto)
+@receiver(post_delete, sender=Produto)
+def signal_produto(sender, instance, **kwargs):
+    invalidar_cache_loja(instance.loja_id)
+
+@receiver(post_save, sender=ProdutoImagem)
+@receiver(post_delete, sender=ProdutoImagem)
+def signal_produto_imagem(sender, instance, **kwargs):
+    if hasattr(instance, "produto") and instance.produto:
+        invalidar_cache_loja(instance.produto.loja_id)
+
+@receiver(post_save, sender=ProdutoVariacao)
+@receiver(post_delete, sender=ProdutoVariacao)
+def signal_produto_variacao(sender, instance, **kwargs):
+    if hasattr(instance, "produto") and instance.produto:
+        invalidar_cache_loja(instance.produto.loja_id)

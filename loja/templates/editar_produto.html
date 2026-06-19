@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Editar - {{ produto.nome }}</title>
     <link rel="stylesheet" href="/static/css/catalogo.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
 </head>
 <body>
     <header class="panel-header">
@@ -46,5 +47,7 @@
             <p class="panel-help">Novas fotos adicionais serão somadas às fotos existentes.</p>
         </section>
     </main>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
+    <script src="/static/js/product_editor.js" defer></script>
 </body>
 </html>

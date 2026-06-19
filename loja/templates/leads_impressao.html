@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Relatório de Leads - {{ loja.nome }}</title>
+    <style>
+        :root {
+            --ink: #111827;
+            --muted: #4b5563;
+            --line: #e5e7eb;
+            --surface: #ffffff;
+            --shadow: rgba(0, 0, 0, 0.05);
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            color: var(--ink);
+            background: var(--surface);
+            line-height: 1.5;
+            margin: 0;
+            padding: 2rem;
+        }
+        .header {
+            border-bottom: 2px solid var(--ink);
+            padding-bottom: 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 1.8rem;
+            font-weight: 800;
+        }
+        .header p {
+            margin: 0.25rem 0 0 0;
+            color: var(--muted);
+            font-size: 0.95rem;
+        }
+        .meta-info {
+            text-align: right;
+            font-size: 0.9rem;
+            color: var(--muted);
+        }
+        .meta-info strong {
+            color: var(--ink);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 3rem;
+            font-size: 0.85rem;
+        }
+        th, td {
+            text-align: left;
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--line);
+            vertical-align: top;
+        }
+        th {
+            background-color: #f9fafb;
+            font-weight: 700;
+            color: var(--ink);
+            border-top: 1px solid var(--line);
+        }
+        tr:hover {
+            background-color: #f9fafb;
+        }
+        .status-pill {
+            display: inline-block;
+            padding: 0.15rem 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            border-radius: 9999px;
+            background: #e5e7eb;
+        }
+        .status-pill.active {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .status-pill.warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        .actions-bar {
+            background: #f3f4f6;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+        .btn {
+            background: var(--ink);
+            color: #fff;
+            border: 0;
+            padding: 8px 16px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .btn.secondary {
+            background: #fff;
+            color: var(--ink);
+            border: 1px solid var(--line);
+        }
+        .btn:hover {
+            opacity: 0.9;
+        }
+        @media print {
+            .actions-bar {
+                display: none;
+            }
+            body {
+                padding: 0;
+            }
+            th {
+                background-color: #f3f4f6 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="actions-bar">
+        <button class="btn secondary" onclick="window.close();">Fechar</button>
+        <button class="btn" onclick="window.print();">Imprimir / Salvar PDF</button>
+    </div>
+
+    <div class="header">
+        <div>
+            <h1>{{ loja.nome }}</h1>
+            <p>Relatório de leads e interesses comerciais</p>
+        </div>
+        <div class="meta-info">
+            <span>Gerado em: <strong>{% now "d/m/Y H:i" %}</strong></span><br>
+            <span>Total de Leads: <strong>{{ leads|length }}</strong></span>
+        </div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 12%">Data</th>
+                <th style="width: 12%">Cliente</th>
+                <th style="width: 12%">Contato</th>
+                <th style="width: 10%">Vendedor</th>
+                <th style="width: 10%">Origem</th>
+                <th style="width: 18%">Produto / Detalhes</th>
+                <th style="width: 16%">Entrega</th>
+                <th style="width: 10%">Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for lead in leads %}
+                <tr>
+                    <td>{{ lead.criado_em|date:"d/m/Y H:i" }}</td>
+                    <td>{{ lead.cliente_nome|default:"-" }}</td>
+                    <td>{{ lead.cliente_telefone|default:"-" }}</td>
+                    <td>{{ lead.vendedor.nome|default:"Direto" }}</td>
+                    <td>{{ lead.get_origem_display }}</td>
+                    <td>
+                        {% if lead.produto %}
+                            <strong>{{ lead.produto.nome }}</strong>
+                            {% if lead.tamanho or lead.cor %}
+                                <br><small>({{ lead.tamanho|default:"Sem tam." }} / {{ lead.cor|default:"Sem cor" }})</small>
+                            {% endif %}
+                        {% else %}
+                            <em>Sacolinha</em>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <strong>{{ lead.get_tipo_entrega_display }}</strong>
+                        {% if lead.endereco_completo %}
+                            <br><small>{{ lead.endereco_completo }}</small>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <span class="status-pill {% if lead.status == 'concluido' %}active{% elif lead.status == 'atendimento' %}warning{% endif %}">
+                            {{ lead.get_status_display }}
+                        </span>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="8" style="text-align: center; padding: 2rem;">Nenhum lead registrado ainda.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <script>
+        // Dispara o diálogo de impressão automaticamente após carregar a página
+        window.addEventListener("DOMContentLoaded", () => {
+            setTimeout(() => {
+                window.print();
+            }, 600);
+        });
+    </script>
+</body>
+</html>

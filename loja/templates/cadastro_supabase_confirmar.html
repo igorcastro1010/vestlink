@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% if google_oauth %}Entrando com Google{% else %}Confirmando e-mail{% endif %} - VestLink</title>
+    <link rel="stylesheet" href="/static/css/catalogo.css?v=75">
+</head>
+<body class="auth-page">
+    <main class="auth-card">
+        <p class="eyebrow">{% if google_oauth %}Acesso com Google{% else %}Confirmação{% endif %}</p>
+        <h1>{% if google_oauth %}Entrando na sua conta{% else %}Confirmando seu e-mail{% endif %}</h1>
+        <p data-confirmation-status>
+            {% if google_oauth %}
+                Estamos conectando sua conta Google ao VestLink.
+            {% else %}
+                Estamos validando sua conta. Aguarde alguns segundos.
+            {% endif %}
+        </p>
+        <p class="auth-switch"><a href="{% url 'login' %}">Voltar para entrar</a></p>
+    </main>
+    <script>
+        const statusText = document.querySelector("[data-confirmation-status]");
+        const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+        const accessToken = hashParams.get("access_token");
+        const errorDescription = hashParams.get("error_description") || hashParams.get("error");
+
+        const updateStatus = (message) => {
+            if (statusText) statusText.textContent = message;
+        };
+
+        if (errorDescription) {
+            updateStatus(errorDescription);
+        } else if (!accessToken) {
+            updateStatus("Nao encontramos o token de confirmacao. Abra o link mais recente enviado para o seu e-mail.");
+        } else {
+            fetch("{% if google_oauth %}{% url 'supabase_google_sessao' %}{% else %}{% url 'supabase_confirmar_sessao' %}{% endif %}", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({access_token: accessToken}),
+            })
+                .then((response) => response.json().then((data) => ({ok: response.ok, data})))
+                .then(({ok, data}) => {
+                    if (!ok) throw new Error(data.error || "{% if google_oauth %}Não foi possível entrar com o Google.{% else %}Não foi possível confirmar seu e-mail.{% endif %}");
+                    updateStatus("{% if google_oauth %}Conta conectada. Redirecionando...{% else %}E-mail confirmado. Redirecionando...{% endif %}");
+                    window.location.href = data.redirect_url;
+                })
+                .catch((error) => {
+                    updateStatus(error.message);
+                });
+        }
+    </script>
+</body>
+</html>

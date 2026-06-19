@@ -4,12 +4,27 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Criar conta - VestLink</title>
-    <link rel="stylesheet" href="/static/css/catalogo.css?v=25">
+    <link rel="stylesheet" href="/static/css/catalogo.css?v=75">
+    <script>
+        (function() {
+            const theme = localStorage.getItem("theme") || "light";
+            document.documentElement.setAttribute("data-theme", theme);
+        })();
+    </script>
 </head>
 <body class="auth-page">
     <main class="auth-card auth-card--wide">
-        <p class="eyebrow">Teste gratis por 7 dias</p>
+        <p class="eyebrow">Teste grátis por 7 dias</p>
         <h1>Criar conta e primeira loja</h1>
+        {% for message in messages %}
+            <p class="auth-message auth-message--{{ message.tags }}">{{ message }}</p>
+        {% endfor %}
+        <a class="google-auth-button" href="{% url 'google_oauth_start' %}?origin=cadastro" aria-label="Criar conta com Google">
+            <img class="google-auth-button__mark" src="/static/images/google-g.svg" alt="" aria-hidden="true">
+            <span class="google-auth-button__wordmark" aria-hidden="true">Google</span>
+        </a>
+        <p class="auth-legal-note">Ao continuar com Google, você aceita os <a href="{% url 'termos_uso' %}?voltar=cadastro">Termos de Uso</a> e a <a href="{% url 'politica_privacidade' %}?voltar=cadastro">Política de Privacidade</a>.</p>
+        <div class="auth-divider"><span>ou preencha seus dados</span></div>
         <form class="panel-form signup-wizard" method="post">
             {% csrf_token %}
             {{ form.non_field_errors }}
@@ -19,18 +34,86 @@
                 {{ form.email.as_field_group }}
                 {{ form.password1.as_field_group }}
                 {{ form.password2.as_field_group }}
+                <div class="password-requirements" id="password-requirements" data-password-requirements aria-live="polite">
+                    <strong>Sua senha precisa ter:</strong>
+                    <ul>
+                        <li data-rule="length">Pelo menos 8 caracteres</li>
+                        <li data-rule="lettersNumbers">Letras e números</li>
+                        <li data-rule="uppercase">Uma letra maiúscula</li>
+                        <li data-rule="special">Um caractere especial</li>
+                        <li data-rule="notNumeric">Não ser apenas números</li>
+                        <li data-rule="notCommon">Não ser uma senha comum</li>
+                        <li data-rule="match">Confirmação igual à senha</li>
+                    </ul>
+                </div>
             </section>
             <section>
                 <h2>Primeira loja</h2>
-                <p class="helptext">Opcional, mas recomendado: voce ja sai com o painel da loja pronto.</p>
+                <p class="helptext">Obrigatório: informe os dados abaixo para criar sua primeira loja. Apenas o Instagram é opcional.</p>
                 {{ form.loja_nome.as_field_group }}
                 {{ form.loja_slug.as_field_group }}
                 {{ form.loja_telefone.as_field_group }}
                 {{ form.loja_instagram.as_field_group }}
             </section>
+            <section class="legal-acceptance">
+                {{ form.aceite_termos.errors }}
+                <label>
+                    {{ form.aceite_termos }}
+                    <span>Li e aceito os <a href="{% url 'termos_uso' %}?voltar=cadastro">Termos de Uso</a> e a <a href="{% url 'politica_privacidade' %}?voltar=cadastro">Política de Privacidade</a>.</span>
+                </label>
+            </section>
             <button type="submit">Criar conta</button>
         </form>
-        <p>Ja tem conta? <a href="{% url 'login' %}">Entrar</a></p>
+        <p>Já tem conta? <a href="{% url 'login' %}">Entrar</a></p>
     </main>
+    <script>
+        const passwordPrimary = document.querySelector("[data-password-primary]");
+        const passwordConfirm = document.querySelector("[data-password-confirm]");
+        const requirements = document.querySelector("[data-password-requirements]");
+
+        if (passwordPrimary && passwordConfirm && requirements) {
+            const commonPasswords = new Set([
+                "12345678",
+                "123456789",
+                "password",
+                "senha123",
+                "qwerty123",
+                "admin123",
+                "vestlink",
+            ]);
+            const rules = {
+                length: (value) => value.length >= 8,
+                lettersNumbers: (value) => /[A-Za-zÀ-ÿ]/.test(value) && /\d/.test(value),
+                uppercase: (value) => /[A-ZÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇ]/.test(value),
+                special: (value) => /[^A-Za-z0-9ÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇáàâãéèêíïóôõöúç]/.test(value),
+                notNumeric: (value) => value.length > 0 && !/^\d+$/.test(value),
+                notCommon: (value) => value.length > 0 && !commonPasswords.has(value.toLowerCase()),
+                match: (value, confirmation) => value.length > 0 && value === confirmation,
+            };
+
+            const setRuleState = (name, isValid, hasInput) => {
+                const item = requirements.querySelector(`[data-rule="${name}"]`);
+                if (!item) return;
+                item.classList.toggle("is-valid", hasInput && isValid);
+                item.classList.toggle("is-invalid", hasInput && !isValid);
+            };
+
+            const refreshPasswordRequirements = () => {
+                const value = passwordPrimary.value;
+                const confirmation = passwordConfirm.value;
+                const hasPassword = value.length > 0;
+                const hasConfirmation = confirmation.length > 0;
+
+                Object.entries(rules).forEach(([name, validator]) => {
+                    const hasInput = name === "match" ? hasConfirmation || hasPassword : hasPassword;
+                    setRuleState(name, validator(value, confirmation), hasInput);
+                });
+            };
+
+            passwordPrimary.addEventListener("input", refreshPasswordRequirements);
+            passwordConfirm.addEventListener("input", refreshPasswordRequirements);
+            refreshPasswordRequirements();
+        }
+    </script>
 </body>
 </html>

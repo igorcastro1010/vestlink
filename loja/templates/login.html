@@ -4,17 +4,30 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Entrar - VestLink</title>
-    <link rel="stylesheet" href="/static/css/catalogo.css?v=24">
+    <link rel="stylesheet" href="/static/css/catalogo.css?v=75">
+    <script>
+        (function() {
+            const theme = localStorage.getItem("theme") || "light";
+            document.documentElement.setAttribute("data-theme", theme);
+        })();
+    </script>
 </head>
 <body class="auth-page">
+    <a class="auth-back-link" href="{% url 'home' %}">
+        <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+            <path d="M19 12H5"></path>
+            <path d="m12 19-7-7 7-7"></path>
+        </svg>
+        <span>Voltar ao início</span>
+    </a>
     <main class="auth-layout">
         <section class="auth-copy">
             <a class="auth-logo" href="/">VestLink</a>
             <p class="eyebrow">Painel do lojista</p>
-            <h1>Entre e atualize seu catalogo em minutos.</h1>
+            <h1>Entre e atualize seu catálogo em minutos.</h1>
             <p>Cadastre produtos, organize tamanhos e cores, e envie o link profissional da loja direto pelo WhatsApp.</p>
             <div class="auth-highlights">
-                <span>Catalogo online</span>
+                <span>Catálogo online</span>
                 <span>Venda pelo WhatsApp</span>
                 <span>Sem app para baixar</span>
             </div>
@@ -23,6 +36,15 @@
         <section class="auth-card">
             <p class="eyebrow">Acesso seguro</p>
             <h2>Entrar na conta</h2>
+            {% for message in messages %}
+                <p class="auth-message auth-message--{{ message.tags }}">{{ message }}</p>
+            {% endfor %}
+            <a class="google-auth-button" href="{% url 'google_oauth_start' %}?origin=login" aria-label="Continuar com Google">
+                <img class="google-auth-button__mark" src="/static/images/google-g.svg" alt="" aria-hidden="true">
+                <span class="google-auth-button__wordmark" aria-hidden="true">Google</span>
+            </a>
+            <p class="auth-legal-note">Ao continuar, você aceita os <a href="{% url 'termos_uso' %}?voltar=login">Termos de Uso</a> e a <a href="{% url 'politica_privacidade' %}?voltar=login">Política de Privacidade</a>.</p>
+            <div class="auth-divider"><span>ou entre com usuário e senha</span></div>
             <form class="panel-form" method="post">
                 {% csrf_token %}
                 {{ form.non_field_errors }}
@@ -36,19 +58,23 @@
                     <span class="password-input-wrap">
                         {{ form.password }}
                         <button class="password-toggle" type="button" aria-label="Mostrar senha" aria-pressed="false" data-password-toggle>
-                            <span class="password-toggle__icon" aria-hidden="true"></span>
+                            <svg class="password-toggle__icon" aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+                                <path d="M2.8 12s3.4-6 9.2-6 9.2 6 9.2 6-3.4 6-9.2 6-9.2-6-9.2-6Z"></path>
+                                <circle cx="12" cy="12" r="2.6"></circle>
+                            </svg>
                         </button>
                     </span>
                     {{ form.password.errors }}
                 </p>
                 <label class="remember-me">
                     <input type="checkbox" name="remember_me" value="1">
-                    <span>Manter conectado por 30 dias</span>
+                    <span>Manter conectado</span>
                 </label>
                 <button type="submit">Entrar</button>
             </form>
             <p class="auth-switch"><a href="{% url 'recuperar_senha' %}">Esqueci minha senha</a></p>
-            <p class="auth-switch">Ainda nao tem conta? <a href="{% url 'cadastro' %}">Criar cadastro</a></p>
+            <p class="auth-switch">Ainda não tem conta? <a href="{% url 'cadastro' %}">Criar cadastro</a></p>
+            <p class="auth-switch auth-switch--legal"><a href="{% url 'termos_uso' %}?voltar=login">Termos</a> · <a href="{% url 'politica_privacidade' %}?voltar=login">Privacidade</a></p>
         </section>
     </main>
     <script>

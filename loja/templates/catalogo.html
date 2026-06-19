@@ -4,7 +4,23 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ loja.nome }}</title>
-    <link rel="stylesheet" href="/static/css/catalogo.css?v=19">
+    <meta name="description" content="{{ loja.descricao|default:'Confira nosso catálogo digital!' }}">
+    <meta property="og:title" content="{{ loja.nome }}">
+    <meta property="og:description" content="{{ loja.descricao|default:'Confira nosso catálogo digital!' }}">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ request.build_absolute_uri }}">
+    {% if loja.logo %}
+        <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ loja.logo.url }}">
+    {% elif loja.banner_imagem %}
+        <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ loja.banner_imagem.url }}">
+    {% endif %}
+    <link rel="stylesheet" href="/static/css/catalogo.css?v=75">
+    <script>
+        (function() {
+            const theme = localStorage.getItem("theme") || "light";
+            document.documentElement.setAttribute("data-theme", theme);
+        })();
+    </script>
 </head>
 <body class="storefront store-theme-{{ loja.tema }}">
     <header class="store-header" style="--brand: {{ loja.cor_principal }}">
@@ -13,11 +29,11 @@
                 <img class="store-logo-image" src="{{ loja.logo.url }}" alt="{{ loja.nome }}">
             {% endif %}
             <div>
-                <p class="eyebrow">Catalogo digital</p>
+                <p class="eyebrow">Catálogo digital</p>
                 <h1>{{ loja.nome }}</h1>
                 {% if loja.descricao %}<p>{{ loja.descricao }}</p>{% endif %}
             </div>
-            <div class="store-header__meta" aria-label="Beneficios do catalogo">
+            <div class="store-header__meta" aria-label="Benefícios do catálogo">
                 <span>Pedido pelo WhatsApp</span>
                 <span>Escolha tamanho e cor</span>
                 <span>Link sempre atualizado</span>
@@ -43,8 +59,41 @@
             </div>
             <div class="cart-checkout">
                 <label>Seu nome <input type="text" data-cart-customer-name placeholder="Ex.: Ana"></label>
-                <label>Seu WhatsApp <input type="tel" data-cart-customer-phone placeholder="DDD + numero"></label>
-                <label>Observacao <textarea data-cart-note rows="2" placeholder="Ex.: quero retirar na loja"></textarea></label>
+                <label>Seu WhatsApp <input type="tel" data-cart-customer-phone placeholder="DDD + número"></label>
+                
+                <div class="delivery-options-container" style="margin: 1rem 0;">
+                    <span style="display: block; font-size: 0.9rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--ink);">Como prefere receber?</span>
+                    <div class="segmented-control" style="position: relative; display: flex; background: var(--line, #e7e1dc); border-radius: 10px; padding: 4px; z-index: 1; overflow: hidden; height: 42px; align-items: center;">
+                        <div class="segmented-indicator" style="position: absolute; top: 4px; bottom: 4px; left: 4px; width: calc(50% - 4px); background: var(--surface, #ffffff); border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1); z-index: 0;"></div>
+                        
+                        <label class="delivery-opt-label" style="flex: 1; display: flex; align-items: center; justify-content: center; height: 100%; cursor: pointer; color: var(--ink); font-size: 0.85rem; font-weight: 600; text-align: center; position: relative; z-index: 2; user-select: none;">
+                            <input type="radio" name="tipo_entrega" value="retirada" checked data-cart-delivery-type style="position: absolute; opacity: 0; pointer-events: none; width: 0; height: 0; margin: 0;">
+                            <span>Retirada</span>
+                        </label>
+                        
+                        <label class="delivery-opt-label" style="flex: 1; display: flex; align-items: center; justify-content: center; height: 100%; cursor: pointer; color: var(--ink); font-size: 0.85rem; font-weight: 600; text-align: center; position: relative; z-index: 2; user-select: none;">
+                            <input type="radio" name="tipo_entrega" value="entrega" data-cart-delivery-type style="position: absolute; opacity: 0; pointer-events: none; width: 0; height: 0; margin: 0;">
+                            <span>Entrega</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="address-fields-container" data-address-fields>
+                    <div class="address-inner-container" style="display: flex; flex-direction: column; gap: 8px; padding-top: 4px;">
+                        <label>CEP <input type="text" data-cart-address-cep placeholder="00000-000"></label>
+                        <div style="display: flex; gap: 8px;">
+                            <label style="flex: 3;">Rua <input type="text" data-cart-address-street placeholder="Rua / Av."></label>
+                            <label style="flex: 1;">Nº <input type="text" data-cart-address-number placeholder="123"></label>
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <label style="flex: 1;">Bairro <input type="text" data-cart-address-neighborhood placeholder="Bairro"></label>
+                            <label style="flex: 1;">Cidade <input type="text" data-cart-address-city placeholder="Cidade"></label>
+                        </div>
+                        <label>Complemento <input type="text" data-cart-address-complement placeholder="Apto, Bloco, etc. (Opcional)"></label>
+                    </div>
+                </div>
+
+                <label>Observação <textarea data-cart-note rows="2" placeholder="Ex.: quero retirar na loja"></textarea></label>
             </div>
             <a class="cart-send" data-cart-send href="{% url 'whatsapp_carrinho' loja.slug %}" target="_blank" rel="noopener">Enviar pelo WhatsApp</a>
             <button class="cart-clear" type="button" data-cart-clear>Limpar</button>
@@ -56,10 +105,10 @@
             <button class="menu-mark" type="button" aria-label="Menu"></button>
             <h2>Produtos</h2>
             <nav class="categories" aria-label="Categorias">
-                <a class="{% if not categoria_ativa %}active{% endif %}" href="{{ loja.get_absolute_url }}">Todos</a>
+                <a class="{% if not categoria_ativa %}active{% endif %}" href="{{ loja.get_absolute_url }}?{% if ordenacao %}ordenacao={{ ordenacao }}&{% endif %}{% if filtro %}filtro={{ filtro }}&{% endif %}{% if vendedor_codigo %}vendedor={{ vendedor_codigo }}&{% endif %}">Todos</a>
                 {% for categoria in categorias %}
                     <a class="{% if categoria_ativa == categoria.id|stringformat:'s' %}active{% endif %}"
-                       href="?categoria={{ categoria.id }}{% if busca %}&q={{ busca|urlencode }}{% endif %}">
+                       href="?categoria={{ categoria.id }}{% if busca %}&q={{ busca|urlencode }}{% endif %}{% if filtro %}&filtro={{ filtro }}{% endif %}{% if ordenacao %}&ordenacao={{ ordenacao }}{% endif %}{% if vendedor_codigo %}&vendedor={{ vendedor_codigo }}{% endif %}">
                         {{ categoria.nome }}
                     </a>
                 {% endfor %}
@@ -71,13 +120,13 @@
                      {% if loja.banner_imagem %}style="background-image: linear-gradient(90deg, rgba(23,18,63,0.82), rgba(23,18,63,0.24)), url('{{ loja.banner_imagem.url }}')"{% endif %}>
                 <div>
                     <p class="eyebrow">Vitrine online</p>
-                    <h2>{% if loja.banner_titulo %}{{ loja.banner_titulo }}{% else %}Novidades selecionadas para voce{% endif %}</h2>
+                    <h2>{% if loja.banner_titulo %}{{ loja.banner_titulo }}{% else %}Novidades selecionadas para você{% endif %}</h2>
                     <p>{% if loja.banner_texto %}{{ loja.banner_texto }}{% else %}Escolha seus produtos favoritos e envie tudo junto pelo WhatsApp.{% endif %}</p>
                 </div>
                 <a href="#produtos" class="catalog-banner__cta">Ver produtos</a>
             </section>
 
-            <section class="store-summary" aria-label="Resumo do catalogo">
+            <section class="store-summary" aria-label="Resumo do catálogo">
                 <article>
                     <strong>{{ produtos|length }}</strong>
                     <span>Produtos na vitrine</span>
@@ -92,25 +141,54 @@
                 </article>
             </section>
 
-            <div class="store-topbar">
+            <div class="store-topbar" style="display: flex; justify-content: space-between; align-items: center; gap: 15px; flex-wrap: wrap;">
                 <span class="store-logo">{{ loja.nome }}</span>
-                <form class="search" method="get">
-                    {% if categoria_ativa %}
-                        <input type="hidden" name="categoria" value="{{ categoria_ativa }}">
-                    {% endif %}
-                    {% if filtro %}
-                        <input type="hidden" name="filtro" value="{{ filtro }}">
-                    {% endif %}
-                    <input type="search" name="q" value="{{ busca }}" placeholder="Buscar peca, cor ou tamanho">
-                    <button type="submit" aria-label="Buscar">Buscar</button>
-                </form>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+                    <form class="search" method="get" style="margin-bottom: 0;">
+                        {% if categoria_ativa %}
+                            <input type="hidden" name="categoria" value="{{ categoria_ativa }}">
+                        {% endif %}
+                        {% if filtro %}
+                            <input type="hidden" name="filtro" value="{{ filtro }}">
+                        {% endif %}
+                        {% if ordenacao %}
+                            <input type="hidden" name="ordenacao" value="{{ ordenacao }}">
+                        {% endif %}
+                        {% if vendedor_codigo %}
+                            <input type="hidden" name="vendedor" value="{{ vendedor_codigo }}">
+                        {% endif %}
+                        <input type="search" name="q" value="{{ busca }}" placeholder="Buscar peça, cor ou tamanho">
+                        <button type="submit" aria-label="Buscar">Buscar</button>
+                    </form>
+                    
+                    <form method="get" style="margin: 0;">
+                        {% if categoria_ativa %}
+                            <input type="hidden" name="categoria" value="{{ categoria_ativa }}">
+                        {% endif %}
+                        {% if filtro %}
+                            <input type="hidden" name="filtro" value="{{ filtro }}">
+                        {% endif %}
+                        {% if busca %}
+                            <input type="hidden" name="q" value="{{ busca }}">
+                        {% endif %}
+                        {% if vendedor_codigo %}
+                            <input type="hidden" name="vendedor" value="{{ vendedor_codigo }}">
+                        {% endif %}
+                        <select name="ordenacao" onchange="this.form.submit()" style="border: 1px solid var(--line); border-radius: 8px; font: inherit; min-height: 46px; padding: 0 14px; background: var(--surface); color: var(--ink); cursor: pointer;">
+                            <option value="">Ordenar por...</option>
+                            <option value="preco_asc" {% if ordenacao == 'preco_asc' %}selected{% endif %}>Menor preço</option>
+                            <option value="preco_desc" {% if ordenacao == 'preco_desc' %}selected{% endif %}>Maior preço</option>
+                            <option value="nome" {% if ordenacao == 'nome' %}selected{% endif %}>Nome (A-Z)</option>
+                        </select>
+                    </form>
+                </div>
             </div>
 
-            <nav class="store-filters" aria-label="Filtros rapidos">
-                <a class="{% if not filtro %}active{% endif %}" href="{{ loja.get_absolute_url }}{% if categoria_ativa %}?categoria={{ categoria_ativa }}{% endif %}">Todos</a>
-                <a class="{% if filtro == 'novos' %}active{% endif %}" href="?filtro=novos{% if categoria_ativa %}&categoria={{ categoria_ativa }}{% endif %}{% if busca %}&q={{ busca|urlencode }}{% endif %}">Novos</a>
-                <a class="{% if filtro == 'promocoes' %}active{% endif %}" href="?filtro=promocoes{% if categoria_ativa %}&categoria={{ categoria_ativa }}{% endif %}{% if busca %}&q={{ busca|urlencode }}{% endif %}">Promocoes</a>
-                <a class="{% if filtro == 'disponiveis' %}active{% endif %}" href="?filtro=disponiveis{% if categoria_ativa %}&categoria={{ categoria_ativa }}{% endif %}{% if busca %}&q={{ busca|urlencode }}{% endif %}">Disponiveis</a>
+            <nav class="store-filters" aria-label="Filtros rápidos">
+                <a class="{% if not filtro %}active{% endif %}" href="{{ loja.get_absolute_url }}?{% if categoria_ativa %}categoria={{ categoria_ativa }}&{% endif %}{% if ordenacao %}ordenacao={{ ordenacao }}&{% endif %}{% if vendedor_codigo %}vendedor={{ vendedor_codigo }}&{% endif %}">Todos</a>
+                <a class="{% if filtro == 'novos' %}active{% endif %}" href="?filtro=novos{% if categoria_ativa %}&categoria={{ categoria_ativa }}{% endif %}{% if busca %}&q={{ busca|urlencode }}{% endif %}{% if ordenacao %}&ordenacao={{ ordenacao }}{% endif %}{% if vendedor_codigo %}&vendedor={{ vendedor_codigo }}{% endif %}">Novos</a>
+                <a class="{% if filtro == 'promocoes' %}active{% endif %}" href="?filtro=promocoes{% if categoria_ativa %}&categoria={{ categoria_ativa }}{% endif %}{% if busca %}&q={{ busca|urlencode }}{% endif %}{% if ordenacao %}&ordenacao={{ ordenacao }}{% endif %}{% if vendedor_codigo %}&vendedor={{ vendedor_codigo }}{% endif %}">Promoções</a>
+                <a class="{% if filtro == 'disponiveis' %}active{% endif %}" href="?filtro=disponiveis{% if categoria_ativa %}&categoria={{ categoria_ativa }}{% endif %}{% if busca %}&q={{ busca|urlencode }}{% endif %}{% if ordenacao %}&ordenacao={{ ordenacao }}{% endif %}{% if vendedor_codigo %}&vendedor={{ vendedor_codigo }}{% endif %}">Disponíveis</a>
             </nav>
 
             <section class="promo-grid" aria-label="Destaques da loja">
@@ -145,141 +223,30 @@
                 {% endfor %}
             </section>
 
-            <h2 class="section-title">{% if filtro == "novos" %}Novos produtos{% elif filtro == "promocoes" %}Promocoes{% elif filtro == "disponiveis" %}Disponiveis agora{% else %}Novidades{% endif %}</h2>
+            <h2 class="section-title">{% if filtro == "novos" %}Novos produtos{% elif filtro == "promocoes" %}Promoções{% elif filtro == "disponiveis" %}Disponíveis agora{% else %}Novidades{% endif %}</h2>
 
             <section class="grid" id="produtos" aria-label="Produtos">
-                {% for produto in produtos %}
-                    <article id="produto-{{ produto.id }}" class="product {% if produto.esgotado %}product--sold{% endif %}">
-                        <button class="favorite-button" type="button" aria-label="Favoritar {{ produto.nome }}">♥</button>
-
-                        <div class="product__media">
-                            <img class="product__main-image" src="{{ produto.imagem.url }}" alt="{{ produto.nome }}">
-                            <div class="badges">
-                                {% if produto.destaque %}<span>Novo</span>{% endif %}
-                                {% if produto.promocao %}<span>Promocao</span>{% endif %}
-                                {% if produto.esgotado %}<span>Esgotado</span>{% endif %}
-                            </div>
-                        </div>
-
-                        {% if produto.imagens.all %}
-                            <div class="gallery" aria-label="Fotos de {{ produto.nome }}">
-                                <button type="button"
-                                        class="gallery-thumb active"
-                                        data-image="{{ produto.imagem.url }}"
-                                        data-alt="{{ produto.nome }}"
-                                        aria-pressed="true">
-                                    <img src="{{ produto.imagem.url }}" alt="{{ produto.nome }}">
-                                </button>
-                                {% for foto in produto.imagens.all %}
-                                    <button type="button"
-                                            class="gallery-thumb"
-                                            data-image="{{ foto.imagem.url }}"
-                                            data-alt="{{ produto.nome }} - foto {{ forloop.counter|add:1 }}"
-                                            aria-pressed="false">
-                                        <img src="{{ foto.imagem.url }}" alt="{{ produto.nome }} - foto {{ forloop.counter|add:1 }}">
-                                    </button>
-                                {% endfor %}
-                            </div>
-                        {% endif %}
-
-                        <div class="product__body">
-                            <h2>{{ produto.nome }}</h2>
-                            {% if produto.descricao %}<p>{{ produto.descricao }}</p>{% endif %}
-                            <a class="product-detail-link" href="{% url 'produto_detalhe_curto' loja.slug produto.id %}">Ver detalhes</a>
-                            <div class="price-stack">
-                                {% if produto.preco_antigo %}
-                                    <span>R$ {{ produto.preco_antigo }}</span>
-                                {% endif %}
-                                <strong>R$ {{ produto.preco }}</strong>
-                            </div>
-
-                            {% if produto.tamanhos_lista %}
-                                <div class="option-group" aria-label="Tamanhos">
-                                    <span class="option-label">Tamanho</span>
-                                    {% for tamanho in produto.tamanhos_lista %}
-                                        {% with tamanho_normalizado=tamanho|lower %}
-                                        <button type="button"
-                                                class="choice-option size-option{% if tamanho_normalizado in produto.tamanhos_esgotados_lista %} choice-option--sold{% endif %}"
-                                                data-size="{{ tamanho }}"
-                                                aria-pressed="false"
-                                                {% if tamanho_normalizado in produto.tamanhos_esgotados_lista %}disabled aria-disabled="true" title="Tamanho esgotado"{% endif %}>
-                                            {{ tamanho }}
-                                        </button>
-                                        {% endwith %}
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
-
-                            {% if produto.cores_lista %}
-                                <div class="option-group" aria-label="Cores">
-                                    <span class="option-label">Cor</span>
-                                    {% for cor in produto.cores_lista %}
-                                        {% with cor_normalizada=cor|lower %}
-                                        <button type="button"
-                                                class="choice-option color-option{% if cor_normalizada in produto.cores_esgotadas_lista %} choice-option--sold{% endif %}"
-                                                data-color="{{ cor }}"
-                                                aria-pressed="false"
-                                                {% if cor_normalizada in produto.cores_esgotadas_lista %}disabled aria-disabled="true" title="Cor esgotada"{% endif %}>
-                                            {{ cor }}
-                                        </button>
-                                        {% endwith %}
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
-
-                            {% if produto.variacoes.all %}
-                                <div class="variant-stock-list">
-                                    <span class="option-label">Estoque por variacao</span>
-                                    {% for variacao in produto.variacoes.all %}
-                                        <span class="{% if not variacao.disponivel %}sold{% endif %}">
-                                            {{ variacao.cor }} / {{ variacao.tamanho }}: {% if variacao.disponivel %}{{ variacao.estoque }} un.{% else %}esgotado{% endif %}
-                                        </span>
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
-
-                            {% if produto.esgotado %}
-                                <button class="whatsapp" disabled>Esgotado</button>
-                            {% else %}
-                                <button class="add-cart-button"
-                                        type="button"
-                                        data-cart-product="{{ produto.nome }}"
-                                        data-cart-price="R$ {{ produto.preco }}">
-                                    Adicionar a sacolinha
-                                </button>
-                                <a class="whatsapp {% if produto.tamanhos_lista or produto.cores_lista %}whatsapp--requires-choice{% endif %}"
-                                   href="{% url 'whatsapp_produto' loja.slug produto.id %}"
-                                   data-phone="55{{ loja.telefone }}"
-                                   data-product="{{ produto.nome }}"
-                                   data-track-url="{% url 'whatsapp_produto' loja.slug produto.id %}"
-                                   data-base-label="Quero esse"
-                                   data-needs-size="{% if produto.tamanhos_lista %}true{% else %}false{% endif %}"
-                                   data-needs-color="{% if produto.cores_lista %}true{% else %}false{% endif %}"
-                                   target="_blank"
-                                   rel="noopener">
-                                    {% if produto.tamanhos_lista and produto.cores_lista %}
-                                        Escolha tamanho e cor
-                                    {% elif produto.tamanhos_lista %}
-                                        Escolha o tamanho
-                                    {% elif produto.cores_lista %}
-                                        Escolha a cor
-                                    {% else %}
-                                        Quero esse
-                                    {% endif %}
-                                </a>
-                            {% endif %}
-                        </div>
-                    </article>
-                {% empty %}
-                    <p class="empty">Nenhum produto encontrado.</p>
-                {% endfor %}
+                {% load cache %}
+                {% cache 600 catalog_grid loja.id cache_version categoria_ativa filtro busca produtos.number vendedor_codigo ordenacao %}
+                    {% include "includes/produto_grid.html" with produtos=produtos %}
+                {% endcache %}
             </section>
+
+            {% if tem_proxima_pagina %}
+                <div class="load-more-container" style="text-align: center; margin: 2rem 0;">
+                    <button id="btn-carregar-mais" class="add-cart-button" type="button"
+                            data-next-page="{{ proxima_pagina }}"
+                            style="display: inline-block; width: auto; padding: 0.75rem 2.5rem; font-size: 1rem; border-radius: 50px; cursor: pointer;">
+                        Carregar Mais
+                    </button>
+                </div>
+            {% endif %}
 
             <section class="store-footer-contact" aria-label="Contato da loja">
                 <div>
                     <p class="eyebrow">Atendimento</p>
                     <h2>Quer falar direto com a loja?</h2>
-                    <p>Chame no WhatsApp para tirar duvidas, combinar entrega ou pedir ajuda com uma peca.</p>
+                    <p>Chame no WhatsApp para tirar dúvidas, combinar entrega ou pedir ajuda com uma peça.</p>
                 </div>
                 <a class="store-whatsapp-footer" href="https://wa.me/55{{ loja.telefone }}" target="_blank" rel="noopener">WhatsApp da loja</a>
             </section>
@@ -287,12 +254,16 @@
     </main>
 
     <script>
-        document.querySelectorAll(".product").forEach((product) => {
+        const initProduct = (product) => {
+            if (product.dataset.initialized) return;
+            product.dataset.initialized = "true";
+
             const mainImage = product.querySelector(".product__main-image");
             const galleryButtons = product.querySelectorAll(".gallery-thumb");
             const sizeButtons = product.querySelectorAll(".size-option:not(:disabled)");
             const colorButtons = product.querySelectorAll(".color-option:not(:disabled)");
             const whatsapp = product.querySelector(".whatsapp");
+            const customerNameInput = product.querySelector("[data-product-customer-name]");
             const selection = {
                 size: "",
                 color: "",
@@ -359,7 +330,7 @@
                 if (selection.color) {
                     details.push(`cor ${selection.color}`);
                 }
-                const message = `Ola! Tenho interesse na peca: ${productName}, ${details.join(", ")}`;
+                const message = `Olá! Tenho interesse na peça: ${productName}, ${details.join(", ")}`;
                 const labelDetails = [selection.size, selection.color].filter(Boolean).join(" / ");
 
                 const params = new URLSearchParams();
@@ -368,6 +339,13 @@
                 }
                 if (selection.color) {
                     params.set("cor", selection.color);
+                }
+                const customerName = customerNameInput?.value.trim();
+                if (customerName) {
+                    params.set("cliente_nome", customerName);
+                }
+                if (whatsapp.dataset.sellerCode) {
+                    params.set("vendedor", whatsapp.dataset.sellerCode);
                 }
 
                 whatsapp.href = params.toString() ? `${trackUrl}?${params.toString()}` : trackUrl;
@@ -406,6 +384,7 @@
             });
 
             whatsapp.addEventListener("click", (event) => {
+                refreshWhatsapp();
                 if (whatsapp.classList.contains("whatsapp--requires-choice") || whatsapp.classList.contains("whatsapp--unavailable")) {
                     event.preventDefault();
                     const nextChoice = product.querySelector(".choice-option:not(.active):not(:disabled)");
@@ -414,6 +393,8 @@
                     }
                 }
             });
+
+            customerNameInput?.addEventListener("input", refreshWhatsapp);
 
             addCartButton?.addEventListener("click", () => {
                 const name = addCartButton.dataset.cartProduct;
@@ -438,7 +419,63 @@
             });
 
             refreshWhatsapp();
-        });
+        };
+
+        // Inicializa produtos da primeira página
+        document.querySelectorAll(".product").forEach(initProduct);
+
+        // Configura carregamento dinâmico via AJAX/Fetch
+        const btnCarregarMais = document.getElementById("btn-carregar-mais");
+        if (btnCarregarMais) {
+            btnCarregarMais.addEventListener("click", () => {
+                const nextPage = btnCarregarMais.dataset.nextPage;
+                if (!nextPage) return;
+
+                btnCarregarMais.disabled = true;
+                btnCarregarMais.textContent = "Carregando...";
+
+                const params = new URLSearchParams(window.location.search);
+                params.set("page", nextPage);
+                params.set("fragment", "1");
+
+                fetch(`${window.location.pathname}?${params.toString()}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error("Erro ao carregar produtos.");
+                        }
+                        return response.text();
+                    })
+                    .then(html => {
+                        const grid = document.getElementById("produtos");
+                        const temp = document.createElement("div");
+                        temp.innerHTML = html;
+
+                        const newProducts = temp.querySelectorAll(".product");
+                        newProducts.forEach(product => {
+                            grid.appendChild(product);
+                        });
+
+                        // Inicializa eventos JS nos novos produtos
+                        newProducts.forEach(initProduct);
+
+                        // Verifica se existe próxima página pelo indicador retornado no fragmento
+                        const nextIndicator = temp.querySelector("#next-page-indicator");
+                        if (nextIndicator) {
+                            btnCarregarMais.dataset.nextPage = nextIndicator.dataset.nextPage;
+                            btnCarregarMais.disabled = false;
+                            btnCarregarMais.textContent = "Carregar Mais";
+                        } else {
+                            // Não há mais páginas, remove o container do botão
+                            btnCarregarMais.parentElement.remove();
+                        }
+                    })
+                    .catch(error => {
+                        console.error(error);
+                        btnCarregarMais.disabled = false;
+                        btnCarregarMais.textContent = "Tentar novamente";
+                    });
+            });
+        }
 
         window.ModalinkCart = (() => {
             const items = [];
@@ -451,6 +488,14 @@
             const customerName = document.querySelector("[data-cart-customer-name]");
             const customerPhone = document.querySelector("[data-cart-customer-phone]");
             const cartNote = document.querySelector("[data-cart-note]");
+            const deliveryTypeRadios = document.querySelectorAll("[data-cart-delivery-type]");
+            const addressFields = document.querySelector("[data-address-fields]");
+            const cepInput = document.querySelector("[data-cart-address-cep]");
+            const streetInput = document.querySelector("[data-cart-address-street]");
+            const numberInput = document.querySelector("[data-cart-address-number]");
+            const neighborhoodInput = document.querySelector("[data-cart-address-neighborhood]");
+            const cityInput = document.querySelector("[data-cart-address-city]");
+            const complementInput = document.querySelector("[data-cart-address-complement]");
             const cartTrackUrl = "{% url 'whatsapp_carrinho' loja.slug %}";
 
             const render = () => {
@@ -463,23 +508,60 @@
                 list.innerHTML = items.map((item, index) => `
                     <article>
                         <span>${item.name}</span>
-                        <small>${[item.size, item.color].filter(Boolean).join(" / ") || "Sem variacao"} - ${item.price}</small>
+                        <small>${[item.size, item.color].filter(Boolean).join(" / ") || "Sem variação"} - ${item.price}</small>
                         <button type="button" data-remove-cart="${index}">Remover</button>
                     </article>
                 `).join("");
+                
                 const customer = customerName?.value.trim();
                 const customerContact = customerPhone?.value.trim();
                 const note = cartNote?.value.trim();
+
+                let deliveryType = "retirada";
+                deliveryTypeRadios.forEach(radio => {
+                    if (radio.checked) deliveryType = radio.value;
+                });
+
+                let addressFormatted = "";
+                if (deliveryType === "entrega") {
+                    addressFields.classList.add("active");
+                    const cep = cepInput?.value.trim();
+                    const street = streetInput?.value.trim();
+                    const number = numberInput?.value.trim();
+                    const neighborhood = neighborhoodInput?.value.trim();
+                    const city = cityInput?.value.trim();
+                    const complement = complementInput?.value.trim();
+
+                    const addrParts = [];
+                    if (street) addrParts.push(`${street}, ${number || "S/N"}`);
+                    if (complement) addrParts.push(complement);
+                    if (neighborhood) addrParts.push(neighborhood);
+                    if (city) addrParts.push(city);
+                    if (cep) addrParts.push(`CEP ${cep}`);
+                    addressFormatted = addrParts.join(" - ");
+                } else {
+                    addressFields.classList.remove("active");
+                }
+
                 const message = [
-                    "Ola! Quero fazer um pedido:",
+                    "Olá! Quero fazer um pedido:",
                     customer ? `Nome: ${customer}` : "",
                     customerContact ? `WhatsApp: ${customerContact}` : "",
+                    `Tipo de entrega: ${deliveryType === "entrega" ? "Entrega a Domicílio" : "Retirada na Loja"}`,
+                    addressFormatted ? `Endereço: ${addressFormatted}` : "",
                     ...items.map((item, index) => `${index + 1}. ${item.name} - ${item.price}${item.size ? ` - tamanho ${item.size}` : ""}${item.color ? ` - cor ${item.color}` : ""}`),
-                    note ? `Observacao: ${note}` : "",
+                    note ? `Observação: ${note}` : "",
                 ].filter(Boolean).join("\n");
+                
                 const params = new URLSearchParams({ mensagem: message });
                 if (customer) params.set("cliente_nome", customer);
                 if (customerContact) params.set("cliente_telefone", customerContact);
+                params.set("tipo_entrega", deliveryType);
+                if (addressFormatted) params.set("endereco_completo", addressFormatted);
+                
+                {% if vendedor_codigo %}
+                    params.set("vendedor", "{{ vendedor_codigo|escapejs }}");
+                {% endif %}
                 send.href = `${cartTrackUrl}?${params.toString()}`;
             };
 
@@ -502,11 +584,43 @@
             customerPhone?.addEventListener("input", render);
             cartNote?.addEventListener("input", render);
 
+            deliveryTypeRadios.forEach(radio => radio.addEventListener("change", render));
+            cepInput?.addEventListener("input", render);
+            streetInput?.addEventListener("input", render);
+            numberInput?.addEventListener("input", render);
+            neighborhoodInput?.addEventListener("input", render);
+            cityInput?.addEventListener("input", render);
+            complementInput?.addEventListener("input", render);
+
+            cepInput?.addEventListener("blur", () => {
+                const cep = cepInput.value.replace(/\D/g, "");
+                if (cep.length === 8) {
+                    cepInput.classList.add("loading");
+                    fetch(`https://viacep.com.br/ws/${cep}/json/`)
+                        .then(res => res.json())
+                        .then(data => {
+                            cepInput.classList.remove("loading");
+                            if (!data.erro) {
+                                if (streetInput) streetInput.value = data.logradouro;
+                                if (neighborhoodInput) neighborhoodInput.value = data.bairro;
+                                if (cityInput) cityInput.value = data.localidade;
+                                render();
+                            }
+                        })
+                        .catch(err => {
+                            cepInput.classList.remove("loading");
+                            console.error("Erro ao buscar CEP", err);
+                        });
+                }
+            });
+
             return {
                 add(item) {
                     items.push(item);
                     box.hidden = false;
                     render();
+                    toggle.classList.add("pulse");
+                    setTimeout(() => toggle.classList.remove("pulse"), 400);
                 },
             };
         })();

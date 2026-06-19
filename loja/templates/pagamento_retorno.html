@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Pagamento - {{ loja.nome }}</title>
-    <link rel="stylesheet" href="/static/css/catalogo.css?v=23">
+    <link rel="stylesheet" href="/static/css/catalogo.css?v=75">
 </head>
 <body class="plans-page">
     <header class="lp-header">
@@ -27,9 +27,9 @@
                     <h1>Estamos aguardando a confirmacao.</h1>
                     <p>Assim que o Mercado Pago confirmar, o webhook atualiza a assinatura automaticamente.</p>
                 {% else %}
-                    <p class="lp-kicker">Pagamento nao concluido</p>
-                    <h1>O pagamento nao foi aprovado.</h1>
-                    <p>Voce pode voltar para a assinatura e tentar novamente.</p>
+                    <p class="lp-kicker">Pagamento não concluído</p>
+                    <h1>O pagamento não foi aprovado.</h1>
+                    <p>Você pode voltar para a assinatura e tentar novamente.</p>
                 {% endif %}
 
                 {% if pagamento %}

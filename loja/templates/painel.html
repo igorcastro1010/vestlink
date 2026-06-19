@@ -3,24 +3,42 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Painel do catalogo</title>
-    <link rel="stylesheet" href="/static/css/catalogo.css?v=18">
+    <title>Painel do catálogo</title>
+    <link rel="stylesheet" href="/static/css/catalogo.css?v=75">
+    <script>
+        (function() {
+            const theme = localStorage.getItem("theme") || "light";
+            document.documentElement.setAttribute("data-theme", theme);
+        })();
+    </script>
 </head>
 <body class="stores-page">
     <header class="panel-header panel-header--stores">
-        <div>
-            <p class="eyebrow">Painel do lojista</p>
-            <h1>Gerencie suas lojas</h1>
-            <span class="panel-store-link">Crie vitrines digitais e organize todos os catalogos em um so lugar.</span>
+        <div class="panel-header-brand">
+            <div>
+                <p class="eyebrow">Painel do lojista</p>
+                <h1>Gerencie suas lojas</h1>
+            </div>
+            <span class="panel-store-link panel-header-subtitle">Crie vitrines digitais e organize todos os catálogos em um só lugar.</span>
         </div>
-        <nav class="panel-nav">
-            <span>{{ request.user.username }}</span>
-            <a href="/">Ver inicio</a>
-            <form method="post" action="{% url 'logout' %}">
+        
+        <div class="panel-header-user">
+            <button class="dark-mode-toggle" type="button" aria-label="Alternar tema" style="background:transparent; border:none; cursor:pointer; padding:6px; display:inline-flex; align-items:center; justify-content:center; color:rgba(255,255,255,0.72); margin-right: 10px;">
+                <svg class="theme-icon-light" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                <svg class="theme-icon-dark" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+            </button>
+            <span class="user-name">
+                <svg class="user-avatar-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.8;">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                {{ request.user.username }}
+            </span>
+            <form method="post" action="{% url 'logout' %}" class="logout-form">
                 {% csrf_token %}
-                <button type="submit">Sair</button>
+                <button type="submit" class="logout-btn">Sair</button>
             </form>
-        </nav>
+        </div>
     </header>
 
     <main class="stores-shell">
@@ -30,7 +48,7 @@
                     <p class="eyebrow">Primeiros passos</p>
                     <h2>Coloque sua vitrine no ar</h2>
                 </div>
-                <span>Guia rapido</span>
+                <span>Guia rápido</span>
             </div>
             <div class="onboarding-compact-list">
                 {% for passo in onboarding_painel %}
@@ -51,7 +69,7 @@
                     <p class="eyebrow">Nova vitrine</p>
                     <h2>Criar loja</h2>
                 </div>
-                <span>Link proprio</span>
+                <span>Link próprio</span>
             </div>
             <form class="panel-form" method="post">
                 {% csrf_token %}
@@ -63,7 +81,7 @@
         <section class="panel-section stores-list-card">
             <div class="section-heading">
                 <div>
-                    <p class="eyebrow">Seu catalogo</p>
+                    <p class="eyebrow">Seu catálogo</p>
                     <h2>Lojas cadastradas</h2>
                 </div>
                 <span>{{ lojas|length }} loja(s)</span>
@@ -78,19 +96,19 @@
                             {% if loja.telefone %}
                                 <small>WhatsApp: {{ loja.telefone }}</small>
                             {% else %}
-                                <small>Adicione o WhatsApp para vender mais rapido.</small>
+                                <small>Adicione o WhatsApp para vender mais rápido.</small>
                             {% endif %}
                         </div>
                         <div class="panel-actions">
                             <a href="{% url 'painel_loja' loja.slug %}">Adicionar produtos</a>
-                            <a href="{% url 'catalogo_curto' loja.slug %}">Ver catalogo</a>
+                            <a href="{% url 'catalogo_curto' loja.slug %}">Ver catálogo</a>
                             <button class="copy-link-button" type="button" data-copy-url="{{ request.scheme }}://{{ request.get_host }}{% url 'catalogo_curto' loja.slug %}">Copiar link</button>
                         </div>
                     </article>
                 {% empty %}
                     <div class="empty-dashboard">
                         <strong>Nenhuma loja cadastrada ainda.</strong>
-                        <p>Crie sua primeira loja para gerar o link do catalogo e comecar a cadastrar produtos.</p>
+                        <p>Crie sua primeira loja para gerar o link do catálogo e começar a cadastrar produtos.</p>
                     </div>
                 {% endfor %}
             </div>
@@ -123,5 +141,6 @@
             });
         });
     </script>
+    <script src="/static/js/theme.js" defer></script>
 </body>
 </html>

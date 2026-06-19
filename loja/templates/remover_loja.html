@@ -4,12 +4,12 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Excluir loja - {{ loja.nome }}</title>
-    <link rel="stylesheet" href="/static/css/catalogo.css?v=10">
+    <link rel="stylesheet" href="/static/css/catalogo.css?v=75">
 </head>
 <body class="merchant-dashboard">
     <header class="panel-header panel-header--dashboard">
         <div>
-            <p class="eyebrow">Acao permanente</p>
+            <p class="eyebrow">Ação permanente</p>
             <h1>Excluir loja</h1>
             <span class="panel-store-link">{{ loja.nome }}</span>
         </div>
@@ -19,10 +19,18 @@
     </header>
     <main class="dashboard-shell dashboard-shell--narrow">
         <section class="panel-section danger-zone">
-            <h2>Tem certeza?</h2>
-            <p>Excluir esta loja tambem remove produtos, categorias e fotos vinculadas a ela.</p>
-            <form method="post">
+            <h2>Confirme antes de excluir</h2>
+            <p>Somente o lojista dono desta loja pode excluir. Esta ação remove a loja, produtos, categorias, fotos e dados vinculados.</p>
+            <p>Para confirmar, digite <strong>{{ loja.slug }}</strong> no campo abaixo.</p>
+            <form class="panel-form" method="post">
                 {% csrf_token %}
+                {% if erro_confirmacao %}
+                    <p class="form-error">{{ erro_confirmacao }}</p>
+                {% endif %}
+                <p>
+                    <label for="id_confirmacao">Confirmação</label>
+                    <input id="id_confirmacao" name="confirmacao" type="text" autocomplete="off" placeholder="{{ loja.slug }}" required>
+                </p>
                 <button class="danger-button" type="submit">Excluir loja definitivamente</button>
                 <a class="panel-cancel" href="{% url 'painel_loja' loja.slug %}">Voltar</a>
             </form>

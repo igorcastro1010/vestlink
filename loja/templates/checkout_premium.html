@@ -4,7 +4,13 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Checkout Premium - {{ loja.nome }}</title>
-    <link rel="stylesheet" href="/static/css/catalogo.css?v=25">
+    <link rel="stylesheet" href="/static/css/catalogo.css?v=75">
+    <script>
+        (function() {
+            const theme = localStorage.getItem("theme") || "light";
+            document.documentElement.setAttribute("data-theme", theme);
+        })();
+    </script>
 </head>
 <body class="plans-page">
     <header class="lp-header">
@@ -27,11 +33,9 @@
                 <div class="checkout-summary">
                     <span>Loja: <strong>{{ loja.nome }}</strong></span>
                     <span>Plano: <strong>Premium</strong></span>
-                    <span>Valor normal: <strong>R$ {{ valor|default:"39,90" }}</strong></span>
-                    {% if cupom %}
-                        <span>Cupom: <strong>{{ cupom.codigo }} - {{ cupom.percentual_desconto }}% OFF</strong></span>
-                    {% endif %}
-                    <span>Total hoje: <strong>R$ {{ valor_final|default:"39,90" }}</strong></span>
+                    <span id="valor-normal-row">Valor normal: <strong id="valor-normal">R$ {{ valor|default:"39,90" }}</strong></span>
+                    <span id="cupom-row" {% if not cupom %}style="display:none;"{% endif %}>Cupom: <strong id="cupom-detalhe">{% if cupom %}{{ cupom.codigo }} - {{ cupom.percentual_desconto }}% OFF{% endif %}</strong></span>
+                    <span id="total-row">Total hoje: <strong id="total-hoje">R$ {{ valor_final|default:"39,90" }}</strong></span>
                     <span>Gateway: <strong>{% if mercado_pago_configurado %}Mercado Pago API{% else %}Modo teste/manual{% endif %}</strong></span>
                 </div>
                 <div class="secure-checkout-list">
@@ -65,5 +69,48 @@
             </aside>
         </section>
     </main>
+    <script src="/static/js/theme.js" defer></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const cupomInput = document.querySelector('input[name="cupom"]');
+            const cupomRow = document.getElementById("cupom-row");
+            const cupomDetalhe = document.getElementById("cupom-detalhe");
+            const totalHoje = document.getElementById("total-hoje");
+            
+            let timeoutId;
+            
+            const validarCupom = () => {
+                const codigo = cupomInput.value.trim().toUpperCase();
+                if (!codigo) {
+                    cupomRow.style.display = "none";
+                    totalHoje.textContent = "R$ 39,90";
+                    return;
+                }
+                
+                fetch(`{% url 'validar_cupom' loja.slug %}?codigo=${encodeURIComponent(codigo)}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.valido) {
+                            cupomRow.style.display = "flex";
+                            cupomDetalhe.textContent = `${data.codigo} - ${data.percentual_desconto}% OFF`;
+                            totalHoje.textContent = data.valor_final_formatado;
+                        } else {
+                            cupomRow.style.display = "none";
+                            totalHoje.textContent = "R$ 39,90";
+                        }
+                    })
+                    .catch(err => console.error("Erro ao validar cupom:", err));
+            };
+            
+            cupomInput.addEventListener("input", () => {
+                clearTimeout(timeoutId);
+                timeoutId = setTimeout(validarCupom, 300);
+            });
+            
+            if (cupomInput.value.trim()) {
+                validarCupom();
+            }
+        });
+    </script>
 </body>
 </html>

@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Excluir categoria - {{ categoria.nome }}</title>
-    <link rel="stylesheet" href="/static/css/catalogo.css?v=10">
+    <link rel="stylesheet" href="/static/css/catalogo.css?v=75">
 </head>
 <body class="merchant-dashboard">
     <header class="panel-header panel-header--dashboard">
@@ -20,7 +20,7 @@
     <main class="dashboard-shell dashboard-shell--narrow">
         <section class="panel-section danger-zone">
             <h2>Excluir "{{ categoria.nome }}"?</h2>
-            <p>Os produtos dessa categoria nao serao excluidos, apenas ficarao sem categoria.</p>
+            <p>Os produtos dessa categoria não serão excluídos, apenas ficarão sem categoria.</p>
             <form method="post">
                 {% csrf_token %}
                 <button class="danger-button" type="submit">Excluir categoria</button>

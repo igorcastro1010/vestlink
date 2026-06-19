@@ -21,19 +21,19 @@ Abra:
 
 A Vercel publica este projeto usando `api/index.py`, que expõe a variavel WSGI `app` para o runtime Python serverless.
 
-### 1. Criar banco de dados
+### 1. Criar banco de dados no Supabase
 
-Para producao, use Postgres. Pode ser:
+Para producao, use o Postgres do Supabase. No painel do Supabase:
 
-- Vercel Postgres/Storage
-- Neon
-- Supabase
-- Railway Postgres
+1. Crie um projeto.
+2. Va em **Project Settings > Database > Connection string**.
+3. Copie a URL em **Transaction pooler > URI**.
+4. Troque `[YOUR-PASSWORD]` pela senha do banco.
 
-Copie a URL do banco no formato:
+O formato fica assim:
 
 ```bash
-postgresql://usuario:senha@host:porta/banco
+postgresql://postgres.[project-ref]:senha@aws-0-us-east-1.pooler.supabase.com:6543/postgres?sslmode=require
 ```
 
 SQLite nao deve ser usado na Vercel para producao, porque o ambiente serverless nao e feito para gravar banco local de forma persistente.
@@ -45,9 +45,29 @@ No painel do projeto na Vercel, adicione:
 ```bash
 DJANGO_SECRET_KEY=sua-chave-secreta-forte
 DJANGO_DEBUG=0
-DATABASE_URL=postgresql://usuario:senha@host:porta/banco
+SUPABASE_DATABASE_URL=postgresql://postgres.[project-ref]:senha@aws-0-us-east-1.pooler.supabase.com:6543/postgres?sslmode=require
+DATABASE_CONN_MAX_AGE=0
+DATABASE_DISABLE_SERVER_SIDE_CURSORS=1
 VESTLINK_BASE_URL=https://seu-projeto.vercel.app
 ```
+
+Se voce conectar pelo Marketplace da Vercel com prefixo `SUPABASE_`, a variavel criada sera `SUPABASE_POSTGRES_URL` e o Django tambem usa ela automaticamente. `SUPABASE_DATABASE_URL` tem prioridade sobre `SUPABASE_POSTGRES_URL`.
+
+Para usar o Supabase Auth na confirmacao de e-mail do cadastro, mantenha tambem:
+
+```bash
+SUPABASE_URL=https://[project-ref].supabase.co
+SUPABASE_ANON_KEY=sua-chave-anon-ou-publishable
+SUPABASE_AUTH_EMAIL_CONFIRMATION=1
+SUPABASE_EMAIL_REDIRECT_URL=https://vestlink.vercel.app/cadastro/supabase-confirmar/
+```
+
+No painel do Supabase, va em **Authentication > URL Configuration**:
+
+- **Site URL**: `https://vestlink.vercel.app`
+- **Redirect URLs**: adicione `https://vestlink.vercel.app/cadastro/supabase-confirmar/`
+
+Em **Authentication > Providers > Email**, deixe **Confirm email** ativado. O Supabase tem envio padrao para testes, mas possui limite baixo; para producao, configure SMTP no proprio Supabase Auth.
 
 Se usar dominio proprio:
 
@@ -55,6 +75,28 @@ Se usar dominio proprio:
 DJANGO_ALLOWED_HOSTS=seudominio.com.br,www.seudominio.com.br
 DJANGO_CSRF_TRUSTED_ORIGINS=https://seudominio.com.br,https://www.seudominio.com.br
 VESTLINK_BASE_URL=https://seudominio.com.br
+```
+
+Se for ativar e-mail de confirmacao de conta com Resend:
+
+```bash
+RESEND_API_KEY=re_xxxxxxxxxxxxxxxxxxxxxxxxx
+RESEND_FROM_EMAIL=VestLink <noreply@seudominio.com.br>
+DEFAULT_FROM_EMAIL=VestLink <noreply@seudominio.com.br>
+```
+
+Para enviar para clientes reais, o dominio do `RESEND_FROM_EMAIL` precisa estar verificado no Resend. Sem `RESEND_API_KEY` ou SMTP configurado, o Django usa o backend de console e o e-mail aparece apenas nos logs.
+
+Se preferir SMTP tradicional:
+
+```bash
+EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend
+EMAIL_HOST=smtp.seuprovedor.com
+EMAIL_PORT=587
+EMAIL_USE_TLS=1
+EMAIL_HOST_USER=usuario
+EMAIL_HOST_PASSWORD=senha
+DEFAULT_FROM_EMAIL=VestLink <contato@seudominio.com.br>
 ```
 
 Se for ativar Mercado Pago:
@@ -75,31 +117,31 @@ vercel --prod
 
 ### 4. Rodar migracoes no banco de producao
 
-Depois de criar o banco e configurar `DATABASE_URL`, rode as migracoes apontando para o banco de producao:
+Depois de criar o banco e configurar a URL do Supabase, rode as migracoes apontando para o banco de producao:
 
 ```bash
-set DATABASE_URL=postgresql://usuario:senha@host:porta/banco
+set SUPABASE_DATABASE_URL=postgresql://postgres.[project-ref]:senha@aws-0-us-east-1.pooler.supabase.com:6543/postgres?sslmode=require
 python manage.py migrate
 ```
 
 No PowerShell:
 
 ```powershell
-$env:DATABASE_URL="postgresql://usuario:senha@host:porta/banco"
+$env:SUPABASE_DATABASE_URL="postgresql://postgres.[project-ref]:senha@aws-0-us-east-1.pooler.supabase.com:6543/postgres?sslmode=require"
 python manage.py migrate
 ```
 
 ### 5. Criar usuario administrador
 
 ```bash
-set DATABASE_URL=postgresql://usuario:senha@host:porta/banco
+set SUPABASE_DATABASE_URL=postgresql://postgres.[project-ref]:senha@aws-0-us-east-1.pooler.supabase.com:6543/postgres?sslmode=require
 python manage.py createsuperuser
 ```
 
 No PowerShell:
 
 ```powershell
-$env:DATABASE_URL="postgresql://usuario:senha@host:porta/banco"
+$env:SUPABASE_DATABASE_URL="postgresql://postgres.[project-ref]:senha@aws-0-us-east-1.pooler.supabase.com:6543/postgres?sslmode=require"
 python manage.py createsuperuser
 ```
 

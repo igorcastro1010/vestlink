@@ -4,7 +4,21 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ produto.nome }} - {{ loja.nome }}</title>
-    <link rel="stylesheet" href="/static/css/catalogo.css?v=19">
+    <meta name="description" content="{{ produto.descricao|truncatechars:160|default:'Confira este lindo modelo no catálogo!' }}">
+    <meta property="og:title" content="{{ produto.nome }} - R$ {{ produto.preco }} | {{ loja.nome }}">
+    <meta property="og:description" content="{{ produto.descricao|truncatechars:160|default:'Confira este lindo modelo no catálogo!' }}">
+    <meta property="og:type" content="product">
+    <meta property="og:url" content="{{ request.build_absolute_uri }}">
+    {% if produto.imagem %}
+        <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ produto.imagem.url }}">
+    {% endif %}
+    <link rel="stylesheet" href="/static/css/catalogo.css?v=75">
+    <script>
+        (function() {
+            const theme = localStorage.getItem("theme") || "light";
+            document.documentElement.setAttribute("data-theme", theme);
+        })();
+    </script>
 </head>
 <body class="storefront store-theme-{{ loja.tema }}">
     <header class="store-header" style="--brand: {{ loja.cor_principal }}">
@@ -19,7 +33,7 @@
             </div>
         </div>
         <div class="store-header__actions">
-            <a href="{% url 'catalogo_curto' loja.slug %}">Voltar ao catalogo</a>
+            <a href="{% url 'catalogo_curto' loja.slug %}">Voltar ao catálogo</a>
             <a href="https://wa.me/55{{ loja.telefone }}" target="_blank" rel="noopener">Entre em contato</a>
         </div>
     </header>
@@ -100,16 +114,21 @@
                 {% if produto.esgotado %}
                     <button class="whatsapp" disabled>Esgotado</button>
                 {% else %}
+                    <label class="product-customer-name">
+                        Seu nome
+                        <input type="text" data-product-customer-name placeholder="Ex.: Ana">
+                    </label>
                     <a class="whatsapp {% if produto.tamanhos_lista or produto.cores_lista %}whatsapp--requires-choice{% endif %}"
                        href="{% url 'whatsapp_produto' loja.slug produto.id %}"
                        data-product="{{ produto.nome }}"
                        data-track-url="{% url 'whatsapp_produto' loja.slug produto.id %}"
-                       data-base-label="Quero esse"
+                       data-seller-code="{{ vendedor_codigo|default:'' }}"
+                       data-base-label="Comprar pelo WhatsApp"
                        data-needs-size="{% if produto.tamanhos_lista %}true{% else %}false{% endif %}"
                        data-needs-color="{% if produto.cores_lista %}true{% else %}false{% endif %}"
                        target="_blank"
                        rel="noopener">
-                        {% if produto.tamanhos_lista and produto.cores_lista %}Escolha tamanho e cor{% elif produto.tamanhos_lista %}Escolha o tamanho{% elif produto.cores_lista %}Escolha a cor{% else %}Quero esse{% endif %}
+                        {% if produto.tamanhos_lista and produto.cores_lista %}Escolha tamanho e cor{% elif produto.tamanhos_lista %}Escolha o tamanho{% elif produto.cores_lista %}Escolha a cor{% else %}Comprar pelo WhatsApp{% endif %}
                     </a>
                 {% endif %}
             </div>
@@ -136,6 +155,7 @@
         const selection = { size: "", color: "" };
         const sizeButtons = product?.querySelectorAll(".size-option:not(:disabled)") || [];
         const colorButtons = product?.querySelectorAll(".color-option:not(:disabled)") || [];
+        const customerNameInput = product?.querySelector("[data-product-customer-name]");
 
         const refreshWhatsapp = () => {
             if (!whatsapp || whatsapp.tagName !== "A") return;
@@ -145,6 +165,9 @@
             const params = new URLSearchParams();
             if (selection.size) params.set("tamanho", selection.size);
             if (selection.color) params.set("cor", selection.color);
+            const customerName = customerNameInput?.value.trim();
+            if (customerName) params.set("cliente_nome", customerName);
+            if (whatsapp.dataset.sellerCode) params.set("vendedor", whatsapp.dataset.sellerCode);
             const label = [selection.size, selection.color].filter(Boolean).join(" / ");
             whatsapp.href = params.toString() ? `${whatsapp.dataset.trackUrl}?${params.toString()}` : whatsapp.dataset.trackUrl;
             whatsapp.textContent = label ? `${whatsapp.dataset.baseLabel} - ${label}` : whatsapp.dataset.baseLabel;
@@ -170,12 +193,15 @@
         });
 
         whatsapp?.addEventListener("click", (event) => {
+            refreshWhatsapp();
             if (whatsapp.classList.contains("whatsapp--requires-choice")) {
                 event.preventDefault();
                 const nextChoice = product.querySelector(".choice-option:not(.active):not(:disabled)");
                 nextChoice?.focus();
             }
         });
+
+        customerNameInput?.addEventListener("input", refreshWhatsapp);
     </script>
 </body>
 </html>
