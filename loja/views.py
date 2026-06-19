@@ -34,7 +34,7 @@ from .legal import LEAD_RETENTION_DAYS, PRIVACY_VERSION, TERMS_VERSION
 from .models import AceiteLegal, Categoria, Cupom, Lead, Loja, Pagamento, Produto, Vendedor
 from .payments import MercadoPagoError
 from .validators import limpar_telefone
-from .services import billing
+from .services import billing, lead
 
 
 logger = logging.getLogger(__name__)
@@ -1101,43 +1101,16 @@ def whatsapp_produto(request, slug=None, produto_id=None):
     if not loja.assinatura_esta_ativa:
         return redirect("catalogo_curto", slug=loja.slug)
     produto = get_object_or_404(Produto, id=produto_id, loja=loja)
-    Produto.objects.filter(id=produto.id).update(cliques_whatsapp=F("cliques_whatsapp") + 1)
 
-    detalhes = []
-    tamanho = request.GET.get("tamanho", "").strip()
-    cor = request.GET.get("cor", "").strip()
-    cliente_nome = request.GET.get("cliente_nome", "").strip()
-    vendedor_ref = _vendedor_por_codigo(loja, request.GET.get("vendedor", ""))
-    if tamanho:
-        detalhes.append(f"tamanho {tamanho}")
-    if cor:
-        detalhes.append(f"cor {cor}")
+    tamanho = request.GET.get("tamanho", "")
+    cor = request.GET.get("cor", "")
+    cliente_nome = request.GET.get("cliente_nome", "")
+    vendedor_codigo = request.GET.get("vendedor", "")
 
-    complemento = f", {', '.join(detalhes)}" if detalhes else ""
-    mensagem = f"Olá! Tenho interesse na peça: {produto.nome}{complemento}"
-    if cliente_nome:
-        mensagem = f"{mensagem}\nCliente: {cliente_nome}"
-    if vendedor_ref:
-        mensagem = f"{mensagem}\nVendedor: {vendedor_ref.nome}"
-
-    Lead.objects.create(
-        loja=loja,
-        vendedor=vendedor_ref,
-        produto=produto,
-        origem=Lead.ORIGEM_PRODUTO,
-        cliente_nome=cliente_nome,
-        tamanho=tamanho,
-        cor=cor,
-        status=Lead.STATUS_NOVO,
-        mensagem=mensagem,
-        ip=_request_ip(request),
-        navegador=request.META.get("HTTP_USER_AGENT", "")[:255],
+    destino, mensagem = lead.processar_whatsapp_produto(
+        request, loja, produto, tamanho, cor, cliente_nome, vendedor_codigo
     )
-    destino = loja.telefone
-    if vendedor_ref and vendedor_ref.telefone:
-        destino_vendedor = limpar_telefone(vendedor_ref.telefone)
-        if destino_vendedor:
-            destino = destino_vendedor
+
     return redirect(f"https://wa.me/55{destino}?text={quote(mensagem)}")
 
 
@@ -1148,35 +1121,18 @@ def whatsapp_carrinho(request, slug=None):
         loja = get_object_or_404(Loja, slug=slug)
     if not loja.assinatura_esta_ativa:
         return redirect("catalogo_curto", slug=loja.slug)
-    mensagem = request.GET.get("mensagem", "").strip()
-    cliente_nome = request.GET.get("cliente_nome", "").strip()
-    cliente_telefone = request.GET.get("cliente_telefone", "").strip()
-    tipo_entrega = request.GET.get("tipo_entrega", "retirada").strip()
-    endereco_completo = request.GET.get("endereco_completo", "").strip()
-    vendedor_ref = _vendedor_por_codigo(loja, request.GET.get("vendedor", ""))
-    if not mensagem:
-        mensagem = "Olá! Quero fazer um pedido pelo catálogo."
-    if vendedor_ref and "Vendedor:" not in mensagem:
-        mensagem = f"{mensagem}\nVendedor: {vendedor_ref.nome}"
 
-    Lead.objects.create(
-        loja=loja,
-        vendedor=vendedor_ref,
-        origem=Lead.ORIGEM_SACOLINHA,
-        cliente_nome=cliente_nome,
-        cliente_telefone=cliente_telefone,
-        status=Lead.STATUS_NOVO,
-        tipo_entrega=tipo_entrega,
-        endereco_completo=endereco_completo,
-        mensagem=mensagem,
-        ip=_request_ip(request),
-        navegador=request.META.get("HTTP_USER_AGENT", "")[:255],
+    mensagem = request.GET.get("mensagem", "")
+    cliente_nome = request.GET.get("cliente_nome", "")
+    cliente_telefone = request.GET.get("cliente_telefone", "")
+    tipo_entrega = request.GET.get("tipo_entrega", "retirada")
+    endereco_completo = request.GET.get("endereco_completo", "")
+    vendedor_codigo = request.GET.get("vendedor", "")
+
+    destino, mensagem = lead.processar_whatsapp_carrinho(
+        request, loja, mensagem, cliente_nome, cliente_telefone, tipo_entrega, endereco_completo, vendedor_codigo
     )
-    destino = loja.telefone
-    if vendedor_ref and vendedor_ref.telefone:
-        destino_vendedor = limpar_telefone(vendedor_ref.telefone)
-        if destino_vendedor:
-            destino = destino_vendedor
+
     return redirect(f"https://wa.me/55{destino}?text={quote(mensagem)}")
 
 
