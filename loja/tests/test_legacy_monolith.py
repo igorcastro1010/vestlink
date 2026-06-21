@@ -11,8 +11,8 @@ from django.utils import timezone
 from urllib.error import HTTPError
 from unittest.mock import patch
 
-from .models import AceiteLegal, Categoria, Cupom, Lead, Loja, Pagamento, Produto, ProdutoImagem, ProdutoVariacao, Vendedor
-from .storage import SupabaseStorage
+from loja.models import AceiteLegal, Categoria, Cupom, Lead, Loja, Pagamento, Produto, ProdutoImagem, ProdutoVariacao, Vendedor
+from loja.storage import SupabaseStorage
 
 
 class CatalogoTests(TestCase):
@@ -1316,61 +1316,6 @@ class SaasOptimizationsTests(TestCase):
         self.assertIn("Vestido Festa", produtos_labels)
         self.assertIn(10, produtos_valores)
 
-
-class SupabaseStorageTests(TestCase):
-    class _Response:
-        headers = {"Content-Length": "2"}
-
-        def __enter__(self):
-            return self
-
-        def __exit__(self, exc_type, exc, traceback):
-            return False
-
-        def read(self):
-            return b"ok"
-
-    @override_settings(
-        SUPABASE_URL="https://example.supabase.co",
-        SUPABASE_STORAGE_BUCKET="vestlink-media",
-        SUPABASE_STORAGE_KEY="service-role-key",
-        SUPABASE_STORAGE_TIMEOUT_SECONDS=20,
-    )
-    @patch("loja.storage.urllib.request.urlopen")
-    def test_save_usa_api_do_supabase_storage(self, mock_urlopen):
-        def fake_urlopen(request, timeout):
-            if request.method == "HEAD":
-                raise HTTPError(request.full_url, 404, "Not Found", None, None)
-            return self._Response()
-
-        mock_urlopen.side_effect = fake_urlopen
-        storage = SupabaseStorage()
-
-        name = storage.save("produtos/teste.png", ContentFile(b"ok"))
-
-        self.assertEqual(name, "produtos/teste.png")
-        request = mock_urlopen.call_args.args[0]
-        self.assertEqual(request.method, "POST")
-        self.assertEqual(request.full_url, "https://example.supabase.co/storage/v1/object/vestlink-media/produtos/teste.png")
-        self.assertEqual(request.headers["Authorization"], "Bearer service-role-key")
-
-    @override_settings(
-        SUPABASE_URL="https://example.supabase.co",
-        SUPABASE_STORAGE_BUCKET="vestlink-media",
-        SUPABASE_STORAGE_KEY="service-role-key",
-        SUPABASE_STORAGE_TIMEOUT_SECONDS=20,
-    )
-    def test_url_publica_do_supabase_storage(self):
-        storage = SupabaseStorage()
-
-        url = storage.url("produtos/teste com espaco.png")
-
-        self.assertEqual(
-            url,
-            "https://example.supabase.co/storage/v1/object/public/vestlink-media/produtos/teste%20com%20espaco.png",
-        )
-
-
 class VendedorRedirecionamentoETelefoneTests(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(username="lojista", password="senha-forte-123")
@@ -1402,7 +1347,7 @@ class VendedorRedirecionamentoETelefoneTests(TestCase):
         )
 
     def test_limpeza_telefone_limpa_caracteres_especiais_e_prefixo_55(self):
-        from .validators import limpar_telefone
+        from loja.validators import limpar_telefone
         self.assertEqual(limpar_telefone("+55 (85) 91111-2222"), "85911112222")
         self.assertEqual(limpar_telefone("85 91111-2222"), "85911112222")
         self.assertEqual(limpar_telefone("5585911112222"), "85911112222")
@@ -1410,7 +1355,7 @@ class VendedorRedirecionamentoETelefoneTests(TestCase):
 
     def test_validacao_telefone_rejeita_comprimento_invalido(self):
         from django.core.exceptions import ValidationError
-        from .validators import validar_whatsapp
+        from loja.validators import validar_whatsapp
         with self.assertRaises(ValidationError):
             validar_whatsapp("123")
         with self.assertRaises(ValidationError):
@@ -1693,3 +1638,5 @@ class FiltrosLeadsEControleAcessoTests(TestCase):
         self.assertContains(response, "Carlos")
         self.assertNotContains(response, "Alice")
         self.assertNotContains(response, "Bob")
+
+
