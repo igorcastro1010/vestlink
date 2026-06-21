@@ -101,30 +101,10 @@
     </aside>
 
     <main class="store-layout">
-        <aside class="store-sidebar">
-            <button class="menu-mark" type="button" aria-label="Menu"></button>
-            <h2>Produtos</h2>
-            <nav class="categories" aria-label="Categorias">
-                <a class="{% if not categoria_ativa %}active{% endif %}" href="{{ loja.get_absolute_url }}?{% if ordenacao %}ordenacao={{ ordenacao }}&{% endif %}{% if filtro %}filtro={{ filtro }}&{% endif %}{% if vendedor_codigo %}vendedor={{ vendedor_codigo }}&{% endif %}">Todos</a>
-                {% for categoria in categorias %}
-                    <a class="{% if categoria_ativa == categoria.id|stringformat:'s' %}active{% endif %}"
-                       href="?categoria={{ categoria.id }}{% if busca %}&q={{ busca|urlencode }}{% endif %}{% if filtro %}&filtro={{ filtro }}{% endif %}{% if ordenacao %}&ordenacao={{ ordenacao }}{% endif %}{% if vendedor_codigo %}&vendedor={{ vendedor_codigo }}{% endif %}">
-                        {{ categoria.nome }}
-                    </a>
-                {% endfor %}
-            </nav>
-        </aside>
+        {% include "includes/catalogo/sidebar.html" %}
 
         <section class="store-content">
-            <section class="catalog-banner {% if loja.banner_imagem %}catalog-banner--image{% endif %}"
-                     {% if loja.banner_imagem %}style="background-image: linear-gradient(90deg, rgba(23,18,63,0.82), rgba(23,18,63,0.24)), url('{{ loja.banner_imagem.url }}')"{% endif %}>
-                <div>
-                    <p class="eyebrow">Vitrine online</p>
-                    <h2>{% if loja.banner_titulo %}{{ loja.banner_titulo }}{% else %}Novidades selecionadas para você{% endif %}</h2>
-                    <p>{% if loja.banner_texto %}{{ loja.banner_texto }}{% else %}Escolha seus produtos favoritos e envie tudo junto pelo WhatsApp.{% endif %}</p>
-                </div>
-                <a href="#produtos" class="catalog-banner__cta">Ver produtos</a>
-            </section>
+            {% include "includes/catalogo/banner.html" %}
 
             <section class="store-summary" aria-label="Resumo do catálogo">
                 <article>

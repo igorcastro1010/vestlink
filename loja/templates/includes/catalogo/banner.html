@@ -1,0 +1,9 @@
+            <section class="catalog-banner {% if loja.banner_imagem %}catalog-banner--image{% endif %}"
+                     {% if loja.banner_imagem %}style="background-image: linear-gradient(90deg, rgba(23,18,63,0.82), rgba(23,18,63,0.24)), url('{{ loja.banner_imagem.url }}')"{% endif %}>
+                <div>
+                    <p class="eyebrow">Vitrine online</p>
+                    <h2>{% if loja.banner_titulo %}{{ loja.banner_titulo }}{% else %}Novidades selecionadas para você{% endif %}</h2>
+                    <p>{% if loja.banner_texto %}{{ loja.banner_texto }}{% else %}Escolha seus produtos favoritos e envie tudo junto pelo WhatsApp.{% endif %}</p>
+                </div>
+                <a href="#produtos" class="catalog-banner__cta">Ver produtos</a>
+            </section>
