@@ -46,287 +46,31 @@
     </header>
 
     <main>
-        <section class="lp-hero">
-            <div class="lp-hero__copy">
-                <p class="lp-kicker">Catálogo digital para moda</p>
-                <h1>Transforme seu WhatsApp em uma vitrine profissional de roupas.</h1>
-                <p>O VestLink ajuda lojas, boutiques e sacoleiras a venderem com um catálogo bonito, organizado e pronto para receber pedidos pelo WhatsApp.</p>
-                <div class="lp-actions">
-                    {% if request.user.is_authenticated %}
-                        <a class="lp-button" href="{% url 'painel' %}">Acessar meu painel</a>
-                    {% else %}
-                        <a class="lp-button" href="{% url 'cadastro' %}">Criar conta e testar 7 dias</a>
-                    {% endif %}
-                    <a class="lp-button lp-button--ghost" href="/c/bela-meunier/">Ver catálogo de demonstração</a>
-                </div>
-                <span>Depois do teste: R$39,90/mês. Sem fidelidade. Sem aplicativo para instalar.</span>
-            </div>
+        {% include "includes/landing/section_hero.html" %}
 
-            <div class="lp-preview lp-preview--stack" aria-label="Prévia do catálogo VestLink">
-                <div class="lp-preview__top">
-                    <span>Bela Meunier</span>
-                    <small>link na bio e no WhatsApp</small>
-                </div>
-                <div class="lp-phone-card">
-                    <div class="lp-phone-card__image"></div>
-                    <div>
-                        <strong>Vestido canelado</strong>
-                        <small>R$ 119,90</small>
-                    </div>
-                    <div class="lp-choice-row">
-                        <span>P</span>
-                        <span class="is-selected">M</span>
-                        <span>G</span>
-                    </div>
-                    <div class="lp-choice-row">
-                        <span>Preto</span>
-                        <span class="is-selected">Branco</span>
-                    </div>
-                    <button>Quero esse no WhatsApp</button>
-                </div>
-                <div class="lp-whatsapp-bubble">Oi! Quero o Vestido canelado no tamanho M, cor Branco.</div>
-            </div>
-        </section>
+        {% include "includes/landing/section_target.html" %}
 
-        <section class="lp-trust-row" aria-label="Resumo do VestLink">
-            <article><strong>10 minutos</strong><span>para colocar a primeira vitrine no ar</span></article>
-            <article><strong>WhatsApp</strong><span>como canal principal de venda</span></article>
-            <article><strong>R$39,90</strong><span>por mês depois dos 7 dias de teste</span></article>
-        </section>
+        {% include "includes/landing/section_problem.html" %}
 
-        <section class="lp-section lp-target">
-            <p class="lp-kicker">Para quem é</p>
-            <h2>Perfeito para lojas e vendedores de moda.</h2>
-            <div class="lp-target-grid">
-                <article>Boutiques femininas que vendem pelo Instagram.</article>
-                <article>Sacoleiras que precisam mandar peças com mais organização.</article>
-                <article>Lojas de roupas que recebem muitos pedidos no WhatsApp.</article>
-                <article>Vendedores online que querem parecer mais profissionais.</article>
-            </div>
-        </section>
+        {% include "includes/landing/section_before_after.html" %}
 
-        <section class="lp-section lp-problem">
-            <div>
-                <p class="lp-kicker">O problema</p>
-                <h2>Cliente interessado(a) não compra quando a escolha fica confusa.</h2>
-            </div>
-            <div class="lp-card-grid">
-                <article>Foto perdida na galeria.</article>
-                <article>Preço perguntado toda hora.</article>
-                <article>PDF desatualizado.</article>
-                <article>Produto esgotado ainda circulando.</article>
-                <article>Instagram bonito, mas compra confusa.</article>
-                <article>WhatsApp cheio de perguntas repetidas.</article>
-            </div>
-        </section>
+        {% include "includes/landing/section_como_funciona.html" %}
 
-        <section class="lp-section lp-before-after">
-            <div class="lp-before-after__card">
-                <p class="lp-kicker">Antes do VestLink</p>
-                <h2>Fotos soltas, respostas manuais e cliente esperando.</h2>
-                <ul>
-                    <li>Você manda várias imagens sem ordem.</li>
-                    <li>A cliente pergunta tamanho, cor e preço de novo.</li>
-                    <li>O pedido chega incompleto no WhatsApp.</li>
-                </ul>
-            </div>
-            <div class="lp-before-after__card lp-before-after__card--after">
-                <p class="lp-kicker">Depois do VestLink</p>
-                <h2>Catálogo com link próprio e pedido mais claro.</h2>
-                <ul>
-                    <li>A cliente vê fotos, preço, tamanho e cor.</li>
-                    <li>Ela escolhe a peça antes de chamar.</li>
-                    <li>O WhatsApp recebe a mensagem pronta para atender.</li>
-                </ul>
-            </div>
-        </section>
+        {% include "includes/landing/section_demo.html" %}
 
-        <section class="lp-section lp-solution" id="como-funciona">
-            <div class="lp-split">
-                <div>
-                    <p class="lp-kicker">Como funciona</p>
-                    <h2>Da primeira foto ao pedido no WhatsApp em poucos passos.</h2>
-                    <p>Você cadastra seus produtos dentro do painel, define categorias, fotos, tamanhos, cores e disponibilidade. Depois compartilha um link curto da loja.</p>
-                </div>
-                <ol class="lp-steps">
-                    <li><span>1</span> Crie a loja e coloque WhatsApp, logo e descrição.</li>
-                    <li><span>2</span> Cadastre produtos com fotos, preço, tamanho e cor.</li>
-                    <li><span>3</span> Publique o link na bio, Stories, grupos e conversas.</li>
-                    <li><span>4</span> Receba o cliente no WhatsApp com o pedido organizado.</li>
-                </ol>
-            </div>
-        </section>
+        {% include "includes/landing/section_beneficios.html" %}
 
-        <section class="lp-section" id="demo">
-            <p class="lp-kicker">Demonstração</p>
-            <h2>Uma experiência simples para lojista e cliente.</h2>
-            <div class="lp-demo-flow">
-                <article class="lp-demo-card">
-                    <span>Painel</span>
-                    <strong>Cadastre e atualize rápido</strong>
-                    <p>Adicione produtos, fotos, categorias, tamanhos, cores, estoque e status sem entrar no admin do Django.</p>
-                </article>
-                <article class="lp-demo-card">
-                    <span>Catálogo</span>
-                    <strong>Mostre uma vitrine bonita</strong>
-                    <p>A cliente navega por filtros, novidades, promoções e produtos publicados.</p>
-                </article>
-                <article class="lp-demo-card">
-                    <span>WhatsApp</span>
-                    <strong>Venda com mensagem pronta</strong>
-                    <p>O pedido chega com produto, tamanho e cor escolhidos para você atender mais rápido.</p>
-                </article>
-            </div>
-            <div class="lp-actions">
-                <a class="lp-button lp-button--ghost" href="/c/bela-meunier/">Ver catálogo de demonstração</a>
-                {% if request.user.is_authenticated %}
-                    <a class="lp-button" href="{% url 'painel' %}">Ir para o painel</a>
-                {% else %}
-                    <a class="lp-button" href="{% url 'cadastro' %}">Criar minha vitrine</a>
-                {% endif %}
-            </div>
-        </section>
+        {% include "includes/landing/section_comparison.html" %}
 
-        <section class="lp-section" id="beneficios">
-            <p class="lp-kicker">Benefícios</p>
-            <h2>Sua venda fica mais simples antes da primeira mensagem.</h2>
-            <div class="lp-feature-grid">
-                <article>
-                    <h3>Mais profissional</h3>
-                    <p>Sua loja passa confiança no primeiro clique, sem depender de PDF ou conversa manual.</p>
-                </article>
-                <article>
-                    <h3>Menos perguntas repetidas</h3>
-                    <p>A cliente vê preço, foto, cor, tamanho e disponibilidade antes de chamar.</p>
-                </article>
-                <article>
-                    <h3>WhatsApp continua vendendo</h3>
-                    <p>O VestLink organiza a vitrine e leva a cliente direto para seu atendimento.</p>
-                </article>
-                <article>
-                    <h3>Estoque mais claro</h3>
-                    <p>Marque produto, tamanho ou cor esgotada sem apagar o restante da vitrine.</p>
-                </article>
-            </div>
-        </section>
+        {% include "includes/landing/section_proof.html" %}
 
-        <section class="lp-section lp-comparison">
-            <p class="lp-kicker">Comparação</p>
-            <h2>Mais organizado que foto solta, mais direto que depender só do Instagram.</h2>
-            <div class="lp-comparison__table">
-                <div><strong>Fotos no WhatsApp</strong><span>Rápido, mas fica bagunçado e difícil de achar depois.</span></div>
-                <div><strong>PDF ou álbum manual</strong><span>Parece improvisado e dá trabalho para atualizar.</span></div>
-                <div><strong>Só Instagram</strong><span>Bom para chamar atenção, mas nem sempre facilita a compra.</span></div>
-                <div class="is-best"><strong>VestLink</strong><span>Link próprio, produtos organizados e pedido direto no WhatsApp.</span></div>
-            </div>
-        </section>
+        {% include "includes/landing/section_precos.html" %}
 
-        <section class="lp-section lp-proof">
-            <p class="lp-kicker">Prova honesta</p>
-            <h2>Estamos preparando o VestLink para lojas que querem vender com mais clareza.</h2>
-            <div class="lp-proof-grid">
-                <article><strong>Beta</strong><span>feito com foco em lojas que vendem pelo WhatsApp</span></article>
-                <article><strong>Sem app</strong><span>cliente acessa pelo link, direto do navegador</span></article>
-                <article><strong>Sem número falso</strong><span>quando houver resultados reais, eles entram aqui</span></article>
-            </div>
-            <p class="lp-note">Nada de depoimento inventado: hoje a promessa é uma ferramenta simples, visual e pronta para testar.</p>
-        </section>
+        {% include "includes/landing/section_objections.html" %}
 
-        <section class="lp-section" id="precos">
-            <p class="lp-kicker">Oferta</p>
-            <h2>Um plano direto para colocar sua loja no ar.</h2>
-            <div class="lp-price-grid">
-                <article class="lp-price-card lp-price-card--featured">
-                    <span>7 dias para testar</span>
-                    <h3>Plano Premium</h3>
-                    <strong>R$39,90/mês</strong>
-                    <ul>
-                        <li>Catálogo profissional com link próprio</li>
-                        <li>Produtos com várias fotos</li>
-                        <li>Tamanhos, cores e controle de esgotados</li>
-                        <li>Categorias, novidades e promoções</li>
-                        <li>Leads, cliques e dashboard da loja</li>
-                        <li>Sem fidelidade e sem aplicativo</li>
-                    </ul>
-                    {% if request.user.is_authenticated %}
-                        <a href="{% url 'painel' %}">Acessar meu painel</a>
-                    {% else %}
-                        <a href="{% url 'cadastro' %}">Testar o Premium</a>
-                    {% endif %}
-                </article>
-            </div>
-            <div class="lp-offer-points">
-                <span>Menos que uma arte por semana.</span>
-                <span>Mais simples que montar PDF.</span>
-                <span>Feito para quem vende no WhatsApp.</span>
-            </div>
-        </section>
+        {% include "includes/landing/section_faq.html" %}
 
-        <section class="lp-section lp-objections">
-            <p class="lp-kicker">Dúvidas comuns</p>
-            <h2>Feito para quem vende na prática, não para quem quer complicar.</h2>
-            <div class="lp-card-grid">
-                <article><strong>"Não sei mexer em sistema."</strong><p>Você cadastra como preencheria uma postagem: nome, preço, foto e salvar.</p></article>
-                <article><strong>"Já vendo pelo Instagram."</strong><p>Perfeito. O Instagram atrai. O VestLink organiza a compra depois do clique.</p></article>
-                <article><strong>"Não quero pagar mensalidade."</strong><p>Você testa por 7 dias e só continua se fizer sentido para sua loja.</p></article>
-                <article><strong>"Vai dar trabalho cadastrar tudo."</strong><p>Comece pelos produtos que mais vendem. Depois você adiciona o restante aos poucos.</p></article>
-                <article><strong>"Meus clientes só usam WhatsApp."</strong><p>Essa é exatamente a ideia: o catálogo prepara o pedido e o WhatsApp fecha a venda.</p></article>
-                <article><strong>"Não tenho site ainda."</strong><p>Não precisa. O VestLink gera o link da loja para você divulgar.</p></article>
-            </div>
-        </section>
-
-        <section class="lp-section" id="faq">
-            <p class="lp-kicker">FAQ</p>
-            <h2>Perguntas frequentes</h2>
-            <div class="lp-faq">
-                <details open>
-                    <summary>O cliente precisa baixar aplicativo?</summary>
-                    <p>Não. Ele abre o catálogo pelo link, escolhe o produto e chama no WhatsApp.</p>
-                </details>
-                <details>
-                    <summary>Posso vender pelo Instagram mesmo assim?</summary>
-                    <p>Sim. Use o Instagram para atrair e o VestLink como vitrine organizada no link da bio.</p>
-                </details>
-                <details>
-                    <summary>Consigo marcar tamanho ou cor esgotada?</summary>
-                    <p>Sim. Você pode controlar produto, tamanho, cor e variações para não perder vendas do que ainda está disponível.</p>
-                </details>
-                <details>
-                    <summary>Posso cancelar depois?</summary>
-                    <p>Sim. O plano não tem fidelidade.</p>
-                </details>
-                <details>
-                    <summary>Quanto custa?</summary>
-                    <p>O Premium custa R$39,90 por mês depois dos 7 dias de teste.</p>
-                </details>
-            </div>
-        </section>
-
-        <section class="lp-cta-strip">
-            <div>
-                <p class="lp-kicker">Próximo passo</p>
-                <h2>Comece pela vitrine de demonstração e depois crie a sua.</h2>
-            </div>
-            <div class="lp-actions">
-                <a class="lp-button lp-button--ghost" href="/c/bela-meunier/">Ver demonstração</a>
-                {% if request.user.is_authenticated %}
-                    <a class="lp-button" href="{% url 'painel' %}">Ir para o painel</a>
-                {% else %}
-                    <a class="lp-button" href="{% url 'cadastro' %}">Criar conta</a>
-                {% endif %}
-            </div>
-        </section>
-
-        <section class="lp-final">
-            <h2>Chega de perder venda porque a cliente não achou a peça.</h2>
-            <p>Crie uma vitrine organizada, bonita e pronta para WhatsApp.</p>
-            {% if request.user.is_authenticated %}
-                <a class="lp-button" href="{% url 'painel' %}">Acessar meu painel</a>
-            {% else %}
-                <a class="lp-button" href="{% url 'cadastro' %}">Criar conta e testar 7 dias</a>
-            {% endif %}
-            <span>Premium por R$39,90/mês depois do teste. Cancele quando quiser.</span>
-        </section>
+        {% include "includes/landing/section_footer_cta.html" %}
     </main>
     <script src="/static/js/theme.js" defer></script>
     <script src="/static/js/landing_motion.js?v=2" defer></script>

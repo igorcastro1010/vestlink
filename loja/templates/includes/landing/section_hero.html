@@ -1,0 +1,47 @@
+        <section class="lp-hero">
+            <div class="lp-hero__copy">
+                <p class="lp-kicker">Catálogo digital para moda</p>
+                <h1>Transforme seu WhatsApp em uma vitrine profissional de roupas.</h1>
+                <p>O VestLink ajuda lojas, boutiques e sacoleiras a venderem com um catálogo bonito, organizado e pronto para receber pedidos pelo WhatsApp.</p>
+                <div class="lp-actions">
+                    {% if request.user.is_authenticated %}
+                        <a class="lp-button" href="{% url 'painel' %}">Acessar meu painel</a>
+                    {% else %}
+                        <a class="lp-button" href="{% url 'cadastro' %}">Criar conta e testar 7 dias</a>
+                    {% endif %}
+                    <a class="lp-button lp-button--ghost" href="/c/bela-meunier/">Ver catálogo de demonstração</a>
+                </div>
+                <span>Depois do teste: R$39,90/mês. Sem fidelidade. Sem aplicativo para instalar.</span>
+            </div>
+
+            <div class="lp-preview lp-preview--stack" aria-label="Prévia do catálogo VestLink">
+                <div class="lp-preview__top">
+                    <span>Bela Meunier</span>
+                    <small>link na bio e no WhatsApp</small>
+                </div>
+                <div class="lp-phone-card">
+                    <div class="lp-phone-card__image"></div>
+                    <div>
+                        <strong>Vestido canelado</strong>
+                        <small>R$ 119,90</small>
+                    </div>
+                    <div class="lp-choice-row">
+                        <span>P</span>
+                        <span class="is-selected">M</span>
+                        <span>G</span>
+                    </div>
+                    <div class="lp-choice-row">
+                        <span>Preto</span>
+                        <span class="is-selected">Branco</span>
+                    </div>
+                    <button>Quero esse no WhatsApp</button>
+                </div>
+                <div class="lp-whatsapp-bubble">Oi! Quero o Vestido canelado no tamanho M, cor Branco.</div>
+            </div>
+        </section>
+
+        <section class="lp-trust-row" aria-label="Resumo do VestLink">
+            <article><strong>10 minutos</strong><span>para colocar a primeira vitrine no ar</span></article>
+            <article><strong>WhatsApp</strong><span>como canal principal de venda</span></article>
+            <article><strong>R$39,90</strong><span>por mês depois dos 7 dias de teste</span></article>
+        </section>

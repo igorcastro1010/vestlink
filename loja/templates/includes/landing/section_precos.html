@@ -1,0 +1,29 @@
+        <section class="lp-section" id="precos">
+            <p class="lp-kicker">Oferta</p>
+            <h2>Um plano direto para colocar sua loja no ar.</h2>
+            <div class="lp-price-grid">
+                <article class="lp-price-card lp-price-card--featured">
+                    <span>7 dias para testar</span>
+                    <h3>Plano Premium</h3>
+                    <strong>R$39,90/mês</strong>
+                    <ul>
+                        <li>Catálogo profissional com link próprio</li>
+                        <li>Produtos com várias fotos</li>
+                        <li>Tamanhos, cores e controle de esgotados</li>
+                        <li>Categorias, novidades e promoções</li>
+                        <li>Leads, cliques e dashboard da loja</li>
+                        <li>Sem fidelidade e sem aplicativo</li>
+                    </ul>
+                    {% if request.user.is_authenticated %}
+                        <a href="{% url 'painel' %}">Acessar meu painel</a>
+                    {% else %}
+                        <a href="{% url 'cadastro' %}">Testar o Premium</a>
+                    {% endif %}
+                </article>
+            </div>
+            <div class="lp-offer-points">
+                <span>Menos que uma arte por semana.</span>
+                <span>Mais simples que montar PDF.</span>
+                <span>Feito para quem vende no WhatsApp.</span>
+            </div>
+        </section>
