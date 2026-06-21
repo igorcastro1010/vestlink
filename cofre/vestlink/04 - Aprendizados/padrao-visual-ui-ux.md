@@ -1,7 +1,7 @@
 ---
 tipo: aprendizado
 status: ativo
-revisado_em: 2026-06-18
+revisado_em: 2026-06-21
 fontes:
   - ../../../static/css/catalogo.css
   - ../../../loja/templates/login.html
@@ -30,6 +30,7 @@ TL;DR: O VestLink usa Django com templates HTML, CSS global em `static/css/catal
 - Ao alterar CSS visual, atualizar o cache bust do `catalogo.css?v=...` nos templates afetados.
 - Preferir ajustar a escala `--uix-*` no fim de `catalogo.css` em vez de espalhar cores fixas por componentes.
 - Roxos primarios devem ser mais calmos/desaturados; evitar gradientes muito luminosos ou blocos roxos em navegacao comum.
+- A paleta light deve evitar branco puro como fundo principal: usar base acetinada (`--uix-bg`) com cards em `--uix-surface`, bordas `--uix-line` um pouco mais visiveis e sombras leves para separar blocos sem pesar.
 - Em telas escuras, nunca usar cores herdadas escuras como `#111` em cards escuros; reforcar titulos com `--uix-text-strong` e textos secundarios com `--uix-text-muted`.
 - Chips, badges, abas e CTAs precisam ter pares de cor para claro e escuro.
 - Verificar visualmente pelo menos landing, login/cadastro, painel de lojas, dashboard da loja, catalogo publico e assinatura apos grandes mudancas visuais.

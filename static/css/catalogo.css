@@ -14012,3 +14012,64 @@ body.storefront {
         transition-duration: 0.001ms !important;
     }
 }
+
+/* 22. Soft premium color depth: tokens-only visual contrast pass */
+:root {
+    --uix-primary: #6548bd;
+    --uix-primary-strong: #493184;
+    --uix-primary-soft: #eee8fb;
+    --uix-bg: #f3eff8;
+    --uix-bg-soft: #ebe5f3;
+    --uix-surface: rgba(255, 253, 251, 0.96);
+    --uix-surface-solid: #fffdfb;
+    --uix-surface-strong: #ffffff;
+    --uix-line: rgba(45, 34, 70, 0.16);
+    --uix-line-strong: rgba(45, 34, 70, 0.26);
+    --uix-shadow-sm: 0 8px 20px rgba(37, 24, 74, 0.07);
+    --uix-shadow-md: 0 16px 40px rgba(37, 24, 74, 0.09);
+    --uix-shadow-lg: 0 26px 64px rgba(37, 24, 74, 0.13);
+    --page: var(--uix-bg);
+    --surface: var(--uix-surface-solid);
+    --line: var(--uix-line);
+}
+
+[data-theme="dark"] {
+    --uix-primary: #bca8ff;
+    --uix-primary-strong: #d8ccff;
+    --uix-primary-soft: #251e36;
+    --uix-bg: #0f0c15;
+    --uix-bg-soft: #17121f;
+    --uix-surface: rgba(28, 23, 38, 0.96);
+    --uix-surface-solid: #1a1524;
+    --uix-surface-strong: #241d32;
+    --uix-line: rgba(246, 241, 255, 0.17);
+    --uix-line-strong: rgba(246, 241, 255, 0.28);
+    --page: var(--uix-bg);
+    --surface: var(--uix-surface-solid);
+    --line: var(--uix-line);
+}
+
+body.auth-page,
+body.stores-page,
+body.merchant-dashboard,
+body.plans-page {
+    background:
+        radial-gradient(circle at 8% 4%, color-mix(in srgb, var(--uix-primary) 9%, transparent), transparent 28%),
+        radial-gradient(circle at 94% 14%, color-mix(in srgb, var(--uix-accent) 6%, transparent), transparent 25%),
+        var(--uix-bg) !important;
+}
+
+.panel-section,
+.onboarding-card,
+.store-card,
+.auth-card,
+.checkout-card,
+.subscription-status-card,
+.subscription-checklist,
+.payments-history,
+.store-identity-card,
+.notification-panel {
+    background: var(--uix-surface) !important;
+    border-color: var(--uix-line) !important;
+    box-shadow: var(--uix-shadow-sm) !important;
+}
