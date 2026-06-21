@@ -1,7 +1,7 @@
 ---
 tipo: contexto
 status: ativo
-revisado_em: 2026-06-19
+revisado_em: 2026-06-21
 fontes:
   - ../../../README.md
   - ../../../config/settings.py
@@ -20,6 +20,7 @@ fontes:
 | Necessidade | Nota |
 |---|---|
 | Entender produto e estado atual | [[visao-geral]] |
+| Desenvolver de forma econômica (Codex/Antigravity) | [[indice-rapido]] |
 | Nomes usados no projeto | [[glossario]] |
 | Componentes e responsabilidades | [[../01 - Arquitetura/arquitetura-do-sistema]] |
 | Rotas e superfícies | [[../01 - Arquitetura/endpoints-e-superficies]] |
