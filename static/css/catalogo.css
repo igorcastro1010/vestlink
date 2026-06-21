@@ -1341,3 +1341,164 @@ body.storefront {
         max-height: 42vh;
     }
 }
+
+/* Mobile polish pass: remove remaining catalog overflow without changing desktop. */
+@media (max-width: 640px) {
+    html:has(body.storefront),
+    body.storefront {
+        max-width: 100%;
+        overflow-x: clip;
+    }
+
+    .storefront *,
+    .storefront *::before,
+    .storefront *::after {
+        box-sizing: border-box;
+    }
+
+    .storefront .store-header,
+    .storefront .store-layout,
+    .storefront .store-content,
+    .storefront .store-sidebar,
+    .storefront .store-topbar,
+    .storefront .store-summary,
+    .storefront .promo-grid,
+    .storefront .grid,
+    .storefront .product-detail-shell,
+    .storefront .product-detail-card {
+        margin-left: auto;
+        margin-right: auto;
+        max-width: min(100%, calc(100vw - 24px)) !important;
+        width: 100% !important;
+    }
+
+    .storefront .store-layout {
+        gap: 14px;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+
+    .storefront .store-header__actions {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        width: 100%;
+    }
+
+    .storefront .store-header__actions a {
+        min-width: 0;
+        overflow-wrap: anywhere;
+        padding-left: 14px;
+        padding-right: 14px;
+    }
+
+    .storefront .store-topbar {
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    .storefront .store-topbar > *,
+    .storefront .store-filters > *,
+    .storefront .store-sidebar > *,
+    .storefront .categories > * {
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    .storefront .categories,
+    .storefront .store-filters {
+        display: flex;
+        min-width: 0;
+        width: 100%;
+    }
+
+    .storefront .store-sidebar,
+    .storefront .store-filters {
+        overflow: hidden;
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .storefront .store-sidebar .categories,
+    .storefront .store-filters {
+        max-width: 100%;
+        overflow-x: auto;
+        padding-left: 2px;
+        padding-right: 2px;
+    }
+
+    .storefront .menu-mark,
+    .storefront .categories a,
+    .storefront .store-filters a,
+    .storefront .store-filters button,
+    .storefront .store-filters select,
+    .storefront .store-filters input {
+        max-width: 100%;
+        min-width: 0;
+    }
+
+    .storefront .menu-mark {
+        display: inline-flex;
+        flex: 0 1 auto;
+        min-height: 38px;
+        overflow-wrap: anywhere;
+        white-space: normal;
+    }
+
+    .storefront .catalog-banner {
+        max-width: min(100%, calc(100vw - 24px)) !important;
+        overflow: hidden;
+        padding-left: 18px !important;
+        padding-right: 18px !important;
+    }
+
+    .storefront .catalog-banner h2 {
+        font-size: clamp(26px, 8vw, 34px) !important;
+        line-height: 1.05;
+    }
+
+    .storefront .catalog-banner p:not(.eyebrow) {
+        font-size: 15px;
+        line-height: 1.35;
+        overflow-wrap: anywhere;
+    }
+
+    .storefront .catalog-banner__cta,
+    .storefront .product-detail-info .whatsapp-button,
+    .storefront .product-detail-info a,
+    .storefront .cart-actions a,
+    .storefront .cart-actions button {
+        max-width: 100%;
+        min-width: 0;
+        white-space: normal;
+        width: 100%;
+    }
+
+    .storefront .product-detail-shell {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+
+    .storefront .product-detail-card {
+        overflow: hidden;
+    }
+
+    .storefront .product-detail-gallery > img {
+        max-height: 38vh;
+        width: 100%;
+    }
+}
+
+@media (max-width: 420px) {
+    .storefront .catalog-banner h2 {
+        font-size: clamp(24px, 7.6vw, 30px) !important;
+    }
+
+    .storefront .store-header__actions a {
+        font-size: 15px;
+    }
+
+    .storefront .catalog-banner {
+        padding-left: 16px !important;
+        padding-right: 16px !important;
+    }
+}

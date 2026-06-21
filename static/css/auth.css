@@ -676,6 +676,20 @@
     overflow-x: clip;
 }
 
+.auth-page *,
+.auth-page *::before,
+.auth-page *::after {
+    box-sizing: border-box;
+}
+
+.auth-card,
+.auth-card--wide,
+.auth-card .panel-form,
+.signup-wizard,
+.signup-wizard section {
+    min-width: 0;
+}
+
 .auth-card h1,
 .auth-card h2,
 .signup-wizard h2,
@@ -705,6 +719,56 @@
     color: #625873;
 }
 
+.auth-card .panel-form input {
+    background: color-mix(in srgb, #ffffff 94%, #f2ecff) !important;
+    border: 1px solid #d8d0e6 !important;
+    border-radius: 13px !important;
+    box-shadow: 0 1px 0 rgba(31, 24, 68, 0.03);
+    color: #1f1844 !important;
+    max-width: 100%;
+    min-width: 0;
+    padding-left: 14px;
+    padding-right: 14px;
+    width: 100%;
+}
+
+.auth-card .panel-form input:focus {
+    border-color: #7c4de0 !important;
+    box-shadow: 0 0 0 4px rgba(124, 77, 224, 0.14);
+    outline: 0;
+}
+
+.auth-card .panel-form > button,
+.auth-card .panel-form button[type="submit"] {
+    align-items: center;
+    background: linear-gradient(135deg, #25184a, #4b2c86) !important;
+    border: 0;
+    border-radius: 14px !important;
+    box-shadow: 0 14px 28px rgba(37, 24, 74, 0.18);
+    color: #ffffff !important;
+    display: inline-flex;
+    font-weight: 900;
+    justify-content: center;
+    max-width: 100%;
+    min-width: 0;
+    overflow-wrap: anywhere;
+    white-space: normal;
+    width: 100%;
+}
+
+.auth-card .google-auth-button,
+.auth-card .auth-legal-note,
+.auth-card .auth-divider,
+.auth-card .panel-form .helptext,
+.auth-card .panel-form small,
+.signup-wizard .helptext,
+.password-requirements,
+.password-requirements li {
+    max-width: 100%;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
 [data-theme="dark"] .auth-card h1,
 [data-theme="dark"] .auth-card h2,
 [data-theme="dark"] .signup-wizard h2,
@@ -731,7 +795,23 @@
     color: #c4bad7;
 }
 
+[data-theme="dark"] .auth-card .panel-form input {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border-color: rgba(232, 224, 255, 0.24) !important;
+    color: #f8f5ff !important;
+}
+
+[data-theme="dark"] .auth-card .panel-form input:focus {
+    border-color: #bba3ff !important;
+    box-shadow: 0 0 0 4px rgba(187, 163, 255, 0.16);
+}
+
 @media (max-width: 760px) {
+    .auth-page {
+        padding-left: 14px;
+        padding-right: 14px;
+    }
+
     .auth-card,
     .auth-card--wide,
     .auth-layout,
@@ -740,6 +820,14 @@
         box-sizing: border-box;
         max-width: 100%;
         min-width: 0;
+        width: 100%;
+    }
+
+    .auth-card,
+    .auth-card--wide {
+        overflow: hidden;
+        padding-left: 18px;
+        padding-right: 18px;
     }
 
     .auth-card h1,
@@ -750,5 +838,13 @@
     .auth-card li,
     .auth-legal-note {
         overflow-wrap: anywhere;
+    }
+
+    .auth-card .panel-form input,
+    .auth-card .panel-form > button,
+    .auth-card .panel-form button[type="submit"],
+    .auth-card .google-auth-button {
+        min-height: 48px;
+        width: 100%;
     }
 }

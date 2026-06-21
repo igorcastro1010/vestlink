@@ -1220,7 +1220,7 @@
 @media (max-width: 640px) {
     .saas-landing .lp-hero {
         grid-template-columns: minmax(0, 1fr) !important;
-        overflow: hidden;
+        overflow: visible;
         width: 100%;
     }
 
@@ -1242,5 +1242,86 @@
 
     .saas-landing .lp-preview {
         justify-self: stretch;
+    }
+
+    .saas-landing .lp-hero h1 {
+        font-size: clamp(34px, 10.5vw, 44px) !important;
+        line-height: 1.04 !important;
+        max-width: 100%;
+    }
+
+    .saas-landing .lp-actions,
+    .saas-landing .lp-actions a,
+    .saas-landing .lp-button,
+    .saas-landing .lp-button-outline {
+        max-width: 100%;
+        min-width: 0;
+    }
+
+    .saas-landing .lp-actions a {
+        white-space: normal;
+    }
+
+    .saas-landing .lp-preview {
+        display: block;
+        overflow: visible;
+    }
+
+    .saas-landing .lp-phone-card {
+        border-radius: 20px;
+        margin-left: auto;
+        margin-right: auto;
+        overflow: hidden;
+        padding: 14px;
+    }
+
+    .saas-landing .lp-preview__top,
+    .saas-landing .lp-preview__card {
+        max-width: 100%;
+        min-width: 0;
+    }
+
+    .saas-landing .lp-preview__top {
+        align-items: start;
+        gap: 4px;
+    }
+
+    .saas-landing .lp-preview__top span {
+        overflow-wrap: anywhere;
+    }
+
+    .saas-landing .lp-preview__card {
+        border-radius: 18px;
+        padding: 12px;
+    }
+
+    .saas-landing .lp-preview__image {
+        aspect-ratio: 4 / 3;
+        max-width: 100%;
+    }
+
+    .saas-landing .lp-preview__card button,
+    .saas-landing .lp-preview__bubble {
+        max-width: 100%;
+        white-space: normal;
+    }
+
+    .saas-landing .lp-preview__bubble {
+        margin-left: 0;
+        width: 100%;
+    }
+}
+
+@media (max-width: 420px) {
+    .saas-landing .lp-hero {
+        gap: 22px;
+    }
+
+    .saas-landing .lp-hero h1 {
+        font-size: clamp(31px, 9.8vw, 39px) !important;
+    }
+
+    .saas-landing .lp-phone-card {
+        padding: 12px;
     }
 }
