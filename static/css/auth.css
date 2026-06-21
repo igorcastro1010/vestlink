@@ -670,3 +670,85 @@
         top: auto;
     }
 }
+
+/* Post-CSS smoke fixes: stronger auth contrast and mobile viewport safety. */
+.auth-page {
+    overflow-x: clip;
+}
+
+.auth-card h1,
+.auth-card h2,
+.signup-wizard h2,
+.password-requirements strong,
+.auth-card .panel-form label,
+.remember-me,
+.auth-switch,
+.auth-card a {
+    color: #1f1844 !important;
+}
+
+.auth-card .panel-form .helptext,
+.auth-card .panel-form .helptext li,
+.auth-card .panel-form small,
+.auth-divider,
+.auth-legal-note,
+.auth-note,
+.auth-switch {
+    color: #4f4663 !important;
+}
+
+.password-requirements li {
+    color: #514862 !important;
+}
+
+.auth-card .panel-form input::placeholder {
+    color: #625873;
+}
+
+[data-theme="dark"] .auth-card h1,
+[data-theme="dark"] .auth-card h2,
+[data-theme="dark"] .signup-wizard h2,
+[data-theme="dark"] .password-requirements strong,
+[data-theme="dark"] .auth-card .panel-form label,
+[data-theme="dark"] .remember-me,
+[data-theme="dark"] .auth-switch,
+[data-theme="dark"] .auth-card a {
+    color: #f6f2ff !important;
+}
+
+[data-theme="dark"] .auth-card .panel-form .helptext,
+[data-theme="dark"] .auth-card .panel-form .helptext li,
+[data-theme="dark"] .auth-card .panel-form small,
+[data-theme="dark"] .auth-divider,
+[data-theme="dark"] .auth-legal-note,
+[data-theme="dark"] .auth-note,
+[data-theme="dark"] .auth-switch,
+[data-theme="dark"] .password-requirements li {
+    color: #d8d0e8 !important;
+}
+
+[data-theme="dark"] .auth-card .panel-form input::placeholder {
+    color: #c4bad7;
+}
+
+@media (max-width: 760px) {
+    .auth-card,
+    .auth-card--wide,
+    .auth-layout,
+    .signup-wizard,
+    .signup-wizard section {
+        box-sizing: border-box;
+        max-width: 100%;
+        min-width: 0;
+    }
+
+    .auth-card h1,
+    .auth-card h2,
+    .signup-wizard h2,
+    .auth-card p,
+    .auth-card label,
+    .auth-card li,
+    .auth-legal-note {
+        overflow-wrap: anywhere;
+    }
+}

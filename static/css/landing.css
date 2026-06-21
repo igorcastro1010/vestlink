@@ -1204,3 +1204,43 @@
     background: #ffffff !important;
     color: #211846 !important;
 }
+
+/* Post-CSS smoke fixes: keep mobile landing inside the viewport. */
+.saas-landing {
+    overflow-x: clip;
+}
+
+.saas-landing .lp-hero,
+.saas-landing .lp-preview,
+.saas-landing .lp-phone-card,
+.saas-landing .lp-demo-card {
+    min-width: 0;
+}
+
+@media (max-width: 640px) {
+    .saas-landing .lp-hero {
+        grid-template-columns: minmax(0, 1fr) !important;
+        overflow: hidden;
+        width: 100%;
+    }
+
+    .saas-landing .lp-hero__copy,
+    .saas-landing .lp-preview,
+    .saas-landing .lp-phone-card,
+    .saas-landing .lp-demo-card {
+        max-width: 100%;
+        width: 100%;
+    }
+
+    .saas-landing .lp-hero h1,
+    .saas-landing .lp-hero__copy > p:not(.lp-kicker),
+    .saas-landing .lp-hero__copy > span,
+    .saas-landing .lp-demo-card,
+    .saas-landing .lp-demo-card * {
+        overflow-wrap: anywhere;
+    }
+
+    .saas-landing .lp-preview {
+        justify-self: stretch;
+    }
+}
