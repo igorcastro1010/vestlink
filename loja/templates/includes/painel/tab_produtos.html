@@ -1,0 +1,262 @@
+<div class="tab-pane" id="tab-produtos" data-tab-content="produtos">
+            <section class="management-grid">
+                <section class="panel-section" id="categorias" style="grid-column: 1 / -1;">
+                    <div class="section-heading">
+                        <div>
+                            <p class="eyebrow">Categorias</p>
+                            <h2>Organizar catálogo</h2>
+                        </div>
+                        <span>{{ total_categorias }} categoria(s)</span>
+                    </div>
+                    <form class="panel-form compact-form" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="acao" value="criar_categoria">
+                        {{ categoria_form.as_p }}
+                        <button type="submit">Adicionar categoria</button>
+                    </form>
+                    <div class="category-list">
+                        {% for categoria in loja.categorias.all %}
+                            <article>
+                                <strong>{{ categoria.nome }}</strong>
+                                <span>Ordem {{ categoria.ordem }}</span>
+                                <div>
+                                    <a href="{% url 'editar_categoria' loja.slug categoria.id %}">Editar</a>
+                                    {% if is_owner %}
+                                    <a class="danger-link" href="{% url 'remover_categoria' loja.slug categoria.id %}">Excluir</a>
+                                    {% endif %}
+                                </div>
+                            </article>
+                        {% empty %}
+                            <p class="empty">Crie categorias como Vestidos, Camisas e Promoções.</p>
+                        {% endfor %}
+                    </div>
+                </section>
+            </section>
+
+            <section class="dashboard-grid" style="margin-top: 20px;">
+                <div class="panel-section product-form-card" id="novo-produto">
+                    <div class="section-heading">
+                        <div>
+                            <p class="eyebrow">Novo item</p>
+                            <h2>Adicionar produto</h2>
+                        </div>
+                        <span>Cadastro focado</span>
+                    </div>
+                    <div class="product-form-intro">
+                        <div>
+                            <strong>Preencha o essencial primeiro.</strong>
+                            <p>Nome, preço e foto principal já bastam para publicar. Tamanhos, cores e status deixam a vitrine mais profissional.</p>
+                        </div>
+                        <div class="product-form-steps" aria-label="Etapas do cadastro">
+                            <span>1 Dados</span>
+                            <span>2 Fotos</span>
+                            <span>3 Variacoes</span>
+                            <span>4 Status</span>
+                        </div>
+                    </div>
+                    <div class="product-form-layout">
+                        {% if not loja.assinatura_esta_ativa %}
+                            <div class="limit-warning product-blocked-warning">
+                                <strong>Assinatura inativa</strong>
+                                {% if is_owner %}
+                                    <p>Regularize o Premium para cadastrar novos produtos e manter o catálogo publicado.</p>
+                                    <a href="{% url 'assinatura' loja.slug %}">Regularizar assinatura</a>
+                                {% else %}
+                                    <p>Consulte o proprietário da loja para regularizar a assinatura e liberar o cadastro de produtos.</p>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                        <form class="panel-form" method="post" enctype="multipart/form-data" data-product-form>
+                            {% csrf_token %}
+                            <div class="form-block form-block--basic">
+                                <h3>Informacoes basicas</h3>
+                                {{ form.non_field_errors }}
+                                {{ form.categoria.as_field_group }}
+                                {{ form.nova_categoria.as_field_group }}
+                                {{ form.nome.as_field_group }}
+                                {{ form.descricao.as_field_group }}
+                                {{ form.preco.as_field_group }}
+                                {{ form.preco_antigo.as_field_group }}
+                                {{ form.ordem.as_field_group }}
+                            </div>
+                            <div class="form-block form-block--media">
+                                <h3>Fotos do produto</h3>
+                                {{ form.imagem.as_field_group }}
+                                {{ form.fotos_adicionais.as_field_group }}
+                            </div>
+                            <div class="form-block form-block--variants">
+                                <h3>Variacoes</h3>
+                                <div class="variant-field-grid">
+                                    <p>
+                                        {{ form.tamanhos.label_tag }}
+                                        {{ form.tamanhos }}
+                                        {% if form.tamanhos.help_text %}<span class="helptext">{{ form.tamanhos.help_text }}</span>{% endif %}
+                                        {{ form.tamanhos.errors }}
+                                    </p>
+                                    <p>
+                                        {{ form.tamanhos_esgotados.label_tag }}
+                                        {{ form.tamanhos_esgotados }}
+                                        {% if form.tamanhos_esgotados.help_text %}<span class="helptext">{{ form.tamanhos_esgotados.help_text }}</span>{% endif %}
+                                        {{ form.tamanhos_esgotados.errors }}
+                                    </p>
+                                    <p>
+                                        {{ form.cores.label_tag }}
+                                        {{ form.cores }}
+                                        {% if form.cores.help_text %}<span class="helptext">{{ form.cores.help_text }}</span>{% endif %}
+                                        {{ form.cores.errors }}
+                                    </p>
+                                    <p>
+                                        {{ form.cores_esgotadas.label_tag }}
+                                        {{ form.cores_esgotadas }}
+                                        {% if form.cores_esgotadas.help_text %}<span class="helptext">{{ form.cores_esgotadas.help_text }}</span>{% endif %}
+                                        {{ form.cores_esgotadas.errors }}
+                                    </p>
+                                </div>
+                                <div class="stock-builder" data-stock-builder>
+                                    <div>
+                                        <strong>Estoque visual por variacao</strong>
+                                        <small>Digite tamanhos e cores acima, depois gere a grade para preencher as quantidades.</small>
+                                    </div>
+                                    <button type="button" data-build-stock>Gerar grade</button>
+                                    <div class="stock-builder__grid" data-stock-grid></div>
+                                </div>
+                                <p class="variant-stock-field">
+                                    {{ form.variacoes_estoque.label_tag }}
+                                    {{ form.variacoes_estoque }}
+                                    {% if form.variacoes_estoque.help_text %}<span class="helptext">{{ form.variacoes_estoque.help_text }}</span>{% endif %}
+                                    {{ form.variacoes_estoque.errors }}
+                                </p>
+                            </div>
+                            <div class="form-block form-block--status">
+                                <h3>Status do produto</h3>
+                                <label class="status-toggle" for="{{ form.destaque.id_for_label }}">
+                                    <span>
+                                        <strong>Novo</strong>
+                                        <small>Mostra o produto como novidade no catálogo.</small>
+                                    </span>
+                                    {{ form.destaque }}
+                                </label>
+                                <label class="status-toggle" for="{{ form.promocao.id_for_label }}">
+                                    <span>
+                                        <strong>Promoção</strong>
+                                        <small>Destaca o item nas ofertas da loja.</small>
+                                    </span>
+                                    {{ form.promocao }}
+                                </label>
+                                <label class="status-toggle" for="{{ form.publicado.id_for_label }}">
+                                    <span>
+                                        <strong>Publicado</strong>
+                                        <small>Deixa o produto visível para clientes.</small>
+                                    </span>
+                                    {{ form.publicado }}
+                                </label>
+                                <label class="status-toggle" for="{{ form.esgotado.id_for_label }}">
+                                    <span>
+                                        <strong>Esgotado</strong>
+                                        <small>Bloqueia a compra quando acabar tudo.</small>
+                                    </span>
+                                    {{ form.esgotado }}
+                                </label>
+                            </div>
+                            <div class="product-form-submit">
+                                <span>Depois de salvar, o produto aparece na lista abaixo.</span>
+                                <button type="submit">Salvar produto</button>
+                            </div>
+                        </form>
+
+                        <aside class="product-preview">
+                            <p class="eyebrow">Prévia no catálogo</p>
+                            <div class="product-preview__image" data-preview-image>Foto</div>
+                            <strong data-preview-name>Nome do produto</strong>
+                            <span data-preview-price>R$ 0,00</span>
+                            <p data-preview-description>Descrição curta do produto.</p>
+                            <div data-preview-options></div>
+                        </aside>
+                    </div>
+                </div>
+
+                <section class="panel-section product-list-card">
+                    <div class="section-heading">
+                        <div>
+                            <p class="eyebrow">Catálogo</p>
+                            <h2>Produtos cadastrados</h2>
+                        </div>
+                        <span>{{ produtos|length }} exibido(s)</span>
+                    </div>
+
+                    <form class="panel-filters" method="get">
+                        <input type="search" name="q" value="{{ busca_painel }}" placeholder="Buscar produto">
+                        <select name="categoria">
+                            <option value="">Todas categorias</option>
+                            {% for categoria in loja.categorias.all %}
+                                <option value="{{ categoria.id }}" {% if categoria_painel == categoria.id|stringformat:"s" %}selected{% endif %}>{{ categoria.nome }}</option>
+                            {% endfor %}
+                        </select>
+                        <select name="status">
+                            <option value="">Todos status</option>
+                            <option value="disponivel" {% if status_painel == "disponivel" %}selected{% endif %}>Disponíveis</option>
+                            <option value="esgotado" {% if status_painel == "esgotado" %}selected{% endif %}>Esgotados</option>
+                            <option value="novo" {% if status_painel == "novo" %}selected{% endif %}>Novos</option>
+                            <option value="promocao" {% if status_painel == "promocao" %}selected{% endif %}>Promoções</option>
+                            <option value="rascunho" {% if status_painel == "rascunho" %}selected{% endif %}>Rascunhos</option>
+                        </select>
+                        <button type="submit">Filtrar</button>
+                    </form>
+
+                    <div class="dashboard-products">
+                        {% for produto in produtos %}
+                            <article>
+                                <img src="{{ produto.imagem.url }}" alt="{{ produto.nome }}">
+                                <div class="dashboard-product-info">
+                                    <div>
+                                        <strong>{{ produto.nome }}</strong>
+                                        <span>R$ {{ produto.preco }}</span>
+                                    </div>
+                                    <small>
+                                        {% if produto.categoria %}{{ produto.categoria.nome }}{% else %}Sem categoria{% endif %}
+                                        - ordem {{ produto.ordem }}
+                                        - {{ produto.imagens.count }} foto(s) adicional(is)
+                                        - {{ produto.cliques_whatsapp }} clique(s)
+                                    </small>
+                                    <div class="product-status-row">
+                                        {% if produto.esgotado %}
+                                            <span class="status-pill sold">Esgotado</span>
+                                        {% elif produto.tamanhos_esgotados or produto.cores_esgotadas %}
+                                            <span class="status-pill warning">Parcial</span>
+                                        {% else %}
+                                            <span class="status-pill active">Disponivel</span>
+                                        {% endif %}
+                                        {% if produto.destaque %}<span class="status-pill">Novo</span>{% endif %}
+                                        {% if produto.promocao %}<span class="status-pill">Promoção</span>{% endif %}
+                                        {% if not produto.publicado %}<span class="status-pill warning">Rascunho</span>{% endif %}
+                                    </div>
+                                    <div class="panel-product-actions">
+                                        {% if not produto.publicado %}
+                                            <form method="post" class="inline-product-form">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="acao" value="publicar_produto">
+                                                <input type="hidden" name="produto_id" value="{{ produto.id }}">
+                                                <button class="publish-button" type="submit">Publicar no catálogo</button>
+                                            </form>
+                                        {% endif %}
+                                        <a href="{% url 'editar_produto' loja.slug produto.id %}">Editar</a>
+                                        <a href="{% url 'produto_detalhe_curto' loja.slug produto.id %}">Detalhes</a>
+                                        <a href="{% url 'catalogo_curto' loja.slug %}?produto={{ produto.id }}#produto-{{ produto.id }}">Ver</a>
+                                        <button class="copy-link-button" type="button" data-copy-url="{{ request.scheme }}://{{ request.get_host }}{% url 'catalogo_curto' loja.slug %}?produto={{ produto.id }}#produto-{{ produto.id }}">Copiar produto</button>
+                                        {% if is_owner %}
+                                        <a class="danger" href="{% url 'remover_produto' loja.slug produto.id %}">Remover</a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </article>
+                        {% empty %}
+                            <div class="empty-dashboard">
+                                <strong>Nenhum produto encontrado.</strong>
+                                <p>Cadastre ou ajuste os filtros para encontrar os produtos da loja.</p>
+                                <a href="#novo-produto">Adicionar primeiro produto</a>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </section>
+            </section>
+        </div>

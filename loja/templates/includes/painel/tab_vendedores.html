@@ -1,0 +1,89 @@
+<div class="tab-pane" id="tab-vendedores" data-tab-content="vendedores">
+            <section class="panel-section sales-panel" id="vendedores">
+                <div class="section-heading">
+                    <div>
+                        <p class="eyebrow">Painel de vendas</p>
+                        <h2>Vendedores e links de referência</h2>
+                        <p>Cadastre cada vendedor e copie o link individual para separar os leads no mesmo catálogo.</p>
+                    </div>
+                    <span>{{ total_vendedores }} vendedor(es)</span>
+                </div>
+
+                <form class="seller-form" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="acao" value="criar_vendedor">
+                    <div class="seller-form-row">
+                        <div>
+                            {{ vendedor_form.nome.label_tag }}
+                            {{ vendedor_form.nome }}
+                            {{ vendedor_form.nome.errors }}
+                        </div>
+                        <div style="position: relative;">
+                            {{ vendedor_form.codigo.label_tag }}
+                            {{ vendedor_form.codigo }}
+                            {{ vendedor_form.codigo.errors }}
+                            <small class="helper-text">Opcional. Se deixar vazio, usamos o nome.</small>
+                        </div>
+                        <div>
+                            {{ vendedor_form.telefone.label_tag }}
+                            {{ vendedor_form.telefone }}
+                            {{ vendedor_form.telefone.errors }}
+                        </div>
+                    </div>
+                    <div class="seller-form-row seller-access-row">
+                        <div>
+                            {{ vendedor_form.username.label_tag }}
+                            {{ vendedor_form.username }}
+                            {{ vendedor_form.username.errors }}
+                        </div>
+                        <div>
+                            {{ vendedor_form.password.label_tag }}
+                            {{ vendedor_form.password }}
+                            {{ vendedor_form.password.errors }}
+                        </div>
+                    </div>
+                    <div class="seller-form-actions">
+                        <label class="seller-active-field">
+                            {{ vendedor_form.ativo }}
+                            {{ vendedor_form.ativo.label }}
+                        </label>
+                        <button type="submit">Adicionar vendedor</button>
+                    </div>
+                </form>
+
+                <div class="seller-list">
+                    {% for vendedor in vendedores %}
+                        {% with vendedor_link=catalogo_url|add:"?vendedor="|add:vendedor.codigo %}
+                        <article>
+                            <div>
+                                <strong>{{ vendedor.nome }}</strong>
+                                <span>{% if vendedor.ativo %}Ativo{% else %}Inativo{% endif %} - {{ vendedor.total_leads }} lead(s) - {{ vendedor.leads_concluidos }} concluído(s)</span>
+                                {% if vendedor.telefone %}<small>WhatsApp: {{ vendedor.telefone }}</small>{% endif %}
+                            </div>
+                            <code>{{ vendedor_link }}</code>
+                            <div class="seller-actions">
+                                <button class="copy-link-button" type="button" data-copy-url="{{ vendedor_link }}">Copiar link</button>
+                                <form method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="acao" value="alternar_vendedor">
+                                    <input type="hidden" name="vendedor_id" value="{{ vendedor.id }}">
+                                    <button type="submit">{% if vendedor.ativo %}Desativar{% else %}Ativar{% endif %}</button>
+                                </form>
+                                <form method="post" onsubmit="return confirm('Remover este vendedor? Os leads antigos continuam no painel, mas sem o cadastro ativo.');">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="acao" value="remover_vendedor">
+                                    <input type="hidden" name="vendedor_id" value="{{ vendedor.id }}">
+                                    <button class="danger" type="submit">Remover</button>
+                                </form>
+                            </div>
+                        </article>
+                        {% endwith %}
+                    {% empty %}
+                        <div class="empty-dashboard">
+                            <strong>Nenhum vendedor cadastrado.</strong>
+                            <p>Cadastre vendedores para separar os leads recebidos pelo mesmo catálogo.</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            </section>
+        </div>

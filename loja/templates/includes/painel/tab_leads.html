@@ -1,0 +1,137 @@
+<div class="tab-pane" id="tab-leads" data-tab-content="leads">
+            <section class="leads-dashboard panel-section" id="leads">
+                <div class="section-heading" style="display: flex; justify-content: space-between; align-items: center; gap: 15px; flex-wrap: wrap; margin-bottom: 2rem;">
+                    <div>
+                        <p class="eyebrow">Leads</p>
+                        <h2>Interesses recebidos</h2>
+                    </div>
+                    <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                        <a href="{% url 'exportar_leads_csv' loja.slug %}?q_leads={{ busca_leads }}&vendedor_leads={{ vendedor_leads_ativo }}&status_leads={{ status_leads_ativo }}" class="panel-cancel" style="background: var(--brand, #5e35b1); color: #ffffff; text-decoration: none; padding: 10px 14px; border-radius: 8px; font-weight: 700; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 6px;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right: 2px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                            Exportar CSV (Excel)
+                        </a>
+                        <a href="{% url 'exportar_leads_impressao' loja.slug %}?q_leads={{ busca_leads }}&vendedor_leads={{ vendedor_leads_ativo }}&status_leads={{ status_leads_ativo }}" target="_blank" class="panel-cancel secondary" style="background: var(--surface); color: var(--ink); border: 1px solid var(--line); text-decoration: none; padding: 10px 14px; border-radius: 8px; font-weight: 700; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 6px;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right: 2px;"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+                            Imprimir / PDF
+                        </a>
+                        <span style="font-size: 0.9rem; font-weight: 700; padding: 10px 12px; background: var(--line); color: var(--ink); border-radius: 8px; display: inline-block;">{{ total_leads }} lead(s)</span>
+                    </div>
+                </div>
+
+                <form class="panel-filters" method="get" action="?#leads" style="margin-bottom: 24px;">
+                    <input type="search" name="q_leads" value="{{ busca_leads }}" placeholder="Buscar por cliente, WhatsApp ou produto">
+                    {% if is_owner %}
+                        <select name="vendedor_leads">
+                            <option value="">Todos vendedores</option>
+                            <option value="sem_vendedor" {% if vendedor_leads_ativo == "sem_vendedor" %}selected{% endif %}>Sem vendedor (Direto)</option>
+                            {% for vend in vendedores %}
+                                <option value="{{ vend.id }}" {% if vendedor_leads_ativo == vend.id|stringformat:"s" %}selected{% endif %}>{{ vend.nome }}</option>
+                            {% endfor %}
+                        </select>
+                    {% endif %}
+                    <select name="status_leads">
+                        <option value="">Todos status</option>
+                        {% for valor, rotulo in status_lead_choices %}
+                            <option value="{{ valor }}" {% if status_leads_ativo == valor %}selected{% endif %}>{{ rotulo }}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit">Filtrar</button>
+                </form>
+
+                <div class="lead-summary">
+                    <article>
+                        <span>Produto</span>
+                        <strong>{{ leads_produto }}</strong>
+                    </article>
+                    <article>
+                        <span>Sacolinha</span>
+                        <strong>{{ leads_sacolinha }}</strong>
+                    </article>
+                    <article>
+                        <span>Total</span>
+                        <strong>{{ total_leads }}</strong>
+                    </article>
+                    <article>
+                        <span>Novos</span>
+                        <strong>{{ pedidos_novos }}</strong>
+                    </article>
+                    <article>
+                        <span>Atendimento</span>
+                        <strong>{{ pedidos_atendimento }}</strong>
+                    </article>
+                    <article>
+                        <span>Concluídos</span>
+                        <strong>{{ pedidos_concluidos }}</strong>
+                    </article>
+                </div>
+
+                <div class="lead-list">
+                    {% for lead in leads_recentes %}
+                        <article>
+                            <div>
+                                <strong>
+                                    {% if lead.produto %}
+                                        {{ lead.produto.nome }}
+                                    {% else %}
+                                        Pedido pela sacolinha
+                                    {% endif %}
+                                </strong>
+                                <span>
+                                    {{ lead.get_origem_display }} - {{ lead.criado_em|date:"d/m/Y H:i" }}
+                                    {% if lead.status == "concluido" %}
+                                        <span class="status-pill active" style="margin-left: 8px;">Concluído</span>
+                                    {% else %}
+                                        <span class="status-pill warning" style="margin-left: 8px;">Pendente</span>
+                                    {% endif %}
+                                </span>
+                            </div>
+                            <p>
+                                {% if lead.cliente_nome %}Cliente: {{ lead.cliente_nome }}{% endif %}
+                                {% if lead.cliente_telefone %}{% if lead.cliente_nome %} - {% endif %}WhatsApp: {{ lead.cliente_telefone }}{% endif %}
+                                {% if lead.cliente_nome or lead.cliente_telefone %}<br>{% endif %}
+                                {% if lead.vendedor %}Vendedor: {{ lead.vendedor.nome }}<br>{% endif %}
+                                {% if lead.tamanho %}Tamanho: {{ lead.tamanho }}{% endif %}
+                                {% if lead.cor %}{% if lead.tamanho %} - {% endif %}Cor: {{ lead.cor }}{% endif %}
+                                {% if not lead.tamanho and not lead.cor %}{{ lead.mensagem|truncatechars:120 }}{% endif %}
+                                {% if lead.tipo_entrega %}
+                                    <br><strong>Recebimento:</strong>
+                                    {% if lead.tipo_entrega == 'entrega' %}
+                                        <span class="delivery-badge delivery-badge-ship">
+                                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="vertical-align: -1px; margin-right: 2px;"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>Entrega
+                                        </span>
+                                    {% else %}
+                                        <span class="delivery-badge delivery-badge-pickup">
+                                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="vertical-align: -1px; margin-right: 2px;"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>Retirada
+                                        </span>
+                                    {% endif %}
+                                    {% if lead.endereco_completo %}
+                                        <br><strong>Endereço:</strong> <span style="font-size: 0.9rem;">{{ lead.endereco_completo }}</span>
+                                        <button type="button" class="btn-copy-address" data-address="{{ lead.endereco_completo }}" title="Copiar Endereço" style="background: none; border: 0; padding: 2px; cursor: pointer; color: var(--muted, #6b7280); vertical-align: middle; margin-left: 4px; display: inline-flex; align-items: center; justify-content: center; transition: all 0.15s;">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="pointer-events: none;"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" style="pointer-events: none;"></path></svg>
+                                        </button>
+                                    {% endif %}
+                                {% endif %}
+                                {% if lead.observacao %}<br><strong>Obs. interna:</strong> {{ lead.observacao|truncatechars:100 }}{% endif %}
+                            </p>
+                            <form class="lead-status-form" method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="acao" value="atualizar_lead_status">
+                                <input type="hidden" name="lead_id" value="{{ lead.id }}">
+                                <select name="status" aria-label="Status do pedido">
+                                    {% for valor, rotulo in status_lead_choices %}
+                                        <option value="{{ valor }}" {% if lead.status == valor %}selected{% endif %}>{{ rotulo }}</option>
+                                    {% endfor %}
+                                </select>
+                                <input type="text" name="observacao" value="{{ lead.observacao }}" placeholder="Observação interna">
+                                <button type="submit">Atualizar</button>
+                            </form>
+                        </article>
+                    {% empty %}
+                        <div class="empty-dashboard">
+                            <strong>Nenhum lead ainda.</strong>
+                            <p>Quando clientes clicarem no WhatsApp ou enviarem a sacolinha, eles aparecem aqui.</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            </section>
+        </div>
