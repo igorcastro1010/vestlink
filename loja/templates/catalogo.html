@@ -46,59 +46,7 @@
             <a href="https://wa.me/55{{ loja.telefone }}" target="_blank" rel="noopener">Entre em contato</a>
         </div>
     </header>
-    <aside class="cart-panel" aria-live="polite">
-        <button class="cart-toggle" type="button" aria-label="Abrir sacolinha" title="Sacolinha">
-            <span class="cart-toggle__icon" aria-hidden="true"></span>
-            <span class="cart-toggle__label">Sacolinha</span>
-            <span data-cart-count>0</span>
-        </button>
-        <div class="cart-box" hidden>
-            <strong>Sua sacolinha</strong>
-            <div class="cart-items" data-cart-items>
-                <p>Nenhum produto adicionado.</p>
-            </div>
-            <div class="cart-checkout">
-                <label>Seu nome <input type="text" data-cart-customer-name placeholder="Ex.: Ana"></label>
-                <label>Seu WhatsApp <input type="tel" data-cart-customer-phone placeholder="DDD + número"></label>
-                
-                <div class="delivery-options-container" style="margin: 1rem 0;">
-                    <span style="display: block; font-size: 0.9rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--ink);">Como prefere receber?</span>
-                    <div class="segmented-control" style="position: relative; display: flex; background: var(--line, #e7e1dc); border-radius: 10px; padding: 4px; z-index: 1; overflow: hidden; height: 42px; align-items: center;">
-                        <div class="segmented-indicator" style="position: absolute; top: 4px; bottom: 4px; left: 4px; width: calc(50% - 4px); background: var(--surface, #ffffff); border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1); z-index: 0;"></div>
-                        
-                        <label class="delivery-opt-label" style="flex: 1; display: flex; align-items: center; justify-content: center; height: 100%; cursor: pointer; color: var(--ink); font-size: 0.85rem; font-weight: 600; text-align: center; position: relative; z-index: 2; user-select: none;">
-                            <input type="radio" name="tipo_entrega" value="retirada" checked data-cart-delivery-type style="position: absolute; opacity: 0; pointer-events: none; width: 0; height: 0; margin: 0;">
-                            <span>Retirada</span>
-                        </label>
-                        
-                        <label class="delivery-opt-label" style="flex: 1; display: flex; align-items: center; justify-content: center; height: 100%; cursor: pointer; color: var(--ink); font-size: 0.85rem; font-weight: 600; text-align: center; position: relative; z-index: 2; user-select: none;">
-                            <input type="radio" name="tipo_entrega" value="entrega" data-cart-delivery-type style="position: absolute; opacity: 0; pointer-events: none; width: 0; height: 0; margin: 0;">
-                            <span>Entrega</span>
-                        </label>
-                    </div>
-                </div>
-
-                <div class="address-fields-container" data-address-fields>
-                    <div class="address-inner-container" style="display: flex; flex-direction: column; gap: 8px; padding-top: 4px;">
-                        <label>CEP <input type="text" data-cart-address-cep placeholder="00000-000"></label>
-                        <div style="display: flex; gap: 8px;">
-                            <label style="flex: 3;">Rua <input type="text" data-cart-address-street placeholder="Rua / Av."></label>
-                            <label style="flex: 1;">Nº <input type="text" data-cart-address-number placeholder="123"></label>
-                        </div>
-                        <div style="display: flex; gap: 8px;">
-                            <label style="flex: 1;">Bairro <input type="text" data-cart-address-neighborhood placeholder="Bairro"></label>
-                            <label style="flex: 1;">Cidade <input type="text" data-cart-address-city placeholder="Cidade"></label>
-                        </div>
-                        <label>Complemento <input type="text" data-cart-address-complement placeholder="Apto, Bloco, etc. (Opcional)"></label>
-                    </div>
-                </div>
-
-                <label>Observação <textarea data-cart-note rows="2" placeholder="Ex.: quero retirar na loja"></textarea></label>
-            </div>
-            <a class="cart-send" data-cart-send href="{% url 'whatsapp_carrinho' loja.slug %}" target="_blank" rel="noopener">Enviar pelo WhatsApp</a>
-            <button class="cart-clear" type="button" data-cart-clear>Limpar</button>
-        </div>
-    </aside>
+    {% include "includes/catalogo/sacolinha.html" %}
 
     <main class="store-layout">
         {% include "includes/catalogo/sidebar.html" %}
