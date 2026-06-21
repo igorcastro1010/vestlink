@@ -1,7 +1,7 @@
 ---
 tipo: contexto
 status: ativo
-revisado_em: 2026-06-15
+revisado_em: 2026-06-19
 fontes:
   - ../../../README.md
   - ../../../config/settings.py
@@ -35,7 +35,8 @@ fontes:
 - Configuração: `config/settings.py`
 - Rotas: `config/urls.py`, `config/urls_tenant.py`
 - Domínio: `loja/models.py`
-- Casos de uso: `loja/views.py`
+- Orquestração HTTP: `loja/views.py`
+- Serviços de Domínio: `loja/services/`
 - Formulários: `loja/forms.py`
 - Auth Supabase: `loja/supabase_auth.py`
 - Storage Supabase: `loja/storage.py`

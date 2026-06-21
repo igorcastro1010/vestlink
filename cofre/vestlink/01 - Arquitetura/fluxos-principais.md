@@ -1,9 +1,10 @@
 ---
 tipo: arquitetura
 status: ativo
-revisado_em: 2026-06-16
+revisado_em: 2026-06-19
 fontes:
   - ../../../loja/views.py
+  - ../../../loja/services/
   - ../../../loja/forms.py
   - ../../../loja/supabase_auth.py
   - ../../../loja/payments.py

@@ -1,21 +1,22 @@
 ---
 tipo: arquitetura
 status: ativo
-revisado_em: 2026-06-15
+revisado_em: 2026-06-19
 fontes:
   - ../../../config/settings.py
   - ../../../config/urls.py
   - ../../../loja/views.py
   - ../../../loja/models.py
+  - ../../../loja/services/
   - ../../../vercel.json
 ---
 
 # Arquitetura do sistema
 
 > [!summary] TL;DR
-> Monólito Django server-rendered. Views concentram casos de uso, models guardam
-> regras de domínio e templates/CSS/JS entregam a interface. A Vercel executa
-> uma função WSGI; serviços persistentes ficam fora do runtime.
+> Monólito Django server-rendered. Views orquestram as requisições HTTP e delegam a
+> lógica de negócios para a camada de services. Models guardam regras de domínio
+> e templates/CSS/JS entregam a interface. A Vercel executa uma função WSGI.
 
 ```mermaid
 flowchart LR
@@ -33,7 +34,8 @@ flowchart LR
 
 - `config/`: settings, URLConf e entrada WSGI/ASGI.
 - `loja/models.py`: entidades, propriedades de assinatura, estoque e sinais.
-- `loja/views.py`: páginas públicas, painel, auth, leads, pagamentos e exports.
+- `loja/views.py`: orquestração HTTP (reduzido para 883 linhas).
+- `loja/services/`: serviços de domínio (`auth.py`, `billing.py`, `catalog.py`, `products.py`, `store.py`, `lead.py`).
 - `loja/forms.py`: validação e escrita dos formulários.
 - `loja/templates/`: HTML server-rendered.
 - `static/`: CSS global e JavaScript progressivo.

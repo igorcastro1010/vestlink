@@ -12,6 +12,7 @@
     {% if produto.imagem %}
         <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ produto.imagem.url }}">
     {% endif %}
+    <link rel="stylesheet" href="/static/css/variables.css?v=75">
     <link rel="stylesheet" href="/static/css/catalogo.css?v=75">
     <script>
         (function() {

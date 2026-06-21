@@ -1,0 +1,234 @@
+:root {
+    color-scheme: light;
+    font-family: Arial, Helvetica, sans-serif;
+    --ink: #171717;
+    --muted: #626262;
+    --line: #e7e1dc;
+    --surface: #ffffff;
+    --page: #f8f5f1;
+    --accent: #1c7c54;
+
+    /* VestLink theme tokens */
+    --uix-primary: #684cc3;
+    --uix-primary-strong: #4d348d;
+    --uix-primary-soft: #efe9ff;
+    --uix-primary-contrast: #ffffff;
+    --uix-accent: #147f59;
+    --uix-accent-strong: #086344;
+    --uix-danger: #b42318;
+    --uix-warning: #8a4b00;
+    --uix-bg: #fbf9ff;
+    --uix-bg-soft: #f5f0ff;
+    --uix-surface: rgba(255, 255, 255, 0.95);
+    --uix-surface-solid: #ffffff;
+    --uix-surface-strong: #ffffff;
+    --uix-ink: #171126;
+    --uix-text: #302743;
+    --uix-muted: #5f5574;
+    --uix-subtle: #766b88;
+    --uix-line: rgba(39, 29, 61, 0.12);
+    --uix-line-strong: rgba(39, 29, 61, 0.20);
+    --uix-ring: rgba(104, 76, 195, 0.26);
+    --uix-shadow-sm: 0 8px 18px rgba(37, 24, 74, 0.055);
+    --uix-shadow-md: 0 16px 38px rgba(37, 24, 74, 0.075);
+    --uix-shadow-lg: 0 24px 58px rgba(37, 24, 74, 0.11);
+    --uix-text-strong: var(--uix-ink);
+    --uix-text-body: var(--uix-text);
+    --uix-text-muted: var(--uix-muted);
+    --uix-chip-bg: rgba(104, 76, 195, 0.10);
+    --uix-chip-text: #4b3294;
+    --ink: var(--uix-ink);
+    --muted: var(--uix-muted);
+    --line: var(--uix-line);
+    --surface: var(--uix-surface-solid);
+    --page: var(--uix-bg);
+    --accent: var(--uix-accent);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+[data-theme="dark"] {
+    color-scheme: dark;
+    --uix-primary: #b59cff;
+    --uix-primary-strong: #9273ee;
+    --uix-primary-soft: #261f38;
+    --uix-primary-contrast: #ffffff;
+    --uix-accent: #4adea4;
+    --uix-accent-strong: #2bbf82;
+    --uix-danger: #ff8b82;
+    --uix-warning: #ffd166;
+    --uix-bg: #0e0b14;
+    --uix-bg-soft: #171220;
+    --uix-surface: rgba(27, 22, 37, 0.96);
+    --uix-surface-solid: #181320;
+    --uix-surface-strong: #231c31;
+    --uix-ink: #ffffff;
+    --uix-text: #f4efff;
+    --uix-muted: #d9d1e8;
+    --uix-subtle: #c2b7d4;
+    --uix-line: rgba(246, 241, 255, 0.15);
+    --uix-line-strong: rgba(246, 241, 255, 0.25);
+    --uix-ring: rgba(181, 156, 255, 0.34);
+    --uix-shadow-sm: 0 8px 18px rgba(0, 0, 0, 0.22);
+    --uix-shadow-md: 0 16px 38px rgba(0, 0, 0, 0.30);
+    --uix-shadow-lg: 0 24px 58px rgba(0, 0, 0, 0.38);
+    --uix-text-strong: #ffffff;
+    --uix-text-body: var(--uix-text);
+    --uix-text-muted: var(--uix-muted);
+    --uix-chip-bg: rgba(181, 156, 255, 0.20);
+    --uix-chip-text: #ffffff;
+    --ink: var(--uix-ink);
+    --muted: var(--uix-muted);
+    --line: var(--uix-line);
+    --surface: var(--uix-surface-solid);
+    --page: var(--uix-bg);
+    --accent: var(--uix-accent);
+}
+
+body {
+    margin: 0;
+    background: var(--page);
+    color: var(--uix-text, var(--ink));
+}
+
+body.auth-page,
+body.stores-page,
+body.merchant-dashboard,
+body.storefront,
+body.plans-page,
+body.saas-landing {
+    color: var(--uix-text) !important;
+}
+
+h1,
+h2,
+h3,
+h4,
+strong,
+b,
+label,
+.section-heading h2,
+.panel-header-brand h1,
+.store-card h2,
+.store-card strong,
+.dashboard-command-center .dashboard-hero h2,
+.notification-panel h2,
+.store-identity-card h2,
+.subscription-status-card h2,
+.subscription-status-card strong,
+.subscription-checklist h2,
+.payments-history h2,
+.storefront .product h2,
+.product-detail-info h2 {
+    color: var(--uix-text-strong) !important;
+}
+
+p,
+small,
+span,
+li,
+dt,
+dd,
+.helptext,
+.panel-form .helptext,
+.store-card p,
+.store-card span,
+.store-card small,
+.dashboard-command-center .dashboard-hero p,
+.notification-panel p,
+.notification-panel li,
+.store-identity-card p,
+.seller-list p,
+.seller-list small,
+.lead-list p,
+.lead-list span,
+.lead-list small,
+.lead-summary span,
+.dashboard-products p,
+.dashboard-products span,
+.dashboard-products small,
+.subscription-status-card p,
+.subscription-status-card dt,
+.subscription-facts dd,
+.subscription-checklist li,
+.payments-list span,
+.auth-card p,
+.storefront .product p,
+.storefront .store-summary span,
+.product-detail-info p,
+.variant-stock-list span {
+    color: var(--uix-text-muted) !important;
+}
+
+a,
+.panel-header-nav a,
+.lp-header nav a:not(.lp-header__cta),
+.product-detail-link {
+    color: var(--uix-primary-strong) !important;
+}
+
+[data-theme="dark"] a,
+[data-theme="dark"] .panel-header-nav a,
+[data-theme="dark"] .lp-header nav a:not(.lp-header__cta),
+[data-theme="dark"] .product-detail-link {
+    color: #f3edff !important;
+}
+
+button,
+.lp-button,
+.lp-header__cta,
+.whatsapp,
+.store-whatsapp-footer,
+.cart-send,
+.copy-link-button,
+.qr-download-button,
+.catalog-banner__cta {
+    color: var(--uix-primary-contrast) !important;
+}
+
+button span,
+button strong,
+.lp-button span,
+.lp-button strong,
+.lp-header__cta span,
+.lp-header__cta strong,
+.whatsapp span,
+.whatsapp strong,
+.store-whatsapp-footer span,
+.store-whatsapp-footer strong,
+.cart-send span,
+.cart-send strong,
+.copy-link-button span,
+.copy-link-button strong,
+.qr-download-button span,
+.qr-download-button strong,
+.catalog-banner__cta span,
+.catalog-banner__cta strong {
+    color: inherit !important;
+}
+
+input,
+select,
+textarea {
+    color: var(--uix-ink) !important;
+}
+
+input::placeholder,
+textarea::placeholder {
+    color: var(--uix-subtle) !important;
+    opacity: 1;
+}
+
+[data-theme="dark"] input,
+[data-theme="dark"] select,
+[data-theme="dark"] textarea {
+    color: var(--uix-ink) !important;
+}
+
+[data-theme="dark"] input::placeholder,
+[data-theme="dark"] textarea::placeholder {
+    color: var(--uix-subtle) !important;
+    opacity: 1;
+}
