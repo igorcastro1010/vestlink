@@ -14073,3 +14073,480 @@ body.plans-page {
     border-color: var(--uix-line) !important;
     box-shadow: var(--uix-shadow-sm) !important;
 }
+
+/* 23. Mobile overflow guard: CSS-only fixes for narrow screens */
+@media (max-width: 640px) {
+    html,
+    body {
+        max-width: 100%;
+        overflow-x: clip;
+    }
+
+    body,
+    .saas-landing,
+    .auth-page,
+    .storefront {
+        width: 100%;
+    }
+
+    .saas-landing *,
+    .auth-page *,
+    .storefront * {
+        min-width: 0;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+    .saas-landing .lp-header,
+    .saas-landing .lp-hero,
+    .saas-landing .lp-section,
+    .saas-landing .lp-final,
+    .saas-landing .lp-cta-strip,
+    .saas-landing .lp-preview,
+    .auth-page .auth-layout,
+    .auth-page .auth-card,
+    .auth-page .auth-card--wide,
+    .storefront .store-header,
+    .storefront .store-layout,
+    .storefront .store-content,
+    .storefront .catalog-banner,
+    .storefront .store-topbar,
+    .storefront .store-summary,
+    .storefront .product-detail-shell,
+    .storefront .product-detail-card {
+        margin-left: auto !important;
+        margin-right: auto !important;
+        max-width: calc(100vw - 24px) !important;
+        width: 100% !important;
+    }
+
+    .saas-landing .lp-hero,
+    .saas-landing .lp-section,
+    .saas-landing .lp-final {
+        padding-left: 12px !important;
+        padding-right: 12px !important;
+    }
+
+    .saas-landing .lp-hero {
+        grid-template-columns: minmax(0, 1fr) !important;
+        overflow: visible !important;
+    }
+
+    .saas-landing .lp-hero h1,
+    .saas-landing .lp-section h2,
+    .saas-landing .lp-final h2,
+    .auth-page .auth-card h1,
+    .auth-page .auth-card h2,
+    .storefront .catalog-banner h2,
+    .storefront .store-header h1,
+    .product-detail-info h2 {
+        overflow-wrap: anywhere;
+        word-break: normal;
+    }
+
+    .saas-landing .lp-hero h1 {
+        font-size: clamp(32px, 10vw, 42px) !important;
+        line-height: 1.05 !important;
+    }
+
+    .saas-landing .lp-actions,
+    .saas-landing .lp-actions a,
+    .saas-landing .lp-button,
+    .auth-page .auth-card .panel-form,
+    .auth-page .auth-card .panel-form input,
+    .auth-page .auth-card .panel-form button,
+    .auth-page .google-auth-button,
+    .storefront .store-header__actions,
+    .storefront .store-header__actions a,
+    .storefront .catalog-banner__cta,
+    .storefront .whatsapp,
+    .storefront .add-cart-button {
+        width: 100% !important;
+    }
+
+    .saas-landing .lp-actions,
+    .storefront .store-header__actions {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) !important;
+    }
+
+    .saas-landing .lp-button,
+    .saas-landing .lp-button--ghost,
+    .auth-page .auth-card .panel-form button,
+    .storefront .store-header__actions a,
+    .storefront .catalog-banner__cta,
+    .storefront .whatsapp,
+    .storefront .add-cart-button {
+        justify-content: center;
+        overflow-wrap: anywhere;
+        text-align: center;
+        white-space: normal !important;
+    }
+
+    .saas-landing .lp-preview,
+    .saas-landing .lp-phone-card {
+        overflow: hidden;
+    }
+
+    .saas-landing .lp-preview__top {
+        align-items: flex-start;
+        display: grid;
+        gap: 4px;
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .auth-page {
+        padding-left: 12px !important;
+        padding-right: 12px !important;
+    }
+
+    .auth-page .auth-card,
+    .auth-page .auth-card--wide {
+        overflow: hidden;
+        padding-left: 18px !important;
+        padding-right: 18px !important;
+    }
+
+    .auth-page .auth-card h1,
+    .auth-page .auth-card h2 {
+        font-size: clamp(28px, 8vw, 36px) !important;
+        line-height: 1.08 !important;
+    }
+
+    .auth-page .auth-legal-note,
+    .auth-page .auth-divider,
+    .auth-page .panel-form .helptext,
+    .auth-page .panel-form small,
+    .auth-page .password-requirements,
+    .auth-page .password-requirements li {
+        color: var(--uix-muted) !important;
+        overflow-wrap: anywhere;
+    }
+
+    .storefront .store-layout {
+        display: grid !important;
+        gap: 16px !important;
+        grid-template-columns: minmax(0, 1fr) !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+
+    .storefront .store-header,
+    .storefront .catalog-banner {
+        overflow: hidden;
+    }
+
+    .storefront .store-header {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) !important;
+        padding-left: 14px !important;
+        padding-right: 14px !important;
+    }
+
+    .storefront .categories,
+    .storefront .store-filters {
+        max-width: 100%;
+        overflow-x: auto;
+        overscroll-behavior-x: contain;
+        scrollbar-width: thin;
+    }
+
+    .storefront .categories a,
+    .storefront .store-filters a {
+        flex: 0 0 auto;
+        white-space: nowrap;
+    }
+
+    .storefront .catalog-banner {
+        padding: 22px !important;
+    }
+
+    .storefront .catalog-banner h2 {
+        color: #ffffff !important;
+        font-size: clamp(30px, 9vw, 42px) !important;
+        line-height: 1.05 !important;
+        text-shadow: 0 2px 4px rgba(15, 9, 36, 0.32);
+    }
+
+    .storefront .catalog-banner p,
+    .storefront .catalog-banner .eyebrow {
+        color: rgba(255, 255, 255, 0.92) !important;
+        overflow-wrap: anywhere;
+        text-shadow: 0 1px 3px rgba(15, 9, 36, 0.28);
+    }
+
+    .product-detail-shell {
+        padding-left: 12px !important;
+        padding-right: 12px !important;
+    }
+
+    .product-detail-card {
+        grid-template-columns: minmax(0, 1fr) !important;
+        overflow: hidden;
+    }
+
+    .product-detail-gallery,
+    .product-detail-gallery > img {
+        width: 100% !important;
+    }
+
+    .product-detail-gallery > img {
+        max-height: 52vh;
+        object-fit: contain;
+    }
+
+    .cart-panel {
+        bottom: 18px !important;
+        left: auto !important;
+        right: 14px !important;
+        top: auto !important;
+    }
+}
+
+@media (max-width: 420px) {
+    .saas-landing .lp-hero h1 {
+        font-size: clamp(30px, 9.4vw, 38px) !important;
+    }
+
+    .storefront .catalog-banner h2 {
+        font-size: clamp(28px, 8.4vw, 36px) !important;
+    }
+
+    .product-detail-gallery > img {
+        max-height: 46vh;
+    }
+}
+
+/* 24. Mobile overflow tightening: keep content away from viewport edges */
+@media (max-width: 640px) {
+    .saas-landing .lp-header,
+    .saas-landing .lp-hero,
+    .saas-landing .lp-section,
+    .saas-landing .lp-final,
+    .saas-landing .lp-cta-strip,
+    .saas-landing .lp-preview,
+    .auth-page .auth-layout,
+    .auth-page .auth-card,
+    .auth-page .auth-card--wide,
+    .storefront .store-header,
+    .storefront .store-layout,
+    .storefront .store-content,
+    .storefront .catalog-banner,
+    .storefront .store-topbar,
+    .storefront .store-summary,
+    .storefront .product-detail-shell,
+    .storefront .product-detail-card {
+        max-width: calc(100vw - 32px) !important;
+    }
+
+    .saas-landing .lp-hero__copy,
+    .saas-landing .lp-preview,
+    .auth-page .auth-card > *,
+    .auth-page .signup-wizard,
+    .storefront .catalog-banner__content,
+    .storefront .product-detail-info {
+        max-width: 100% !important;
+        width: 100% !important;
+    }
+
+    .saas-landing .lp-hero h1 {
+        font-size: clamp(30px, 9vw, 38px) !important;
+        max-width: 100% !important;
+        word-break: break-word;
+    }
+
+    .auth-page .auth-card h1,
+    .auth-page .auth-card h2 {
+        font-size: clamp(26px, 7vw, 32px) !important;
+        word-break: break-word;
+    }
+
+    .auth-page .auth-legal-note,
+    .auth-page .auth-switch,
+    .auth-page .panel-form .helptext,
+    .auth-page .panel-form small {
+        white-space: normal !important;
+        word-break: break-word;
+    }
+
+    .auth-page .auth-card .panel-form .password-toggle {
+        display: inline-flex !important;
+        min-height: 40px !important;
+        min-width: 42px !important;
+        padding: 0 !important;
+        position: absolute !important;
+        right: 6px !important;
+        top: 50% !important;
+        transform: translateY(-50%) !important;
+        width: 42px !important;
+    }
+
+    .auth-page .auth-card .panel-form input[type="checkbox"] {
+        min-height: auto !important;
+        min-width: auto !important;
+        width: auto !important;
+    }
+
+    .auth-page .auth-card .panel-form button:not(.password-toggle) {
+        width: 100% !important;
+    }
+
+    .storefront .store-header__actions a,
+    .storefront .catalog-banner__cta {
+        max-width: calc(100vw - 64px) !important;
+        justify-self: center;
+    }
+
+    .storefront .catalog-banner h2 {
+        font-size: clamp(28px, 8vw, 38px) !important;
+        max-width: 100% !important;
+        word-break: break-word;
+    }
+
+    .storefront .catalog-banner p {
+        max-width: 100% !important;
+        word-break: break-word;
+    }
+}
+
+@media (max-width: 420px) {
+    .saas-landing .lp-hero h1 {
+        font-size: clamp(28px, 8.6vw, 34px) !important;
+    }
+
+    .storefront .catalog-banner h2 {
+        font-size: clamp(26px, 7.7vw, 32px) !important;
+    }
+}
+
+/* 25. Mobile edge breathing room: prevent final right-side clipping */
+@media (max-width: 640px) {
+    .saas-landing .lp-header,
+    .saas-landing .lp-hero,
+    .saas-landing .lp-section,
+    .saas-landing .lp-final,
+    .saas-landing .lp-cta-strip,
+    .saas-landing .lp-preview,
+    .auth-page .auth-layout,
+    .auth-page .auth-card,
+    .auth-page .auth-card--wide,
+    .storefront .store-header,
+    .storefront .store-layout,
+    .storefront .store-content,
+    .storefront .catalog-banner,
+    .storefront .store-topbar,
+    .storefront .store-summary,
+    .storefront .product-detail-shell,
+    .storefront .product-detail-card {
+        max-width: calc(100vw - 56px) !important;
+    }
+
+    .saas-landing .lp-actions,
+    .auth-page .auth-card .panel-form,
+    .storefront .store-header__actions,
+    .storefront .catalog-banner__cta {
+        max-width: 100% !important;
+        width: 100% !important;
+    }
+
+    .saas-landing .lp-hero h1 {
+        font-size: clamp(27px, 8vw, 34px) !important;
+        line-height: 1.08 !important;
+    }
+
+    .saas-landing .lp-hero__copy > p:not(.lp-kicker) {
+        font-size: 15px !important;
+        overflow-wrap: anywhere;
+    }
+
+    .auth-page .auth-card .panel-form input,
+    .auth-page .auth-card .panel-form button:not(.password-toggle),
+    .auth-page .google-auth-button {
+        display: flex;
+        max-width: 100% !important;
+        width: 100% !important;
+    }
+
+    .storefront .store-header h1 {
+        font-size: clamp(24px, 7vw, 32px) !important;
+        overflow-wrap: break-word;
+        word-break: normal;
+    }
+
+    .storefront .catalog-banner h2 {
+        font-size: clamp(25px, 7.2vw, 32px) !important;
+    }
+
+    .storefront .catalog-banner p {
+        font-size: 14px !important;
+    }
+
+    .storefront .cart-panel {
+        right: 18px !important;
+    }
+}
+
+@media (max-width: 420px) {
+    .saas-landing .lp-hero h1 {
+        font-size: clamp(26px, 7.6vw, 32px) !important;
+    }
+
+    .auth-page .auth-card h1,
+    .auth-page .auth-card h2 {
+        font-size: clamp(24px, 6.5vw, 30px) !important;
+    }
+}
+
+/* 26. Mobile text columns: force readable line length inside viewport */
+@media (max-width: 640px) {
+    .saas-landing .lp-hero__copy,
+    .saas-landing .lp-actions,
+    .saas-landing .lp-preview,
+    .auth-page .auth-card,
+    .auth-page .auth-card--wide,
+    .storefront .store-header,
+    .storefront .catalog-banner,
+    .storefront .store-topbar,
+    .storefront .store-summary,
+    .storefront .product-detail-card {
+        max-width: calc(100vw - 80px) !important;
+        width: calc(100vw - 80px) !important;
+    }
+
+    .saas-landing .lp-hero h1,
+    .saas-landing .lp-hero__copy > p:not(.lp-kicker),
+    .saas-landing .lp-hero__copy > span,
+    .auth-page .auth-legal-note,
+    .auth-page .auth-switch,
+    .storefront .catalog-banner h2,
+    .storefront .catalog-banner p {
+        max-width: calc(100vw - 96px) !important;
+    }
+
+    .saas-landing .lp-button,
+    .saas-landing .lp-button--ghost,
+    .auth-page .auth-card .panel-form input,
+    .auth-page .auth-card .panel-form button:not(.password-toggle),
+    .auth-page .google-auth-button,
+    .storefront .store-header__actions a,
+    .storefront .catalog-banner__cta {
+        max-width: calc(100vw - 96px) !important;
+        width: 100% !important;
+    }
+}
+
+@media (max-width: 420px) {
+    .saas-landing .lp-hero__copy,
+    .saas-landing .lp-actions,
+    .saas-landing .lp-preview,
+    .auth-page .auth-card,
+    .auth-page .auth-card--wide,
+    .storefront .store-header,
+    .storefront .catalog-banner,
+    .storefront .store-topbar,
+    .storefront .store-summary,
+    .storefront .product-detail-card {
+        max-width: calc(100vw - 72px) !important;
+        width: calc(100vw - 72px) !important;
+    }
+}
