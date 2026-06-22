@@ -14,6 +14,7 @@ fontes:
 > [!summary] TL;DR
 > Este guia orienta Codex/Antigravity na seleção estrita de quais arquivos ler e quais ignorar
 > para tarefas comuns no VestLink. Use-o para economizar tokens e evitar varreduras desnecessárias.
+> Para saber quais comandos de testes mínimos executar de forma econômica e segura, consulte [comandos-seguros.md](../10%20-%20Meta/comandos-seguros.md).
 
 ---
 
