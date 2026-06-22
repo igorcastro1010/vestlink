@@ -6,7 +6,7 @@ fontes:
   - ./mapa-de-contexto.md
   - ../../../loja/views.py
   - ../../../loja/models.py
-  - ../../../loja/tests.py
+  - ../../../loja/tests/
 ---
 
 # Índice Rápido para Desenvolvimento Econômico
@@ -31,8 +31,8 @@ fontes:
   - Outros templates do painel administrativo ou catálogo público.
 * **Skill Recomendada:** `security-review` (em alterações de fluxo de acesso) ou `forms-ux-polish` (em alterações de interface/formulários).
 * **Teste Mínimo Recomendado:**
-  - `python manage.py test loja.tests.CatalogoTests.test_cadastro_cria_conta_pendente_e_confirma_por_email`
-  - `python manage.py test loja.tests.CatalogoTests.test_google_oauth_cria_usuario_local_e_autentica`
+  - `python manage.py test loja.tests.test_auth.AuthTests.test_cadastro_cria_conta_pendente_e_confirma_por_email`
+  - `python manage.py test loja.tests.test_auth.AuthTests.test_google_oauth_cria_usuario_local_e_autentica`
 
 ---
 
@@ -49,8 +49,8 @@ fontes:
   - Templates de painel administrativo (`painel_loja.html`, `editar_loja.html`).
 * **Skill Recomendada:** `catalog-design-conversion` (para conversão/UX), `mobile-ux-design` (para responsividade do catálogo).
 * **Teste Mínimo Recomendado:**
-  - `python manage.py test loja.tests.CatalogoTests.test_catalogo_publico_renderiza_produto`
-  - `python manage.py test loja.tests.CatalogoTests.test_paginacao_catalogo_primeira_pagina`
+  - `python manage.py test loja.tests.test_catalogo.CatalogoTests.test_catalogo_publico_renderiza_produto`
+  - `python manage.py test loja.tests.test_catalogo.CatalogoTests.test_paginacao_catalogo_primeira_pagina`
 
 ---
 
@@ -68,8 +68,8 @@ fontes:
   - Templates de login/cadastro ou termos de privacidade.
 * **Skill Recomendada:** `forms-ux-polish` (UX de formulário de cadastro de produtos).
 * **Teste Mínimo Recomendado:**
-  - `python manage.py test loja.tests.CatalogoTests.test_painel_cadastra_produto`
-  - `python manage.py test loja.tests.SaasOptimizationsTests.test_image_optimized_and_converted_to_webp`
+  - `python manage.py test loja.tests.test_products.ProductTests.test_painel_cadastra_produto`
+  - `python manage.py test loja.tests.test_products.ProductTests.test_image_optimized_and_converted_to_webp`
 
 ---
 
@@ -85,8 +85,8 @@ fontes:
   - Templates do catálogo público (`catalogo.html`, `produto_detalhe.html`).
 * **Skill Recomendada:** `dashboard-design` (design do painel), `table-list-ux` (visualização de dados).
 * **Teste Mínimo Recomendado:**
-  - `python manage.py test loja.tests.CatalogoTests.test_painel_renderiza_area_da_loja`
-  - `python manage.py test loja.tests.SaasOptimizationsTests.test_dashboard_charts_context_variables`
+  - `python manage.py test loja.tests.test_dashboard.DashboardTests.test_painel_renderiza_area_da_loja`
+  - `python manage.py test loja.tests.test_dashboard.DashboardChartsTests.test_dashboard_charts_context_variables`
 
 ---
 
@@ -104,8 +104,8 @@ fontes:
   - Templates da área de faturamento ou planos.
 * **Skill Recomendada:** `copywriting-ux` (mensagens e fluxos de conversa), `table-list-ux` (relatório e listagens de leads).
 * **Teste Mínimo Recomendado:**
-  - `python manage.py test loja.tests.CatalogoTests.test_whatsapp_produto_contabiliza_clique`
-  - `python manage.py test loja.tests.NovosRecursosSaaSTests.test_whatsapp_carrinho_salva_tipo_entrega_e_endereco`
+  - `python manage.py test loja.tests.test_leads.LeadsTests.test_whatsapp_produto_contabiliza_clique`
+  - `python manage.py test loja.tests.test_leads.NovosRecursosLeadsTests.test_whatsapp_carrinho_salva_tipo_entrega_e_endereco`
 
 ---
 
@@ -123,8 +123,8 @@ fontes:
   - Templates de catálogo, produtos ou categorias.
 * **Skill Recomendada:** `security-review` (para webhooks e segurança de preços/cupons).
 * **Teste Mínimo Recomendado:**
-  - `python manage.py test loja.tests.CatalogoTests.test_checkout_mercado_pago_cria_preferencia_e_redireciona`
-  - `python manage.py test loja.tests.CatalogoTests.test_webhook_mercado_pago_atualiza_pagamento`
+  - `python manage.py test loja.tests.test_billing.BillingPlanoAssinaturaTests.test_checkout_mercado_pago_cria_preferencia_e_redireciona`
+  - `python manage.py test loja.tests.test_billing.BillingPlanoAssinaturaTests.test_webhook_mercado_pago_atualiza_pagamento`
 
 ---
 
@@ -139,7 +139,7 @@ fontes:
   - `loja/supabase_auth.py`, `loja/payments.py`.
 * **Skill Recomendada:** `mobile-ux-design` (ajuste responsivo), `saas-ui-polish` (melhoria estética), `brand-design-system` (consistência de cores/tokens), `motion-microinteractions` (animações e hovers).
 * **Teste Mínimo Recomendado:**
-  - Verificação visual via browser (Playwright ou screenshot) + `python manage.py test loja.tests.CatalogoTests.test_catalogo_publico_renderiza_produto` (valida o esqueleto HTML).
+  - Verificação visual via browser (Playwright ou screenshot) + `python manage.py test loja.tests.test_catalogo.CatalogoTests.test_catalogo_publico_renderiza_produto` (valida o esqueleto HTML).
 
 ---
 
@@ -154,7 +154,7 @@ fontes:
   - Toda a lógica de negócios em `loja/services/` e arquivos de templates HTML/CSS.
 * **Skill Recomendada:** `performance-audit` (se envolver otimização de headers de cache na Vercel).
 * **Teste Mínimo Recomendado:**
-  - `python manage.py test` para garantir integridade + checagem sintática do arquivo `vercel.json`.
+  - `python manage.py test loja` para garantir integridade + checagem sintática do arquivo `vercel.json`.
 
 ---
 
