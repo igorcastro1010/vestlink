@@ -9,7 +9,9 @@ fontes:
 # Estrutura de Testes Modularizados
 
 > [!important]
-> O antigo arquivo monolítico `loja/tests.py` foi **completamente removido** para evitar lentidão e consumo excessivo de tokens. A suíte de testes agora reside modularizada na pasta `loja/tests/`.
+> O antigo arquivo monolítico `loja/tests.py` foi **completamente removido** para evitar lentidão e consumo excessivo de tokens. 
+> 
+> **ATENÇÃO AGENTES:** NUNCA recriem o arquivo `loja/tests.py`. Toda nova suíte de testes ou modificação deve ser feita dentro do pacote `loja/tests/`, respeitando a modularização por domínio.
 
 ---
 
