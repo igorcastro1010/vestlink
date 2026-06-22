@@ -2,16 +2,16 @@
 :root {
     color-scheme: light;
     font-family: Arial, Helvetica, sans-serif;
-    --ink: #171717;
+    --ink: #171222;
     --muted: #5f5574;
-    --line: #ddd5e8;
-    --surface: #fffdfb;
-    --page: #f3eff8;
+    --line: #ded7e7;
+    --surface: #faf9fc;
+    --page: #f5f2f8;
     --accent: #1c7c54;
-    --brand-purple: #684cc3;
-    --brand-purple-strong: #4d348d;
-    --brand-purple-soft: #efe9ff;
-    --shadow-soft: 0 14px 34px rgba(37, 24, 74, 0.08);
+    --brand-purple: #5f45b2;
+    --brand-purple-strong: #483184;
+    --brand-purple-soft: #eee8fb;
+    --shadow-soft: 0 12px 30px rgba(37, 24, 74, 0.04);
 }
 
 * {

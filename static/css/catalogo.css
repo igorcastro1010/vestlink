@@ -12060,9 +12060,16 @@ body.saas-landing {
 
 .saas-landing .lp-price-card--featured h3,
 .saas-landing .lp-price-card--featured strong,
-.saas-landing .lp-price-card--featured li,
-.saas-landing .lp-price-card--featured > span {
+.saas-landing .lp-price-card--featured li {
     color: #ffffff !important;
+}
+
+.saas-landing .lp-price-card--featured > span {
+    color: #211846 !important;
+}
+
+[data-theme="dark"] .saas-landing .lp-price-card--featured > span {
+    color: #d9c7ff !important;
 }
 
 .saas-landing .lp-price-card--featured a {
@@ -12164,6 +12171,28 @@ body.saas-landing {
     .saas-landing .lp-cta-strip {
         border-radius: 22px !important;
     }
+}
+
+.saas-landing #precos {
+    text-align: center;
+}
+
+.saas-landing #precos h2,
+.saas-landing #precos .lp-kicker {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.saas-landing #precos .lp-price-grid {
+    margin: 0 auto;
+}
+
+.saas-landing #precos .lp-offer-points {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 32px;
 }
 
 /* 19. Public catalog conversion polish: storefront only */
@@ -14015,19 +14044,19 @@ body.storefront {
 
 /* 22. Soft premium color depth: tokens-only visual contrast pass */
 :root {
-    --uix-primary: #6548bd;
-    --uix-primary-strong: #493184;
+    --uix-primary: #5f45b2;
+    --uix-primary-strong: #483184;
     --uix-primary-soft: #eee8fb;
-    --uix-bg: #f3eff8;
-    --uix-bg-soft: #ebe5f3;
-    --uix-surface: rgba(255, 253, 251, 0.96);
-    --uix-surface-solid: #fffdfb;
+    --uix-bg: #f5f2f8;
+    --uix-bg-soft: #ebe6f2;
+    --uix-surface: rgba(250, 249, 252, 0.96);
+    --uix-surface-solid: #faf9fc;
     --uix-surface-strong: #ffffff;
-    --uix-line: rgba(45, 34, 70, 0.16);
-    --uix-line-strong: rgba(45, 34, 70, 0.26);
-    --uix-shadow-sm: 0 8px 20px rgba(37, 24, 74, 0.07);
-    --uix-shadow-md: 0 16px 40px rgba(37, 24, 74, 0.09);
-    --uix-shadow-lg: 0 26px 64px rgba(37, 24, 74, 0.13);
+    --uix-line: rgba(74, 58, 112, 0.16);
+    --uix-line-strong: rgba(74, 58, 112, 0.28);
+    --uix-shadow-sm: 0 6px 16px rgba(45, 34, 70, 0.04);
+    --uix-shadow-md: 0 12px 30px rgba(45, 34, 70, 0.06);
+    --uix-shadow-lg: 0 20px 48px rgba(45, 34, 70, 0.09);
     --page: var(--uix-bg);
     --surface: var(--uix-surface-solid);
     --line: var(--uix-line);
