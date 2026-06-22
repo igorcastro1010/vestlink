@@ -1,21 +1,15 @@
-import json
 from datetime import timedelta
-
-from django.core import mail
+from unittest.mock import patch
 from django.contrib.auth.models import User
-from django.core.files.base import ContentFile
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
-from urllib.error import HTTPError
-from unittest.mock import patch
 
-from loja.models import AceiteLegal, Categoria, Cupom, Lead, Loja, Pagamento, Produto, ProdutoImagem, ProdutoVariacao, Vendedor
-from loja.storage import SupabaseStorage
+from loja.models import Categoria, Cupom, Lead, Loja, Pagamento, Produto
 
 
-class CatalogoTests(TestCase):
+class BillingPlanoAssinaturaTests(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(username="lojista", password="senha-forte-123")
         self.loja = Loja.objects.create(
@@ -242,7 +236,8 @@ class CatalogoTests(TestCase):
 
         self.assertEqual(response.status_code, 405)
 
-class SaasTenantCronTests(TestCase):
+
+class BillingCronTests(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(username="lojista", password="senha-forte-123")
         self.loja = Loja.objects.create(
@@ -292,5 +287,3 @@ class SaasTenantCronTests(TestCase):
         self.assertIn("foi marcada como VENCIDA", out.getvalue())
         self.loja.refresh_from_db()
         self.assertEqual(self.loja.assinatura_status, Loja.ASSINATURA_VENCIDA)
-
-
