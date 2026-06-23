@@ -12195,6 +12195,185 @@ body.saas-landing {
     margin-top: 32px;
 }
 
+/* Melhorias na prévia do celular (Hero) */
+.saas-landing .lp-phone-card {
+    display: grid;
+    gap: 12px;
+    padding: 16px;
+    background: var(--uix-surface-strong) !important;
+    border-radius: 20px !important;
+    text-align: left;
+}
+
+[data-theme="dark"] .saas-landing .lp-phone-card {
+    background: var(--uix-surface-solid) !important;
+}
+
+.saas-landing .lp-phone-card__image {
+    aspect-ratio: 16 / 10;
+    border-radius: 12px;
+    background-image: url('/static/images/vestido_canelado.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    position: relative;
+    overflow: hidden;
+}
+
+.saas-landing .lp-phone-card__image::after {
+    content: "Disponível";
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: var(--lp-green);
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 4px 8px;
+    border-radius: 99px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    box-shadow: 0 4px 10px rgba(34, 160, 107, 0.2);
+}
+
+.saas-landing .lp-phone-card strong {
+    font-size: 18px;
+    color: var(--lp-purple-dark);
+    display: block;
+    margin-bottom: 2px;
+}
+
+[data-theme="dark"] .saas-landing .lp-phone-card strong {
+    color: #ffffff;
+}
+
+.saas-landing .lp-phone-card small {
+    font-size: 16px;
+    color: var(--lp-green);
+    font-weight: 800;
+}
+
+.saas-landing .lp-choice-row {
+    display: flex;
+    gap: 6px;
+}
+
+.saas-landing .lp-choice-row span {
+    border: 1px solid var(--lp-line);
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 6px 12px;
+    color: var(--lp-muted);
+    cursor: default;
+    background: var(--uix-surface-strong);
+    transition: all 0.2s ease;
+}
+
+.saas-landing .lp-choice-row span.is-selected {
+    border-color: var(--lp-purple) !important;
+    background: var(--lp-brand-purple-soft, var(--lp-lilac)) !important;
+    color: var(--lp-purple) !important;
+    box-shadow: 0 4px 10px rgba(94, 53, 177, 0.06);
+}
+
+[data-theme="dark"] .saas-landing .lp-choice-row span {
+    border-color: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.04);
+}
+
+[data-theme="dark"] .saas-landing .lp-choice-row span.is-selected {
+    border-color: #a982f4 !important;
+    background: rgba(169, 130, 244, 0.15) !important;
+    color: #d9c7ff !important;
+}
+
+.saas-landing .lp-phone-card button {
+    background: var(--lp-green);
+    border: 0;
+    border-radius: 12px;
+    color: #ffffff;
+    font-weight: 800;
+    font-size: 14px;
+    padding: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 6px 18px rgba(34, 160, 107, 0.15);
+}
+
+.saas-landing .lp-phone-card button:hover {
+    background: color-mix(in srgb, var(--lp-green) 85%, #000000);
+    transform: translateY(-1px);
+    box-shadow: 0 8px 22px rgba(34, 160, 107, 0.22);
+}
+
+.saas-landing .lp-whatsapp-bubble {
+    background: #e7f7ed;
+    border: 1px solid #c2ebd0;
+    border-radius: 16px 16px 4px 16px;
+    color: #123a2c;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.4;
+    padding: 12px 16px;
+    margin-top: 14px;
+    position: relative;
+    box-shadow: 0 4px 12px rgba(34, 160, 107, 0.04);
+    align-self: flex-end;
+    max-width: 90%;
+    text-align: left;
+}
+
+[data-theme="dark"] .saas-landing .lp-whatsapp-bubble {
+    background: #12281e;
+    border-color: #1b3d2d;
+    color: #a9dcc3;
+}
+
+/* Cards de Benefícios / Trust Row */
+.saas-landing .lp-trust-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
+    margin-top: 40px;
+}
+
+.saas-landing .lp-trust-row article {
+    background: var(--uix-surface-strong) !important;
+    border: 1px solid var(--lp-line) !important;
+    border-radius: 18px !important;
+    padding: 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 12px rgba(37, 24, 74, 0.02) !important;
+    text-align: left;
+}
+
+.saas-landing .lp-trust-row article:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 30px rgba(37, 24, 74, 0.06) !important;
+    border-color: var(--lp-purple) !important;
+}
+
+.saas-landing .lp-trust-row article strong {
+    font-size: 20px;
+    color: var(--lp-purple-dark) !important;
+    font-weight: 800;
+}
+
+.saas-landing .lp-trust-row article span {
+    font-size: 14px;
+    color: var(--lp-muted) !important;
+    line-height: 1.4;
+}
+
+[data-theme="dark"] .saas-landing .lp-trust-row article {
+    background: var(--uix-surface-solid) !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
 /* 19. Public catalog conversion polish: storefront only */
 body.storefront {
     --catalog-ink: var(--fashion-ink, var(--uix-ink));
@@ -14811,10 +14990,86 @@ body.plans-page {
 [data-theme="dark"] .merchant-dashboard .seller-list article,
 [data-theme="dark"] .merchant-dashboard .lead-list article,
 [data-theme="dark"] .stores-page .panel-section,
-[data-theme="dark"] .stores-page .store-card {
+[data-theme="dark"] .stores-page .store-card,
+[data-theme="dark"] .saas-landing .lp-trust-row article {
     background: var(--uix-surface-solid) !important;
-    border-color: var(--uix-line-strong) !important;
-    color: var(--ink) !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Melhorias na seção de Prova / Destaques da vitrine */
+.saas-landing .lp-proof {
+    background: linear-gradient(135deg, color-mix(in srgb, var(--lp-lilac) 45%, transparent), var(--uix-surface-strong)) !important;
+    border-color: var(--lp-line) !important;
+    box-shadow: var(--uix-shadow-sm) !important;
+}
+
+[data-theme="dark"] .saas-landing .lp-proof {
+    background: linear-gradient(135deg, #1b152e, #13101c) !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.saas-landing .lp-proof .lp-subtitle {
+    font-size: 18px !important;
+    color: var(--lp-muted) !important;
+    max-width: 720px;
+    line-height: 1.5;
+    margin-bottom: 32px;
+    margin-top: 0;
+}
+
+.saas-landing .lp-proof-grid {
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)) !important;
+    gap: 20px !important;
+}
+
+.saas-landing .lp-proof-grid article {
+    background: var(--uix-surface-strong) !important;
+    border: 1px solid var(--lp-line) !important;
+    border-radius: 20px !important;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 14px rgba(37, 24, 74, 0.02) !important;
+    text-align: left;
+}
+
+.saas-landing .lp-proof-grid article:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 28px rgba(37, 24, 74, 0.06) !important;
+    border-color: var(--lp-purple) !important;
+}
+
+.saas-landing .lp-proof-grid article h3 {
+    font-size: 18px;
+    color: var(--lp-purple-dark) !important;
+    font-weight: 800;
+    margin: 0;
+}
+
+[data-theme="dark"] .saas-landing .lp-proof-grid article h3 {
+    color: #ffffff !important;
+}
+
+.saas-landing .lp-proof-grid article span {
+    font-size: 14px;
+    color: var(--lp-muted) !important;
+    line-height: 1.45;
+}
+
+.saas-landing .lp-proof .lp-note {
+    font-size: 13px !important;
+    font-weight: 700;
+    color: var(--lp-purple) !important;
+    margin-top: 32px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    opacity: 0.85;
+}
+
+[data-theme="dark"] .saas-landing .lp-proof .lp-note {
+    color: #a982f4 !important;
 }
 
 [data-theme="dark"] .merchant-dashboard .store-status-bar strong,
@@ -14845,4 +15100,9 @@ body.plans-page {
 [data-theme="dark"] .stores-page .store-card span,
 [data-theme="dark"] .stores-page .store-card small {
     color: var(--muted) !important;
+}
+
+/* Ocultar botões/toggles de modo claro/escuro de forma global e permanente */
+.dark-mode-toggle {
+    display: none !important;
 }

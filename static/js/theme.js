@@ -1,34 +1,31 @@
-// Theme management for VestLink (Persists dark mode state via localStorage)
+// Theme management for VestLink (Forced dark mode)
 document.addEventListener("DOMContentLoaded", () => {
-    // Read theme preference from localStorage or fallback to light
-    const getTheme = () => localStorage.getItem("theme") || "light";
+    // Read theme preference (always dark)
+    const getTheme = () => "dark";
     
     // Set theme attribute on root element
     const setTheme = (theme) => {
-        document.documentElement.setAttribute("data-theme", theme);
-        localStorage.setItem("theme", theme);
+        document.documentElement.setAttribute("data-theme", "dark");
+        localStorage.setItem("theme", "dark");
         document.querySelectorAll(".dark-mode-toggle").forEach(toggle => {
-            const darkModeActive = theme === "dark";
-            toggle.setAttribute("aria-label", darkModeActive ? "Ativar modo claro" : "Ativar modo escuro");
-            toggle.setAttribute("title", darkModeActive ? "Ativar modo claro" : "Ativar modo escuro");
+            toggle.style.display = "none";
         });
     };
 
     // Apply active theme to root
     setTheme(getTheme());
 
-    // Setup toggle event listener for all buttons with class .dark-mode-toggle
+    // Setup toggle event listener (noop since toggles are hidden)
     const setupToggles = () => {
         const toggles = document.querySelectorAll(".dark-mode-toggle");
         toggles.forEach(toggle => {
+            toggle.style.display = "none";
             // Avoid duplicate listeners if script runs multiple times
             if (toggle.dataset.themeListenerSetup) return;
             toggle.dataset.themeListenerSetup = "true";
 
             toggle.addEventListener("click", () => {
-                const currentTheme = getTheme();
-                const newTheme = currentTheme === "dark" ? "light" : "dark";
-                setTheme(newTheme);
+                setTheme("dark");
             });
         });
     };

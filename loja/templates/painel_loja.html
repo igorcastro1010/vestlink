@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-br" data-theme="dark">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -8,10 +8,7 @@
     <link rel="stylesheet" href="/static/css/catalogo.css?v=75">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
     <script>
-        (function() {
-            const theme = localStorage.getItem("theme") || "light";
-            document.documentElement.setAttribute("data-theme", theme);
-        })();
+        document.documentElement.setAttribute("data-theme", "dark");
     </script>
 </head>
 <body class="merchant-dashboard" style="--brand: {{ loja.cor_principal|default:'#5e35b1' }};">
