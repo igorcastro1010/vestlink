@@ -15109,6 +15109,119 @@ body.plans-page {
     color: var(--muted) !important;
 }
 
+/* 28. Stores management layout polish */
+.stores-page .stores-shell {
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 26px !important;
+    max-width: 1180px !important;
+}
+
+.stores-page .stores-onboarding {
+    order: 1;
+    padding: 24px !important;
+}
+
+.stores-page .stores-list-card {
+    grid-column: 1 / -1;
+    margin: 0 auto;
+    max-width: 1040px;
+    order: 2;
+    width: 100%;
+}
+
+.stores-page .stores-form-card {
+    grid-column: 1 / -1;
+    margin: 0 auto;
+    max-width: 1040px;
+    order: 3;
+    width: 100%;
+}
+
+.stores-page .stores-onboarding .section-heading {
+    align-items: center;
+    gap: 18px;
+    margin-bottom: 22px;
+}
+
+.stores-page .stores-onboarding .section-heading h2 {
+    margin-top: 5px;
+}
+
+.stores-page .stores-onboarding .section-heading > span {
+    margin-left: auto;
+    white-space: nowrap;
+}
+
+.stores-page .onboarding-compact-list {
+    gap: 14px;
+}
+
+.stores-page .onboarding-compact-list article {
+    align-content: start;
+    min-height: 116px;
+    padding: 18px !important;
+}
+
+@media (min-width: 761px) {
+    .stores-page .stores-list .store-card {
+        grid-template-columns: 64px minmax(0, 1fr) auto !important;
+        padding: 18px !important;
+    }
+
+    .stores-page .store-card__avatar {
+        height: 64px;
+        width: 64px;
+    }
+
+    .stores-page .store-card .panel-actions {
+        grid-column: auto !important;
+        justify-content: flex-end;
+        max-width: 440px;
+    }
+
+    .stores-page .store-card .panel-actions a,
+    .stores-page .store-card .panel-actions button {
+        min-height: 44px;
+        white-space: nowrap;
+    }
+
+    .stores-page .stores-form-card .panel-form {
+        display: grid;
+        gap: 16px 18px;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .stores-page .stores-form-card .panel-form p {
+        margin: 0;
+    }
+
+    .stores-page .stores-form-card .panel-form p:has(textarea),
+    .stores-page .stores-form-card .panel-form p:has(input[type="file"]),
+    .stores-page .stores-form-card .panel-form p:has(input[type="color"]),
+    .stores-page .stores-form-card .panel-form p:has(#id_descricao),
+    .stores-page .stores-form-card .panel-form p:has(#id_banner_titulo),
+    .stores-page .stores-form-card .panel-form p:has(#id_banner_texto),
+    .stores-page .stores-form-card .panel-form button {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 760px) {
+    .stores-page .stores-onboarding,
+    .stores-page .stores-list-card,
+    .stores-page .stores-form-card {
+        max-width: 100% !important;
+    }
+
+    .stores-page .stores-onboarding .section-heading {
+        align-items: flex-start;
+    }
+
+    .stores-page .stores-onboarding .section-heading > span {
+        margin-left: 0;
+    }
+}
+
 /* Ocultar botões/toggles de modo claro/escuro de forma global e permanente */
 .dark-mode-toggle {
     display: none !important;
