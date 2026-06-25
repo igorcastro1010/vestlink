@@ -12174,6 +12174,9 @@ body.saas-landing {
 }
 
 .saas-landing #precos {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     text-align: center;
 }
 
@@ -12181,9 +12184,12 @@ body.saas-landing {
 .saas-landing #precos .lp-kicker {
     margin-left: auto;
     margin-right: auto;
+    text-align: center;
 }
 
 .saas-landing #precos .lp-price-grid {
+    width: 100%;
+    max-width: 720px;
     margin: 0 auto;
 }
 
@@ -12193,6 +12199,7 @@ body.saas-landing {
     justify-content: center;
     gap: 12px;
     margin-top: 32px;
+    width: 100%;
 }
 
 /* Melhorias na prévia do celular (Hero) */
