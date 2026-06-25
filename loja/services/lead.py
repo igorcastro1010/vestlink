@@ -3,7 +3,7 @@ from django.db.models import F
 from django.utils.text import slugify
 from urllib.parse import quote
 
-from loja.models import Lead, Vendedor, Produto
+from loja.models import Lead, Vendedor, Produto, ProdutoVariacao
 from loja.validators import limpar_telefone
 
 logger = logging.getLogger(__name__)
@@ -21,6 +21,50 @@ def _vendedor_por_codigo(loja, codigo):
     if not codigo:
         return None
     return loja.vendedores.filter(codigo__iexact=codigo, ativo=True).first()
+
+
+def _atualizar_esgotado_produto(produto):
+    if not produto or not produto.variacoes.exists():
+        return
+
+    tem_estoque_disponivel = produto.variacoes.filter(estoque__gt=0, disponivel=True).exists()
+    Produto.objects.filter(pk=produto.pk).update(esgotado=not tem_estoque_disponivel)
+
+
+def _baixar_estoque_variacao_do_lead(lead):
+    produto = lead.produto
+    if not produto:
+        return
+
+    cor = (lead.cor or "").strip()
+    tamanho = (lead.tamanho or "").strip()
+    variacao = ProdutoVariacao.objects.filter(
+        produto=produto,
+        cor__iexact=cor,
+        tamanho__iexact=tamanho,
+    ).first()
+    if not variacao:
+        return
+
+    if variacao.estoque > 0:
+        variacao.estoque -= 1
+        if variacao.estoque == 0:
+            variacao.disponivel = False
+        variacao.save(update_fields=["estoque", "disponivel"])
+
+    _atualizar_esgotado_produto(produto)
+
+
+def atualizar_status_lead(lead, novo_status, observacao=""):
+    status_anterior = lead.status
+    lead.status = novo_status
+    lead.observacao = (observacao or "").strip()
+    lead.save(update_fields=["status", "observacao"])
+
+    if status_anterior != Lead.STATUS_CONCLUIDO and novo_status == Lead.STATUS_CONCLUIDO:
+        _baixar_estoque_variacao_do_lead(lead)
+
+    return lead
 
 
 def processar_whatsapp_produto(request, loja, produto, tamanho, cor, cliente_nome, vendedor_codigo):

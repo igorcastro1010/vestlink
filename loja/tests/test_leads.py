@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.test import TestCase
 from django.urls import reverse
 
-from loja.models import Categoria, Lead, Loja, Produto, Vendedor
+from loja.models import Categoria, Lead, Loja, Produto, ProdutoVariacao, Vendedor
 
 
 class LeadsTests(TestCase):
@@ -134,6 +134,117 @@ class LeadsTests(TestCase):
         lead.refresh_from_db()
         self.assertEqual(lead.status, Lead.STATUS_CONCLUIDO)
         self.assertEqual(lead.observacao, "Cliente pediu entrega")
+
+    def test_concluir_lead_baixa_estoque_da_variacao_em_um(self):
+        variacao = ProdutoVariacao.objects.create(
+            produto=self.produto,
+            cor="Preto",
+            tamanho="P",
+            estoque=2,
+            disponivel=True,
+        )
+        lead = Lead.objects.create(
+            loja=self.loja,
+            produto=self.produto,
+            origem=Lead.ORIGEM_PRODUTO,
+            cor="Preto",
+            tamanho="P",
+        )
+        self.client.force_login(self.user)
+
+        response = self.client.post(
+            reverse("painel_loja", kwargs={"slug": self.loja.slug}),
+            {"acao": "atualizar_lead_status", "lead_id": str(lead.id), "status": Lead.STATUS_CONCLUIDO},
+        )
+
+        self.assertEqual(response.status_code, 302)
+        variacao.refresh_from_db()
+        self.produto.refresh_from_db()
+        self.assertEqual(variacao.estoque, 1)
+        self.assertTrue(variacao.disponivel)
+        self.assertFalse(self.produto.esgotado)
+
+    def test_concluir_lead_ja_concluido_nao_baixa_estoque_duas_vezes(self):
+        variacao = ProdutoVariacao.objects.create(
+            produto=self.produto,
+            cor="Preto",
+            tamanho="P",
+            estoque=2,
+            disponivel=True,
+        )
+        lead = Lead.objects.create(
+            loja=self.loja,
+            produto=self.produto,
+            origem=Lead.ORIGEM_PRODUTO,
+            cor="Preto",
+            tamanho="P",
+            status=Lead.STATUS_CONCLUIDO,
+        )
+        self.client.force_login(self.user)
+
+        response = self.client.post(
+            reverse("painel_loja", kwargs={"slug": self.loja.slug}),
+            {"acao": "atualizar_lead_status", "lead_id": str(lead.id), "status": Lead.STATUS_CONCLUIDO},
+        )
+
+        self.assertEqual(response.status_code, 302)
+        variacao.refresh_from_db()
+        self.assertEqual(variacao.estoque, 2)
+
+    def test_concluir_lead_nao_deixa_estoque_negativo(self):
+        variacao = ProdutoVariacao.objects.create(
+            produto=self.produto,
+            cor="Preto",
+            tamanho="P",
+            estoque=0,
+            disponivel=True,
+        )
+        lead = Lead.objects.create(
+            loja=self.loja,
+            produto=self.produto,
+            origem=Lead.ORIGEM_PRODUTO,
+            cor="Preto",
+            tamanho="P",
+        )
+        self.client.force_login(self.user)
+
+        response = self.client.post(
+            reverse("painel_loja", kwargs={"slug": self.loja.slug}),
+            {"acao": "atualizar_lead_status", "lead_id": str(lead.id), "status": Lead.STATUS_CONCLUIDO},
+        )
+
+        self.assertEqual(response.status_code, 302)
+        variacao.refresh_from_db()
+        self.assertEqual(variacao.estoque, 0)
+
+    def test_concluir_lead_esgota_produto_quando_ultima_variacao_zera(self):
+        variacao = ProdutoVariacao.objects.create(
+            produto=self.produto,
+            cor="Preto",
+            tamanho="P",
+            estoque=1,
+            disponivel=True,
+        )
+        lead = Lead.objects.create(
+            loja=self.loja,
+            produto=self.produto,
+            origem=Lead.ORIGEM_PRODUTO,
+            cor="Preto",
+            tamanho="P",
+        )
+        self.client.force_login(self.user)
+
+        response = self.client.post(
+            reverse("painel_loja", kwargs={"slug": self.loja.slug}),
+            {"acao": "atualizar_lead_status", "lead_id": str(lead.id), "status": Lead.STATUS_CONCLUIDO},
+        )
+
+        self.assertEqual(response.status_code, 302)
+        variacao.refresh_from_db()
+        self.produto.refresh_from_db()
+        self.assertEqual(variacao.estoque, 0)
+        self.assertFalse(variacao.disponivel)
+        self.assertTrue(self.produto.esgotado)
 
 
 class VendedorRedirecionamentoETelefoneTests(TestCase):

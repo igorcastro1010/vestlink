@@ -436,12 +436,14 @@ def painel_loja(request, slug):
         return redirect(f"{reverse('painel_loja', kwargs={'slug': loja.slug})}#produtos")
 
     elif request.method == "POST" and request.POST.get("acao") == "atualizar_lead_status":
-        lead = get_object_or_404(Lead, id=request.POST.get("lead_id"), loja=loja)
+        lead_obj = get_object_or_404(Lead, id=request.POST.get("lead_id"), loja=loja)
         novo_status = request.POST.get("status")
-        lead.observacao = request.POST.get("observacao", "").strip()
         if novo_status in dict(Lead.STATUS_CHOICES):
-            lead.status = novo_status
-            lead.save(update_fields=["status", "observacao"])
+            lead.atualizar_status_lead(
+                lead_obj,
+                novo_status,
+                request.POST.get("observacao", ""),
+            )
         return redirect(f"{reverse('painel_loja', kwargs={'slug': loja.slug})}#leads")
 
     elif request.method == "POST" and not loja.assinatura_esta_ativa:
