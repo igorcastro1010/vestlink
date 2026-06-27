@@ -15109,6 +15109,139 @@ body.plans-page {
     color: var(--muted) !important;
 }
 
+/* 29. Landing practical demo */
+.saas-landing .lp-live-demo {
+    align-items: stretch;
+    display: grid;
+    gap: 18px;
+    grid-template-columns: minmax(0, 1.1fr) minmax(300px, 0.9fr);
+    margin-top: 28px;
+}
+
+.saas-landing .lp-live-demo__catalog,
+.saas-landing .lp-live-demo__steps {
+    background: var(--uix-surface-solid);
+    border: 1px solid var(--uix-line);
+    border-radius: 22px;
+    box-shadow: var(--uix-shadow-sm);
+    padding: 18px;
+}
+
+.saas-landing .lp-live-demo__bar {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    gap: 14px;
+    margin-bottom: 16px;
+}
+
+.saas-landing .lp-live-demo__bar strong,
+.saas-landing .lp-live-demo__grid strong,
+.saas-landing .lp-live-demo__steps strong {
+    color: var(--ink);
+}
+
+.saas-landing .lp-live-demo__bar span,
+.saas-landing .lp-live-demo__grid span,
+.saas-landing .lp-live-demo__steps p {
+    color: var(--muted);
+}
+
+.saas-landing .lp-live-demo__grid {
+    display: grid;
+    gap: 14px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.saas-landing .lp-live-demo__grid article {
+    background: var(--uix-bg-soft);
+    border: 1px solid var(--uix-line);
+    border-radius: 18px;
+    display: grid;
+    gap: 8px;
+    padding: 12px;
+}
+
+.saas-landing .lp-live-demo__image {
+    aspect-ratio: 4 / 3;
+    background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.72), transparent 44%),
+        linear-gradient(135deg, #252232 0 42%, #f5eadc 42% 68%, #8b6be8 68%);
+    border-radius: 14px;
+}
+
+.saas-landing .lp-live-demo__image--alt {
+    background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.62), transparent 38%),
+        linear-gradient(135deg, #f5eadc 0 36%, #d94f92 36% 66%, #252232 66%);
+}
+
+.saas-landing .lp-live-demo__steps {
+    display: grid;
+    gap: 14px;
+}
+
+.saas-landing .lp-live-demo__steps article {
+    align-items: start;
+    display: grid;
+    gap: 12px;
+    grid-template-columns: auto minmax(0, 1fr);
+}
+
+.saas-landing .lp-live-demo__steps article > span {
+    align-items: center;
+    background: var(--uix-primary-soft);
+    border: 1px solid var(--uix-line);
+    border-radius: 999px;
+    color: var(--uix-primary-strong);
+    display: flex;
+    font-weight: 900;
+    height: 34px;
+    justify-content: center;
+    width: 34px;
+}
+
+.saas-landing .lp-live-demo__steps p {
+    margin: 4px 0 0;
+}
+
+.saas-landing .lp-live-demo__message {
+    background: #dcfce7;
+    border: 1px solid rgba(22, 163, 74, 0.25);
+    border-radius: 16px;
+    color: #14532d;
+    font-weight: 900;
+    line-height: 1.35;
+    padding: 14px;
+}
+
+[data-theme="dark"] .saas-landing .lp-live-demo__catalog,
+[data-theme="dark"] .saas-landing .lp-live-demo__steps {
+    background: var(--uix-surface-solid);
+    border-color: var(--uix-line-strong);
+}
+
+[data-theme="dark"] .saas-landing .lp-live-demo__grid article {
+    background: var(--uix-surface-strong);
+    border-color: var(--uix-line);
+}
+
+[data-theme="dark"] .saas-landing .lp-live-demo__message {
+    background: rgba(34, 197, 94, 0.15);
+    border-color: rgba(134, 239, 172, 0.28);
+    color: #bbf7d0;
+}
+
+@media (max-width: 760px) {
+    .saas-landing .lp-live-demo {
+        grid-template-columns: 1fr;
+    }
+
+    .saas-landing .lp-live-demo__grid {
+        grid-template-columns: 1fr;
+    }
+}
+
 /* 28. Stores management layout polish */
 .stores-page .stores-shell {
     grid-template-columns: minmax(0, 1fr) !important;

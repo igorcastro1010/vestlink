@@ -1,21 +1,6 @@
-        <section class="lp-cta-strip">
-            <div>
-                <p class="lp-kicker">Próximo passo</p>
-                <h2>Comece pela vitrine de demonstração e depois crie a sua.</h2>
-            </div>
-            <div class="lp-actions">
-                <a class="lp-button lp-button--ghost" href="/c/bela-meunier/">Ver demonstração</a>
-                {% if request.user.is_authenticated %}
-                    <a class="lp-button" href="{% url 'painel' %}">Ir para o painel</a>
-                {% else %}
-                    <a class="lp-button" href="{% url 'cadastro' %}">Criar conta</a>
-                {% endif %}
-            </div>
-        </section>
-
         <section class="lp-final">
-            <h2>Chega de perder venda porque a cliente não achou a peça.</h2>
-            <p>Crie uma vitrine organizada, bonita e pronta para WhatsApp.</p>
+            <h2>Crie uma vitrine organizada e venda melhor pelo WhatsApp.</h2>
+            <p>Teste por 7 dias e veja se faz sentido para sua loja.</p>
             {% if request.user.is_authenticated %}
                 <a class="lp-button" href="{% url 'painel' %}">Acessar meu painel</a>
             {% else %}

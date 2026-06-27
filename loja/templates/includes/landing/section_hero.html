@@ -1,15 +1,14 @@
         <section class="lp-hero">
             <div class="lp-hero__copy">
-                <p class="lp-kicker">Transforme seu WhatsApp - Catálogo digital para moda</p>
+                <p class="lp-kicker">Transforme seu WhatsApp - catálogo digital para moda</p>
                 <h1>Venda suas roupas pelo WhatsApp com um catálogo profissional.</h1>
                 <p>Organize seus produtos, receba pedidos e pare de depender de fotos soltas no direct, status ou grupos.</p>
                 <div class="lp-actions">
                     {% if request.user.is_authenticated %}
                         <a class="lp-button" href="{% url 'painel' %}">Acessar meu painel</a>
                     {% else %}
-                        <a class="lp-button" href="{% url 'cadastro' %}">Acessar meu painel</a>
+                        <a class="lp-button" href="{% url 'cadastro' %}">Criar conta e testar 7 dias</a>
                     {% endif %}
-                    <a class="lp-button lp-button--ghost" href="/c/bela-meunier/">Ver catálogo de demonstração</a>
                 </div>
                 <span>Depois do teste: R$39,90/mês. Sem fidelidade. Sem aplicativo para instalar.</span>
             </div>

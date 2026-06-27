@@ -1,29 +1,42 @@
         <section class="lp-section" id="demo">
-            <p class="lp-kicker">Demonstração</p>
-            <h2>Uma experiência simples para lojista e cliente.</h2>
-            <div class="lp-demo-flow">
-                <article class="lp-demo-card">
-                    <span>Painel</span>
-                    <strong>Cadastre e atualize rápido</strong>
-                    <p>Adicione produtos, fotos, categorias, tamanhos, cores, estoque e status sem entrar no admin do Django.</p>
-                </article>
-                <article class="lp-demo-card">
-                    <span>Catálogo</span>
-                    <strong>Mostre uma vitrine bonita</strong>
-                    <p>A cliente navega por filtros, novidades, promoções e produtos publicados.</p>
-                </article>
-                <article class="lp-demo-card">
-                    <span>WhatsApp</span>
-                    <strong>Venda com mensagem pronta</strong>
-                    <p>O pedido chega com produto, tamanho e cor escolhidos para você atender mais rápido.</p>
-                </article>
-            </div>
-            <div class="lp-actions">
-                <a class="lp-button lp-button--ghost" href="/c/bela-meunier/">Ver catálogo de demonstração</a>
-                {% if request.user.is_authenticated %}
-                    <a class="lp-button" href="{% url 'painel' %}">Ir para o painel</a>
-                {% else %}
-                    <a class="lp-button" href="{% url 'cadastro' %}">Criar minha vitrine</a>
-                {% endif %}
+            <p class="lp-kicker">Demo prática</p>
+            <h2>Veja como a cliente compra na prática.</h2>
+            <div class="lp-live-demo">
+                <div class="lp-live-demo__catalog">
+                    <div class="lp-live-demo__bar">
+                        <strong>Bela Meunier</strong>
+                        <span>Catálogo online</span>
+                    </div>
+                    <div class="lp-live-demo__grid">
+                        <article>
+                            <div class="lp-live-demo__image"></div>
+                            <strong>Vestido canelado</strong>
+                            <span>R$ 119,90</span>
+                        </article>
+                        <article>
+                            <div class="lp-live-demo__image lp-live-demo__image--alt"></div>
+                            <strong>Blusa cropped</strong>
+                            <span>R$ 79,90</span>
+                        </article>
+                    </div>
+                </div>
+
+                <div class="lp-live-demo__steps">
+                    <article>
+                        <span>1</span>
+                        <div>
+                            <strong>A cliente escolhe a peça</strong>
+                            <p>Ela vê foto, preço, tamanho, cor e disponibilidade.</p>
+                        </div>
+                    </article>
+                    <article>
+                        <span>2</span>
+                        <div>
+                            <strong>O pedido vai pronto</strong>
+                            <p>A mensagem já chega no WhatsApp com produto, tamanho e cor.</p>
+                        </div>
+                    </article>
+                    <div class="lp-live-demo__message">Oi! Quero o Vestido canelado no tamanho M, cor Branco.</div>
+                </div>
             </div>
         </section>
