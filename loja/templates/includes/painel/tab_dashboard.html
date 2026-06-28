@@ -1,304 +1,143 @@
-<div class="tab-pane active" id="tab-dashboard" data-tab-content="dashboard">
-            <section class="dashboard-command-center">
-            <section class="dashboard-hero">
+<div class="tab-pane" id="tab-dashboard" data-tab-content="dashboard">
+    <section class="dashboard-command-center dashboard-command-center--analytics">
+        <section class="dashboard-hero">
             <div>
-                    <p class="eyebrow">Visão geral</p>
-                <h2>Organize sua vitrine e venda melhor pelo WhatsApp.</h2>
-                <p>Edite dados da loja, organize categorias, acompanhe cliques e copie links diretos para vender mais rápido.</p>
+                <p class="eyebrow">Analitico</p>
+                <h2>Dashboard</h2>
+                <p>Analise desempenho, acompanhe cliques, leads e os produtos que mais geram interesse.</p>
             </div>
             <div class="dashboard-actions">
-                <a href="{% url 'catalogo' loja.slug %}">Abrir catálogo</a>
-                <button class="copy-link-button secondary" type="button" data-copy-url="{{ request.scheme }}://{{ request.get_host }}{% url 'catalogo_curto' loja.slug %}">Copiar link</button>
-                <a class="secondary" href="https://wa.me/?text={{ mensagem_compartilhar }}" target="_blank" rel="noopener">Compartilhar catálogo</a>
-                <button class="secondary" type="button" data-tour-start>Ver tour</button>
-                <a class="secondary" href="#novo-produto">Adicionar produto</a>
+                <a class="secondary" href="#leads">Ver leads</a>
+                <a class="secondary" href="#produtos">Ver produtos</a>
+                <a href="{% url 'catalogo' loja.slug %}" target="_blank" rel="noopener">Ver catalogo</a>
             </div>
         </section>
+    </section>
 
-            <aside class="dashboard-side-stack" aria-label="Atalhos da loja">
-        {% if is_owner %}
-        <section class="plan-strip">
-            <div>
-                <span>Assinatura</span>
-                <strong>{{ loja.assinatura_status_label }}</strong>
-                {% if loja.assinatura_status == "trial" and loja.trial_dias_restantes > 0 %}
-                    <small>Teste grátis: {{ loja.trial_dias_restantes }} dia(s) restantes. Depois R$39,90/mês.</small>
-                {% elif loja.assinatura_status == "ativa" %}
-                    <small>Premium ativo por R$39,90/mês, sem fidelidade.</small>
-                {% elif loja.assinatura_status == "cancelada" %}
-                    <small>Assinatura cancelada. Reative quando quiser.</small>
-                {% else %}
-                    <small>Teste expirado. Regularize para manter a loja profissional.</small>
-                {% endif %}
-            </div>
-            <a href="{% url 'assinatura' loja.slug %}">Ver assinatura</a>
-        </section>
-        {% endif %}
+    <section class="metric-grid" aria-label="Metricas da loja">
+        <article>
+            <span>Produtos</span>
+            <strong>{{ total_produtos }}</strong>
+        </article>
+        <article>
+            <span>Esgotados</span>
+            <strong>{{ total_esgotados }}</strong>
+        </article>
+        <article>
+            <span>Categorias</span>
+            <strong>{{ total_categorias }}</strong>
+        </article>
+        <article>
+            <span>Cliques WhatsApp</span>
+            <strong>{{ total_cliques }}</strong>
+        </article>
+        <article>
+            <span>Leads</span>
+            <strong>{{ total_leads_global }}</strong>
+        </article>
+        <article>
+            <span>Vendedores</span>
+            <strong>{{ vendedores_ativos }}</strong>
+        </article>
+    </section>
 
-        <section class="store-identity-card store-identity-card--compact">
-            <div>
-                <p class="eyebrow">Link personalizado</p>
-                <h2>{% if loja.dominio_limpo %}{{ loja.dominio_limpo }}{% else %}{{ request.get_host }}{% url 'catalogo_curto' loja.slug %}{% endif %}</h2>
-                <p>Use na bio, Stories, WhatsApp e cartão da loja.</p>
-            </div>
-            <button class="copy-link-button" type="button" data-copy-url="{{ catalogo_url }}">Copiar</button>
-        </section>
-
-        <section class="store-identity-card qr-card">
-            <div>
-                <p class="eyebrow">QR Code</p>
-                <h2>Código para vitrine e embalagem</h2>
-                <p>Use este QR Code em cartões, sacolas, provador ou vitrine física para levar clientes ao catálogo.</p>
-            </div>
-            <div class="qr-card__actions">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data={{ request.scheme }}://{{ request.get_host }}{% url 'catalogo_curto' loja.slug %}" alt="QR Code do catálogo {{ loja.nome }}">
-                <a class="qr-download-button" href="{% url 'baixar_qr_code' loja.slug %}" download>
-                    <span aria-hidden="true">↓</span>
-                    Baixar QR Code
-                </a>
-            </div>
-        </section>
-
-        <section class="store-identity-card theme-card">
-            <div>
-                <p class="eyebrow">Tema da loja</p>
-                <h2>{{ loja.get_tema_display }}</h2>
-                <p>Altere em “Editar dados da loja” para escolher entre elegante, minimalista, boutique e streetwear.</p>
-            </div>
-            <div class="theme-swatches" aria-hidden="true">
-                <span class="theme-dot theme-dot--elegante"></span>
-                <span class="theme-dot theme-dot--minimalista"></span>
-                <span class="theme-dot theme-dot--boutique"></span>
-                <span class="theme-dot theme-dot--streetwear"></span>
-            </div>
-        </section>
-            </aside>
-        </section>
-
-        {% if pedidos_novos_global %}
-            <section class="lead-alert">
-                <div>
-                    <p class="eyebrow">Novos interesses</p>
-                    <h2>{{ pedidos_novos_global }} lead(s) novo(s) esperando atendimento.</h2>
-                    <p>Responda rápido para aumentar a chance de fechar a venda.</p>
-                </div>
-                <a href="#leads">Ver leads</a>
-            </section>
-        {% endif %}
-
-        {% if is_owner and avisos %}
-            <section class="notification-panel" aria-label="Avisos do painel">
-                <div class="section-heading">
-                    <div>
-                        <p class="eyebrow">Atenção</p>
-                        <h2>O que melhorar agora</h2>
-                    </div>
-                    <span>{{ avisos|length }} aviso(s)</span>
-                </div>
-                <div class="notification-list">
-                    {% for aviso in avisos %}
-                        <article>{{ aviso }}</article>
-                    {% endfor %}
-                </div>
-            </section>
-        {% endif %}
-
-        {% if is_owner %}
-        <section class="onboarding-steps onboarding-steps--guided" aria-label="Primeiros passos">
-            <div class="onboarding-header">
-                <div>
-                    <p class="eyebrow">Onboarding</p>
-                    <h2>Publique sua loja em poucos passos</h2>
-                </div>
-                <strong>{{ onboarding_concluidos }}/{{ onboarding_total }} feitos</strong>
-            </div>
-            <div class="onboarding-progress" aria-hidden="true">
-                <span style="width: {{ onboarding_percentual }}%"></span>
-            </div>
-            {% for passo in onboarding %}
-                <article class="{% if passo.feito %}done{% endif %}">
-                    <span>{% if passo.feito %}OK{% else %}{{ passo.numero }}{% endif %}</span>
-                    <strong>{{ passo.titulo }}</strong>
-                    <small>{{ passo.descricao }}</small>
-                </article>
-            {% endfor %}
-            <div class="onboarding-actions">
-                <a class="onboarding-action onboarding-action--primary" href="#novo-produto">Cadastrar produto</a>
-                <button class="copy-link-button" type="button" data-copy-url="{{ catalogo_url }}">Copiar link</button>
-                <a class="onboarding-action onboarding-action--catalog" href="{% url 'catalogo_curto' loja.slug %}">Abrir catálogo</a>
-            </div>
-        </section>
-        {% endif %}
-
-        <section class="metric-grid" aria-label="Resumo da loja">
-            <article>
-                <span>Produtos</span>
-                <strong>{{ total_produtos }}</strong>
-            </article>
-            <article>
-                <span>Esgotados</span>
-                <strong>{{ total_esgotados }}</strong>
-            </article>
-            <article>
-                <span>Categorias</span>
-                <strong>{{ total_categorias }}</strong>
-            </article>
-            <article>
-                <span>Cliques WhatsApp</span>
-                <strong>{{ total_cliques }}</strong>
-            </article>
-            <article>
-                <span>Leads</span>
-                <strong>{{ total_leads_global }}</strong>
-            </article>
-            <article>
-                <span>Vendedores</span>
-                <strong>{{ vendedores_ativos }}</strong>
-            </article>
-        </section>
-
-        <section class="panel-section whatsapp-template-panel">
+    <section class="dashboard-report-grid">
+        <section class="panel-section">
             <div class="section-heading">
                 <div>
-                    <p class="eyebrow">WhatsApp</p>
-                    <h2>Mensagens prontas para divulgar</h2>
+                    <p class="eyebrow">Ranking</p>
+                    <h2>Produtos mais clicados</h2>
                 </div>
-                <span>Copiar e enviar</span>
+                <span>Top 5</span>
             </div>
-            <div class="template-grid">
+            <div class="chart-container" style="position: relative; min-height: 220px; width: 100%;">
+                {% if total_cliques %}
+                    <canvas id="chartProdutos"></canvas>
+                {% else %}
+                    <p class="empty">Nenhum clique registrado nos produtos ainda.</p>
+                {% endif %}
+            </div>
+        </section>
+
+        <section class="panel-section">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">Movimento</p>
+                    <h2>Leads por dia</h2>
+                </div>
+                <span>Ultimos dias</span>
+            </div>
+            <div class="chart-container" style="position: relative; min-height: 220px; width: 100%;">
+                {% if total_leads %}
+                    <canvas id="chartLeads"></canvas>
+                {% else %}
+                    <p class="empty">Nenhum lead recebido nos ultimos dias.</p>
+                {% endif %}
+            </div>
+        </section>
+
+        <section class="panel-section">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">Conversao</p>
+                    <h2>Resumo comercial</h2>
+                </div>
+                <span>Vendas</span>
+            </div>
+            <div class="conversion-grid">
                 <article>
-                    <strong>Catálogo novo</strong>
-                    <p>Oi! Nosso catálogo está atualizado com as peças disponíveis. Veja aqui: {{ catalogo_url }}</p>
-                    <button class="copy-link-button" type="button" data-copy-url="Oi! Nosso catálogo está atualizado com as peças disponíveis. Veja aqui: {{ catalogo_url }}">Copiar mensagem</button>
+                    <span>Leads concluidos</span>
+                    <strong>{{ pedidos_concluidos }}</strong>
                 </article>
                 <article>
-                    <strong>Promoção</strong>
-                    <p>Tem promoção nova na {{ loja.nome }}. Escolha sua peça pelo catálogo e me chama no WhatsApp: {{ catalogo_url }}</p>
-                    <button class="copy-link-button" type="button" data-copy-url="Tem promoção nova na {{ loja.nome }}. Escolha sua peça pelo catálogo e me chama no WhatsApp: {{ catalogo_url }}">Copiar mensagem</button>
+                    <span>Conversao dos leads</span>
+                    <strong>{{ taxa_conversao }}%</strong>
                 </article>
                 <article>
-                    <strong>Coleção nova</strong>
-                    <p>Acabaram de chegar novidades na {{ loja.nome }}. Veja tamanhos, cores e valores no catálogo: {{ catalogo_url }}</p>
-                    <button class="copy-link-button" type="button" data-copy-url="Acabaram de chegar novidades na {{ loja.nome }}. Veja tamanhos, cores e valores no catálogo: {{ catalogo_url }}">Copiar mensagem</button>
+                    <span>Lead por clique</span>
+                    <strong>{{ taxa_interesse }}%</strong>
+                </article>
+                <article>
+                    <span>Produtos com interesse</span>
+                    <strong>R$ {{ ticket_estimado }}</strong>
                 </article>
             </div>
         </section>
 
-        <section class="dashboard-report-grid">
-            <section class="panel-section">
-                <div class="section-heading">
-                    <div>
-                        <p class="eyebrow">Ranking</p>
-                        <h2>Produtos mais clicados</h2>
-                    </div>
-                    <span>Top 5</span>
+        <section class="panel-section">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">Horarios</p>
+                    <h2>Picos de interesse</h2>
                 </div>
-                <div class="chart-container" style="position: relative; min-height: 220px; width: 100%;">
-                    {% if total_cliques %}
-                        <canvas id="chartProdutos"></canvas>
-                    {% else %}
-                        <p class="empty">Nenhum clique registrado nos produtos ainda.</p>
-                    {% endif %}
-                </div>
-            </section>
-
-            <section class="panel-section">
-                <div class="section-heading">
-                    <div>
-                        <p class="eyebrow">Movimento</p>
-                        <h2>Leads por dia</h2>
-                    </div>
-                    <span>Últimos dias</span>
-                </div>
-                <div class="chart-container" style="position: relative; min-height: 220px; width: 100%;">
-                    {% if total_leads %}
-                        <canvas id="chartLeads"></canvas>
-                    {% else %}
-                        <p class="empty">Nenhum lead recebido nos últimos dias.</p>
-                    {% endif %}
-                </div>
-            </section>
-
-            <section class="panel-section">
-                <div class="section-heading">
-                    <div>
-                        <p class="eyebrow">Conversão</p>
-                        <h2>Resumo comercial</h2>
-                    </div>
-                    <span>Vendas</span>
-                </div>
-                <div class="conversion-grid">
-                    <article>
-                        <span>Leads concluídos</span>
-                        <strong>{{ pedidos_concluidos }}</strong>
-                    </article>
-                    <article>
-                        <span>Conversão dos leads</span>
-                        <strong>{{ taxa_conversao }}%</strong>
-                    </article>
-                    <article>
-                        <span>Lead por clique</span>
-                        <strong>{{ taxa_interesse }}%</strong>
-                    </article>
-                    <article>
-                        <span>Produtos com interesse</span>
-                        <strong>R$ {{ ticket_estimado }}</strong>
-                    </article>
-                </div>
-            </section>
-
-            <section class="panel-section">
-                <div class="section-heading">
-                    <div>
-                        <p class="eyebrow">Horários</p>
-                        <h2>Picos de interesse</h2>
-                    </div>
-                    <span>Top 5</span>
-                </div>
-                <div class="chart-container" style="position: relative; min-height: 220px; width: 100%;">
-                    {% if total_leads %}
-                        <canvas id="chartHorarios"></canvas>
-                    {% else %}
-                        <p class="empty">Ainda não há dados de horário de pico.</p>
-                    {% endif %}
-                </div>
-            </section>
-
-            {% if total_vendedores %}
-            <section class="panel-section">
-                <div class="section-heading">
-                    <div>
-                        <p class="eyebrow">Equipe</p>
-                        <h2>Leads por vendedor</h2>
-                    </div>
-                    <span>Geral</span>
-                </div>
-                <div class="chart-container" style="position: relative; min-height: 220px; width: 100%;">
-                    {% if total_leads %}
-                        <canvas id="chartVendedores"></canvas>
-                    {% else %}
-                        <p class="empty">Nenhum lead recebido ainda.</p>
-                    {% endif %}
-                </div>
-            </section>
-            {% endif %}
+                <span>Top 5</span>
+            </div>
+            <div class="chart-container" style="position: relative; min-height: 220px; width: 100%;">
+                {% if total_leads %}
+                    <canvas id="chartHorarios"></canvas>
+                {% else %}
+                    <p class="empty">Ainda nao ha dados de horario de pico.</p>
+                {% endif %}
+            </div>
         </section>
 
-        {% if is_owner %}
-        <section class="management-grid">
-            <section class="panel-section" id="categorias">
-                <div class="section-heading">
-                    <div>
-                        <p class="eyebrow">Dados da loja</p>
-                        <h2>Configuração</h2>
-                    </div>
-                    <span>Marca</span>
+        {% if total_vendedores %}
+        <section class="panel-section">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">Equipe</p>
+                    <h2>Leads por vendedor</h2>
                 </div>
-                <div class="quick-actions">
-                    <a href="{% url 'editar_loja' loja.slug %}">Editar dados da loja</a>
-                    <a class="danger-link" href="{% url 'remover_loja' loja.slug %}">Excluir loja</a>
-                </div>
-            </section>
+                <span>Geral</span>
+            </div>
+            <div class="chart-container" style="position: relative; min-height: 220px; width: 100%;">
+                {% if total_leads %}
+                    <canvas id="chartVendedores"></canvas>
+                {% else %}
+                    <p class="empty">Nenhum lead recebido ainda.</p>
+                {% endif %}
+            </div>
         </section>
         {% endif %}
-        </div> <!-- Fim da Aba Dashboard -->
+    </section>
+</div>

@@ -1,0 +1,118 @@
+<div class="tab-pane active" id="tab-painel-geral" data-tab-content="painel-geral">
+    <section class="dashboard-command-center dashboard-command-center--general">
+        <section class="dashboard-hero">
+            <div>
+                <p class="eyebrow">Visao geral</p>
+                <h2>Painel geral</h2>
+                <p>Acompanhe a operacao da loja, veja os pontos que precisam de atencao e acesse rapidamente as acoes mais usadas.</p>
+            </div>
+            <div class="dashboard-actions">
+                <a class="secondary" href="#novo-produto">Adicionar produto</a>
+                <a href="{% url 'catalogo' loja.slug %}" target="_blank" rel="noopener">Ver catalogo</a>
+                <button class="copy-link-button secondary" type="button" data-copy-url="{{ request.scheme }}://{{ request.get_host }}{% url 'catalogo_curto' loja.slug %}">Copiar link</button>
+                <a class="secondary" href="#leads">Ver leads</a>
+            </div>
+        </section>
+    </section>
+
+    <section class="metric-grid" aria-label="Resumo rapido da loja">
+        <article>
+            <span>Produtos</span>
+            <strong>{{ total_produtos }}</strong>
+        </article>
+        <article>
+            <span>Novos leads</span>
+            <strong>{{ pedidos_novos }}</strong>
+        </article>
+        <article>
+            <span>Cliques WhatsApp</span>
+            <strong>{{ total_cliques }}</strong>
+        </article>
+        <article>
+            <span>Vendedores ativos</span>
+            <strong>{{ vendedores_ativos }}</strong>
+        </article>
+    </section>
+
+    {% if pedidos_novos_global %}
+        <section class="lead-alert">
+            <div>
+                <p class="eyebrow">Novos interesses</p>
+                <h2>{{ pedidos_novos_global }} lead(s) novo(s) esperando atendimento.</h2>
+                <p>Responda rapido para aumentar a chance de fechar a venda.</p>
+            </div>
+            <a href="#leads">Ver leads</a>
+        </section>
+    {% endif %}
+
+    {% if is_owner and avisos %}
+        <section class="notification-panel" aria-label="Avisos do painel">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">Atencao</p>
+                    <h2>O que melhorar agora</h2>
+                </div>
+                <span>{{ avisos|length }} aviso(s)</span>
+            </div>
+            <div class="notification-list">
+                {% for aviso in avisos %}
+                    <article>{{ aviso }}</article>
+                {% endfor %}
+            </div>
+        </section>
+    {% endif %}
+
+    {% if is_owner %}
+    <section class="onboarding-steps onboarding-steps--guided" aria-label="Proximos passos">
+        <div class="onboarding-header">
+            <div>
+                <p class="eyebrow">Onboarding</p>
+                <h2>Publique sua loja em poucos passos</h2>
+            </div>
+            <strong>{{ onboarding_concluidos }}/{{ onboarding_total }} feitos</strong>
+        </div>
+        <div class="onboarding-progress" aria-hidden="true">
+            <span style="width: {{ onboarding_percentual }}%"></span>
+        </div>
+        {% for passo in onboarding %}
+            <article class="{% if passo.feito %}done{% endif %}">
+                <span>{% if passo.feito %}OK{% else %}{{ passo.numero }}{% endif %}</span>
+                <strong>{{ passo.titulo }}</strong>
+                <small>{{ passo.descricao }}</small>
+            </article>
+        {% endfor %}
+        <div class="onboarding-actions">
+            <a class="onboarding-action onboarding-action--primary" href="#novo-produto">Cadastrar produto</a>
+            <button class="copy-link-button" type="button" data-copy-url="{{ catalogo_url }}">Copiar link</button>
+            <a class="onboarding-action onboarding-action--catalog" href="{% url 'catalogo_curto' loja.slug %}">Abrir catalogo</a>
+        </div>
+    </section>
+    {% endif %}
+
+    <section class="panel-section whatsapp-template-panel">
+        <div class="section-heading">
+            <div>
+                <p class="eyebrow">WhatsApp</p>
+                <h2>Mensagens prontas para divulgar</h2>
+            </div>
+            <span>Copiar e enviar</span>
+        </div>
+        <div class="template-grid">
+            <article>
+                <strong>Catalogo novo</strong>
+                <p>Oi! Nosso catalogo esta atualizado com as pecas disponiveis. Veja aqui: {{ catalogo_url }}</p>
+                <button class="copy-link-button" type="button" data-copy-url="Oi! Nosso catalogo esta atualizado com as pecas disponiveis. Veja aqui: {{ catalogo_url }}">Copiar mensagem</button>
+            </article>
+            <article>
+                <strong>Promocao</strong>
+                <p>Tem promocao nova na {{ loja.nome }}. Escolha sua peca pelo catalogo e me chama no WhatsApp: {{ catalogo_url }}</p>
+                <button class="copy-link-button" type="button" data-copy-url="Tem promocao nova na {{ loja.nome }}. Escolha sua peca pelo catalogo e me chama no WhatsApp: {{ catalogo_url }}">Copiar mensagem</button>
+            </article>
+            <article>
+                <strong>Colecao nova</strong>
+                <p>Acabaram de chegar novidades na {{ loja.nome }}. Veja tamanhos, cores e valores no catalogo: {{ catalogo_url }}</p>
+                <button class="copy-link-button" type="button" data-copy-url="Acabaram de chegar novidades na {{ loja.nome }}. Veja tamanhos, cores e valores no catalogo: {{ catalogo_url }}">Copiar mensagem</button>
+            </article>
+        </div>
+    </section>
+</div>

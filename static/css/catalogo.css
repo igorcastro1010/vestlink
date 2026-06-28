@@ -1301,6 +1301,14 @@ body {
     width: 54px;
 }
 
+.store-card__avatar img {
+    border-radius: inherit;
+    display: block;
+    height: 100%;
+    object-fit: cover;
+    width: 100%;
+}
+
 .store-card__content {
     display: grid;
     gap: 4px;
@@ -13546,6 +13554,23 @@ body.storefront {
     backdrop-filter: blur(16px);
 }
 
+.merchant-dashboard .panel-header-user .user-name,
+.stores-page .panel-header-user .user-name {
+    background: transparent !important;
+    border: 0 !important;
+    color: #ffffff !important;
+    text-decoration: none !important;
+}
+
+.merchant-dashboard .panel-header-user .user-avatar-icon,
+.stores-page .panel-header-user .user-avatar-icon {
+    color: #ffffff !important;
+}
+
+.stores-page .panel-header-brand .panel-header-subtitle {
+    transform: translateY(8px);
+}
+
 .merchant-dashboard .panel-header-brand h1,
 .stores-page .panel-header-brand h1,
 .plans-page .lp-logo,
@@ -14782,7 +14807,6 @@ body.plans-page {
         overflow-wrap: anywhere;
     }
 
-    .merchant-dashboard .panel-header,
     .merchant-dashboard .dashboard-shell,
     .merchant-dashboard .dashboard-shell--redesign,
     .merchant-dashboard .dashboard-command-center,
@@ -14799,7 +14823,6 @@ body.plans-page {
     .merchant-dashboard .leads-dashboard,
     .merchant-dashboard .product-form-card,
     .merchant-dashboard .product-form-layout,
-    .stores-page .panel-header,
     .stores-page .stores-shell,
     .stores-page .panel-section,
     .stores-page .store-card {
@@ -14819,6 +14842,10 @@ body.plans-page {
     .stores-page .panel-header {
         align-items: flex-start !important;
         flex-wrap: wrap !important;
+        max-width: none !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        width: 100% !important;
     }
 
     .merchant-dashboard .panel-header-brand,
@@ -15245,13 +15272,17 @@ body.plans-page {
 /* 28. Stores management layout polish */
 .stores-page .stores-shell {
     grid-template-columns: minmax(0, 1fr) !important;
-    gap: 26px !important;
+    gap: 20px !important;
+    margin-top: 18px !important;
     max-width: 1180px !important;
 }
 
 .stores-page .stores-onboarding {
+    margin: 0 auto;
+    max-width: 1040px;
     order: 1;
-    padding: 24px !important;
+    padding: 20px 22px !important;
+    width: 100%;
 }
 
 .stores-page .stores-list-card {
@@ -15272,12 +15303,13 @@ body.plans-page {
 
 .stores-page .stores-onboarding .section-heading {
     align-items: center;
-    gap: 18px;
-    margin-bottom: 22px;
+    gap: 14px;
+    margin-bottom: 18px;
 }
 
 .stores-page .stores-onboarding .section-heading h2 {
-    margin-top: 5px;
+    font-size: clamp(1.25rem, 2vw, 1.55rem) !important;
+    margin-top: 4px;
 }
 
 .stores-page .stores-onboarding .section-heading > span {
@@ -15286,19 +15318,55 @@ body.plans-page {
 }
 
 .stores-page .onboarding-compact-list {
-    gap: 14px;
+    gap: 12px;
 }
 
 .stores-page .onboarding-compact-list article {
     align-content: start;
-    min-height: 116px;
-    padding: 18px !important;
+    min-height: 96px;
+    padding: 14px 16px !important;
+}
+
+.stores-page .onboarding-compact-list article strong {
+    font-size: 0.96rem;
+}
+
+.stores-page .onboarding-compact-list article small {
+    font-size: 0.84rem;
+    line-height: 1.35;
+}
+
+.stores-page .stores-list-card,
+.stores-page .stores-form-card {
+    padding: 22px !important;
+}
+
+.stores-page .stores-form-card {
+    padding: 18px 22px !important;
+}
+
+.stores-page .stores-list-card .section-heading,
+.stores-page .stores-form-card .section-heading {
+    margin-bottom: 18px;
+}
+
+.stores-page .stores-form-card .section-heading {
+    margin-bottom: 14px;
+}
+
+.stores-page .stores-list-card .section-heading h2,
+.stores-page .stores-form-card .section-heading h2 {
+    font-size: clamp(1.25rem, 2vw, 1.55rem) !important;
+}
+
+.stores-page .stores-list {
+    gap: 12px;
 }
 
 @media (min-width: 761px) {
     .stores-page .stores-list .store-card {
         grid-template-columns: 64px minmax(0, 1fr) auto !important;
-        padding: 18px !important;
+        padding: 14px 18px !important;
     }
 
     .stores-page .store-card__avatar {
@@ -15307,25 +15375,52 @@ body.plans-page {
     }
 
     .stores-page .store-card .panel-actions {
+        display: grid !important;
+        gap: 10px !important;
         grid-column: auto !important;
-        justify-content: flex-end;
-        max-width: 440px;
+        grid-template-columns: repeat(3, max-content);
+        justify-content: flex-end !important;
+        max-width: none;
+        width: auto !important;
     }
 
     .stores-page .store-card .panel-actions a,
     .stores-page .store-card .panel-actions button {
-        min-height: 44px;
+        min-height: 40px;
+        padding: 9px 16px !important;
+        text-align: center;
         white-space: nowrap;
     }
 
     .stores-page .stores-form-card .panel-form {
         display: grid;
-        gap: 16px 18px;
+        gap: 10px 18px;
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     .stores-page .stores-form-card .panel-form p {
+        gap: 4px;
         margin: 0;
+    }
+
+    .stores-page .stores-form-card .panel-form label {
+        font-size: 0.9rem;
+    }
+
+    .stores-page .stores-form-card .panel-form input,
+    .stores-page .stores-form-card .panel-form select,
+    .stores-page .stores-form-card .panel-form textarea {
+        min-height: 40px !important;
+        padding: 9px 12px !important;
+    }
+
+    .stores-page .stores-form-card .panel-form input[type="file"] {
+        min-height: 38px !important;
+    }
+
+    .stores-page .stores-form-card .panel-form .helptext {
+        font-size: 0.78rem;
+        margin-top: 0;
     }
 
     .stores-page .stores-form-card .panel-form p:has(textarea),
@@ -15635,5 +15730,400 @@ body.storefront .product__body {
 
     body.storefront .search button {
         width: 100% !important;
+    }
+}
+
+/* 30. Merchant dashboard final layout polish */
+.merchant-dashboard .panel-header--dashboard {
+    border-left: 0 !important;
+    border-radius: 0 !important;
+    border-right: 0 !important;
+    min-height: 72px !important;
+    padding: 14px clamp(16px, 3vw, 34px) !important;
+}
+
+.merchant-dashboard .panel-header-brand {
+    gap: 14px !important;
+}
+
+.merchant-dashboard .panel-header-brand h1 {
+    font-size: clamp(1.35rem, 2.4vw, 1.65rem) !important;
+    line-height: 1.1 !important;
+}
+
+.merchant-dashboard .panel-header-brand .panel-store-link {
+    max-width: min(360px, 28vw) !important;
+    min-height: 34px;
+    padding: 8px 12px !important;
+}
+
+.merchant-dashboard .panel-header-nav {
+    gap: 10px !important;
+}
+
+.merchant-dashboard .panel-header-nav .nav-link,
+.merchant-dashboard .panel-header-user .logout-btn {
+    min-height: 36px;
+    padding: 9px 12px !important;
+}
+
+.merchant-dashboard .panel-header-user {
+    min-height: 42px !important;
+    padding: 4px 6px 4px 12px !important;
+}
+
+.merchant-dashboard .dashboard-shell--redesign {
+    gap: 16px !important;
+    max-width: 1180px !important;
+    padding: 18px clamp(16px, 3vw, 32px) 48px !important;
+}
+
+.merchant-dashboard .store-status-bar {
+    align-items: center !important;
+    border-radius: 18px !important;
+    gap: 14px !important;
+    padding: 12px 14px !important;
+}
+
+.merchant-dashboard .store-status-bar > div {
+    gap: 8px !important;
+}
+
+.merchant-dashboard .store-status-bar a,
+.merchant-dashboard .store-status-bar button {
+    min-height: 36px !important;
+    padding: 9px 12px !important;
+}
+
+.merchant-dashboard .panel-tabs-container {
+    border-radius: 18px !important;
+    padding: 6px !important;
+}
+
+.merchant-dashboard .panel-tabs {
+    gap: 6px !important;
+}
+
+.merchant-dashboard .tab-btn {
+    border-radius: 14px !important;
+    font-size: 0.9rem !important;
+    min-height: 42px !important;
+    padding: 9px 12px !important;
+}
+
+.merchant-dashboard .tab-icon {
+    flex: 0 0 auto;
+}
+
+.merchant-dashboard .tab-pane {
+    display: none;
+}
+
+.merchant-dashboard .tab-pane.active {
+    display: grid;
+    gap: 16px;
+}
+
+.merchant-dashboard .dashboard-command-center {
+    align-items: stretch !important;
+    gap: 16px !important;
+    grid-template-columns: minmax(0, 1.45fr) minmax(280px, 0.8fr) !important;
+}
+
+.merchant-dashboard .dashboard-command-center--general {
+    grid-template-columns: minmax(0, 1fr) !important;
+}
+
+.merchant-dashboard .dashboard-command-center--analytics {
+    grid-template-columns: minmax(0, 1fr) !important;
+}
+
+.merchant-dashboard .dashboard-command-center .dashboard-hero {
+    align-content: center;
+    gap: 18px !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    min-height: 0 !important;
+    padding: 22px !important;
+}
+
+.merchant-dashboard .dashboard-command-center .dashboard-hero h2 {
+    font-size: clamp(1.55rem, 2.6vw, 2.15rem) !important;
+    line-height: 1.08 !important;
+    max-width: 760px;
+}
+
+.merchant-dashboard .dashboard-command-center .dashboard-hero p:not(.eyebrow) {
+    font-size: 0.98rem !important;
+    max-width: 720px !important;
+}
+
+.merchant-dashboard .dashboard-command-center--general .dashboard-hero {
+    grid-template-columns: minmax(0, 1fr) !important;
+}
+
+.merchant-dashboard .dashboard-command-center--general .dashboard-actions {
+    margin-top: 2px;
+}
+
+.merchant-dashboard .dashboard-actions {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 10px !important;
+}
+
+.merchant-dashboard .dashboard-actions a,
+.merchant-dashboard .dashboard-actions button,
+.merchant-dashboard .copy-link-button,
+.merchant-dashboard .panel-cancel,
+.merchant-dashboard .qr-download-button {
+    min-height: 40px;
+    padding: 10px 14px !important;
+    white-space: nowrap;
+}
+
+.merchant-dashboard .dashboard-side-stack {
+    gap: 12px !important;
+}
+
+.merchant-dashboard .dashboard-side-stack .plan-strip,
+.merchant-dashboard .dashboard-side-stack .store-identity-card,
+.merchant-dashboard .panel-section,
+.merchant-dashboard .leads-dashboard,
+.merchant-dashboard .seller-form {
+    border-radius: 18px !important;
+    padding: 16px !important;
+}
+
+.merchant-dashboard .dashboard-side-stack .store-identity-card h2 {
+    font-size: 1rem !important;
+    line-height: 1.25 !important;
+    overflow-wrap: anywhere;
+}
+
+.merchant-dashboard .dashboard-side-stack .qr-card {
+    grid-template-columns: minmax(0, 1fr) auto !important;
+}
+
+.merchant-dashboard .dashboard-side-stack .qr-card img {
+    height: 112px !important;
+    width: 112px !important;
+}
+
+.merchant-dashboard .section-heading {
+    align-items: center;
+    gap: 12px !important;
+    margin-bottom: 14px !important;
+}
+
+.merchant-dashboard .section-heading h2,
+.merchant-dashboard .panel-section h2 {
+    font-size: clamp(1.15rem, 2vw, 1.45rem) !important;
+    line-height: 1.15 !important;
+}
+
+.merchant-dashboard .section-heading > span {
+    white-space: nowrap;
+}
+
+.merchant-dashboard .notification-panel,
+.merchant-dashboard .onboarding-steps,
+.merchant-dashboard .whatsapp-template-panel,
+.merchant-dashboard .dashboard-report-grid .panel-section {
+    padding: 16px !important;
+}
+
+.merchant-dashboard .metric-grid,
+.merchant-dashboard .dashboard-insights-grid .metric-grid {
+    gap: 10px !important;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)) !important;
+}
+
+.merchant-dashboard .metric-grid article,
+.merchant-dashboard .dashboard-insights-grid .metric-grid article,
+.merchant-dashboard .lead-summary article,
+.merchant-dashboard .conversion-grid article {
+    min-height: 88px;
+    padding: 14px !important;
+}
+
+.merchant-dashboard .metric-grid strong,
+.merchant-dashboard .dashboard-insights-grid .metric-grid strong,
+.merchant-dashboard .lead-summary strong,
+.merchant-dashboard .conversion-grid strong {
+    font-size: clamp(1.35rem, 2.4vw, 1.75rem) !important;
+}
+
+.merchant-dashboard .dashboard-report-grid,
+.merchant-dashboard .management-grid {
+    gap: 16px !important;
+}
+
+.merchant-dashboard .panel-filters {
+    gap: 10px !important;
+}
+
+.merchant-dashboard .dashboard-products article,
+.merchant-dashboard .seller-list article,
+.merchant-dashboard .lead-list article {
+    border-radius: 16px !important;
+    padding: 14px !important;
+}
+
+.merchant-dashboard .panel-product-actions,
+.merchant-dashboard .seller-actions,
+.merchant-dashboard .lead-status-form {
+    gap: 8px !important;
+}
+
+.merchant-dashboard .product-form-card .section-heading,
+.merchant-dashboard .leads-dashboard .section-heading,
+.merchant-dashboard .sales-panel .section-heading {
+    margin-bottom: 16px !important;
+}
+
+.merchant-dashboard .lead-alert a {
+    background: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.92) !important;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18) !important;
+    color: #171022 !important;
+    opacity: 1 !important;
+}
+
+.merchant-dashboard .lead-alert a:hover {
+    background: #f4efff !important;
+    border-color: #ffffff !important;
+    color: #171022 !important;
+}
+
+@media (max-width: 1080px) {
+    .merchant-dashboard .panel-header--dashboard {
+        align-items: flex-start !important;
+        display: grid !important;
+        gap: 12px !important;
+    }
+
+    .merchant-dashboard .panel-header-brand .panel-store-link {
+        max-width: min(520px, 58vw) !important;
+    }
+
+    .merchant-dashboard .dashboard-command-center {
+        grid-template-columns: minmax(0, 1fr) !important;
+    }
+
+    .merchant-dashboard .dashboard-side-stack {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+
+    .merchant-dashboard .dashboard-side-stack .plan-strip,
+    .merchant-dashboard .dashboard-side-stack .theme-card {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 760px) {
+    .merchant-dashboard .panel-header--dashboard {
+        margin: 0 !important;
+        padding: 12px !important;
+    }
+
+    .merchant-dashboard .panel-header-brand {
+        align-items: flex-start !important;
+        flex-direction: column !important;
+        gap: 8px !important;
+    }
+
+    .merchant-dashboard .panel-header-brand .panel-store-link {
+        max-width: 100% !important;
+        white-space: normal !important;
+    }
+
+    .merchant-dashboard .panel-header-nav,
+    .merchant-dashboard .panel-tabs {
+        overflow-x: auto;
+        padding-bottom: 2px !important;
+        scrollbar-width: none;
+        width: 100%;
+    }
+
+    .merchant-dashboard .panel-header-nav::-webkit-scrollbar,
+    .merchant-dashboard .panel-tabs::-webkit-scrollbar {
+        display: none;
+    }
+
+    .merchant-dashboard .panel-header-user {
+        justify-content: space-between !important;
+        width: 100% !important;
+    }
+
+    .merchant-dashboard .dashboard-shell--redesign {
+        gap: 12px !important;
+        padding: 12px 12px 40px !important;
+    }
+
+    .merchant-dashboard .store-status-bar,
+    .merchant-dashboard .store-status-bar > div,
+    .merchant-dashboard .dashboard-actions,
+    .merchant-dashboard .quick-actions,
+    .merchant-dashboard .panel-product-actions,
+    .merchant-dashboard .seller-actions,
+    .merchant-dashboard .lead-status-form {
+        align-items: stretch !important;
+        display: flex !important;
+        flex-direction: column !important;
+        width: 100% !important;
+    }
+
+    .merchant-dashboard .store-status-bar a,
+    .merchant-dashboard .store-status-bar button,
+    .merchant-dashboard .dashboard-actions a,
+    .merchant-dashboard .dashboard-actions button,
+    .merchant-dashboard .quick-actions a,
+    .merchant-dashboard .panel-product-actions a,
+    .merchant-dashboard .panel-product-actions button,
+    .merchant-dashboard .seller-actions button,
+    .merchant-dashboard .lead-status-form button {
+        justify-content: center !important;
+        text-align: center !important;
+        width: 100% !important;
+    }
+
+    .merchant-dashboard .dashboard-command-center .dashboard-hero,
+    .merchant-dashboard .dashboard-side-stack .plan-strip,
+    .merchant-dashboard .dashboard-side-stack .store-identity-card,
+    .merchant-dashboard .panel-section,
+    .merchant-dashboard .leads-dashboard,
+    .merchant-dashboard .seller-form {
+        padding: 14px !important;
+    }
+
+    .merchant-dashboard .dashboard-command-center .dashboard-hero h2 {
+        font-size: 1.55rem !important;
+    }
+
+    .merchant-dashboard .dashboard-side-stack,
+    .merchant-dashboard .metric-grid,
+    .merchant-dashboard .lead-summary,
+    .merchant-dashboard .conversion-grid,
+    .merchant-dashboard .dashboard-report-grid,
+    .merchant-dashboard .management-grid {
+        grid-template-columns: minmax(0, 1fr) !important;
+    }
+
+    .merchant-dashboard .dashboard-side-stack .qr-card {
+        grid-template-columns: minmax(0, 1fr) !important;
+    }
+
+    .merchant-dashboard .dashboard-side-stack .qr-card img {
+        height: 132px !important;
+        width: 132px !important;
+    }
+
+    .merchant-dashboard .section-heading {
+        align-items: flex-start !important;
+        flex-direction: column !important;
+    }
+
+    .merchant-dashboard .section-heading > span {
+        align-self: flex-start;
     }
 }
