@@ -38,11 +38,11 @@
 
                     <section class="store-identity-card store-identity-card--compact">
                         <div>
-                            <p class="eyebrow">Link personalizado</p>
-                            <h2>{% if loja.dominio_limpo %}{{ loja.dominio_limpo }}{% else %}{{ request.get_host }}{% url 'catalogo_curto' loja.slug %}{% endif %}</h2>
+                            <p class="eyebrow">Link do catálogo</p>
+                            <h2>{{ request.get_host }}{% url 'catalogo_curto' loja.slug %}</h2>
                             <p>Use na bio, Stories, WhatsApp e cartão da loja.</p>
                         </div>
-                        <button class="copy-link-button" type="button" data-copy-url="{{ catalogo_url }}" style="background: #1f1844; color: #ffffff; border: 0; border-radius: 8px; font-weight: 800; padding: 10px 14px; cursor: pointer;">Copiar</button>
+                        <button class="copy-link-button" type="button" data-copy-url="{{ request.scheme }}://{{ request.get_host }}{% url 'catalogo_curto' loja.slug %}" style="background: #1f1844; color: #ffffff; border: 0; border-radius: 8px; font-weight: 800; padding: 10px 14px; cursor: pointer;">Copiar</button>
                     </section>
 
                     <section class="store-identity-card qr-card">

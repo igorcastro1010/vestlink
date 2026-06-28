@@ -32,7 +32,6 @@ class LojaForm(forms.ModelForm):
             "telefone",
             "descricao",
             "instagram",
-            "dominio_personalizado",
             "cor_principal",
             "tema",
             "logo",
@@ -45,7 +44,6 @@ class LojaForm(forms.ModelForm):
             "telefone": "WhatsApp",
             "descricao": "Descrição",
             "instagram": "Instagram",
-            "dominio_personalizado": "Domínio personalizado",
             "cor_principal": "Cor principal",
             "tema": "Tema da loja",
             "logo": "Logo da loja",
@@ -57,7 +55,6 @@ class LojaForm(forms.ModelForm):
             "cor_principal": forms.TextInput(attrs={"type": "color"}),
             "banner_titulo": forms.TextInput(attrs={"placeholder": "Ex.: Novidades da semana"}),
             "banner_texto": forms.TextInput(attrs={"placeholder": "Ex.: Peças novas com pronta entrega"}),
-            "dominio_personalizado": forms.TextInput(attrs={"placeholder": "catalogo.sualoja.com.br"}),
         }
 
     def clean_telefone(self):
