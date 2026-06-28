@@ -112,6 +112,19 @@
                                     {% endif %}
                                 {% endif %}
                                 {% if lead.observacao %}<br><strong>Obs. interna:</strong> {{ lead.observacao|truncatechars:100 }}{% endif %}
+                                {% if lead.status_atualizado_por and lead.status_atualizado_em %}
+                                    <br><strong>Atualizado por:</strong>
+                                    {% if lead.status_atualizado_por == loja.usuario %}
+                                        {{ lead.status_atualizado_por.get_full_name|default:lead.status_atualizado_por.username }} (dono/lojista)
+                                    {% else %}
+                                        {% if lead.status_atualizado_por.vendedor_perfil %}
+                                            {{ lead.status_atualizado_por.vendedor_perfil.nome }}
+                                        {% else %}
+                                            {{ lead.status_atualizado_por.get_full_name|default:lead.status_atualizado_por.username }}
+                                        {% endif %}
+                                    {% endif %}
+                                    <br><strong>Em:</strong> {{ lead.status_atualizado_em|date:"d/m/Y H:i" }}
+                                {% endif %}
                             </p>
                             <form class="lead-status-form" method="post">
                                 {% csrf_token %}

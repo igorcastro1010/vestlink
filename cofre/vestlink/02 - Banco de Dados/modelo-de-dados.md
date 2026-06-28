@@ -1,7 +1,7 @@
 ---
 tipo: banco
 status: ativo
-revisado_em: 2026-06-16
+revisado_em: 2026-06-28
 fontes:
   - ../../../loja/models.py
   - ../../../loja/migrations/
@@ -25,6 +25,7 @@ erDiagram
     LOJA ||--o{ VENDEDOR : cadastra
     LOJA ||--o{ LEAD : recebe
     VENDEDOR o|--o{ LEAD : referencia
+    USER o|--o{ LEAD : atualiza_status
     PRODUTO o|--o{ LEAD : interessa
     LOJA ||--o{ PAGAMENTO : cobra
     CUPOM o|--o{ PAGAMENTO : desconta
@@ -56,6 +57,8 @@ Código único dentro da loja, telefone, status e usuário Django opcional.
 
 Intenção de compra. Guarda origem, vendedor, produto, variação escolhida,
 cliente, entrega/endereço, mensagem, status, IP, navegador e `anonimizado_em`.
+Tambem guarda `status_atualizado_por` e `status_atualizado_em` para auditoria
+da ultima alteracao de status feita por lojista ou vendedor.
 O método `anonimizar()` remove dados pessoais e mantém o registro operacional.
 
 ### AceiteLegal

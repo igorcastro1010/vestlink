@@ -134,6 +134,8 @@ class LeadsTests(TestCase):
         lead.refresh_from_db()
         self.assertEqual(lead.status, Lead.STATUS_CONCLUIDO)
         self.assertEqual(lead.observacao, "Cliente pediu entrega")
+        self.assertEqual(lead.status_atualizado_por, self.user)
+        self.assertIsNotNone(lead.status_atualizado_em)
 
     def test_concluir_lead_baixa_estoque_da_variacao_em_um(self):
         variacao = ProdutoVariacao.objects.create(
@@ -465,6 +467,94 @@ class FiltrosLeadsEControleAcessoTests(TestCase):
         # Como é vendedor, o total_leads_global/pedidos_novos_global também são baseados no leads_base que foi filtrado.
         self.assertEqual(response.context["total_leads_global"], 1)
         self.assertEqual(response.context["pedidos_novos_global"], 1)
+
+    def test_vendedor_consegue_concluir_lead_proprio(self):
+        self.client.force_login(self.vendedor_user1)
+
+        response = self.client.post(
+            reverse("painel_loja", kwargs={"slug": self.loja.slug}),
+            {
+                "acao": "atualizar_lead_status",
+                "lead_id": str(self.lead_vendedor1.id),
+                "status": Lead.STATUS_CONCLUIDO,
+            },
+        )
+
+        self.assertEqual(response.status_code, 302)
+        self.lead_vendedor1.refresh_from_db()
+        self.assertEqual(self.lead_vendedor1.status, Lead.STATUS_CONCLUIDO)
+        self.assertEqual(self.lead_vendedor1.status_atualizado_por, self.vendedor_user1)
+        self.assertIsNotNone(self.lead_vendedor1.status_atualizado_em)
+
+    def test_vendedor_nao_consegue_concluir_lead_de_outro_vendedor(self):
+        self.client.force_login(self.vendedor_user1)
+
+        response = self.client.post(
+            reverse("painel_loja", kwargs={"slug": self.loja.slug}),
+            {
+                "acao": "atualizar_lead_status",
+                "lead_id": str(self.lead_vendedor2.id),
+                "status": Lead.STATUS_CONCLUIDO,
+            },
+        )
+
+        self.assertEqual(response.status_code, 404)
+        self.lead_vendedor2.refresh_from_db()
+        self.assertEqual(self.lead_vendedor2.status, Lead.STATUS_ATENDIMENTO)
+
+    def test_conclusao_feita_por_vendedor_baixa_estoque(self):
+        variacao = ProdutoVariacao.objects.create(
+            produto=self.produto,
+            cor="Azul",
+            tamanho="M",
+            estoque=2,
+            disponivel=True,
+        )
+        lead = Lead.objects.create(
+            loja=self.loja,
+            vendedor=self.vendedor1,
+            produto=self.produto,
+            origem=Lead.ORIGEM_PRODUTO,
+            cor="Azul",
+            tamanho="M",
+            status=Lead.STATUS_NOVO,
+        )
+        self.client.force_login(self.vendedor_user1)
+
+        response = self.client.post(
+            reverse("painel_loja", kwargs={"slug": self.loja.slug}),
+            {
+                "acao": "atualizar_lead_status",
+                "lead_id": str(lead.id),
+                "status": Lead.STATUS_CONCLUIDO,
+            },
+        )
+
+        self.assertEqual(response.status_code, 302)
+        variacao.refresh_from_db()
+        lead.refresh_from_db()
+        self.assertEqual(variacao.estoque, 1)
+        self.assertEqual(lead.status_atualizado_por, self.vendedor_user1)
+
+    def test_dono_ve_quem_atualizou_status_do_lead_no_painel(self):
+        self.client.force_login(self.vendedor_user1)
+        response = self.client.post(
+            reverse("painel_loja", kwargs={"slug": self.loja.slug}),
+            {
+                "acao": "atualizar_lead_status",
+                "lead_id": str(self.lead_vendedor1.id),
+                "status": Lead.STATUS_CONCLUIDO,
+            },
+        )
+        self.assertEqual(response.status_code, 302)
+
+        self.client.force_login(self.owner_user)
+        response = self.client.get(reverse("painel_loja", kwargs={"slug": self.loja.slug}))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Atualizado por:")
+        self.assertContains(response, "Vendedor Um")
+        self.assertContains(response, "Em:")
 
     def test_dono_visualiza_todos_leads_sem_filtro(self):
         self.client.force_login(self.owner_user)

@@ -360,7 +360,7 @@ def _loja_do_usuario(request, slug):
 
 
 def _obter_leads_filtrados(request, loja):
-    leads = loja.leads.select_related("produto", "vendedor").all()
+    leads = loja.leads.select_related("produto", "vendedor", "status_atualizado_por").all()
     vendedor_logado = None
     if request.user != loja.usuario:
         try:
@@ -436,13 +436,20 @@ def painel_loja(request, slug):
         return redirect(f"{reverse('painel_loja', kwargs={'slug': loja.slug})}#produtos")
 
     elif request.method == "POST" and request.POST.get("acao") == "atualizar_lead_status":
-        lead_obj = get_object_or_404(Lead, id=request.POST.get("lead_id"), loja=loja)
+        lead_filters = {"id": request.POST.get("lead_id"), "loja": loja}
+        if request.user != loja.usuario:
+            try:
+                lead_filters["vendedor"] = request.user.vendedor_perfil
+            except Vendedor.DoesNotExist:
+                raise PermissionDenied("Voce nao tem permissao para atualizar leads desta loja.")
+        lead_obj = get_object_or_404(Lead, **lead_filters)
         novo_status = request.POST.get("status")
         if novo_status in dict(Lead.STATUS_CHOICES):
             lead.atualizar_status_lead(
                 lead_obj,
                 novo_status,
                 request.POST.get("observacao", ""),
+                request.user,
             )
         return redirect(f"{reverse('painel_loja', kwargs={'slug': loja.slug})}#leads")
 

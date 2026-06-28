@@ -1,5 +1,6 @@
 import logging
 from django.db.models import F
+from django.utils import timezone
 from django.utils.text import slugify
 from urllib.parse import quote
 
@@ -55,11 +56,13 @@ def _baixar_estoque_variacao_do_lead(lead):
     _atualizar_esgotado_produto(produto)
 
 
-def atualizar_status_lead(lead, novo_status, observacao=""):
+def atualizar_status_lead(lead, novo_status, observacao="", usuario=None):
     status_anterior = lead.status
     lead.status = novo_status
     lead.observacao = (observacao or "").strip()
-    lead.save(update_fields=["status", "observacao"])
+    lead.status_atualizado_por = usuario if getattr(usuario, "is_authenticated", False) else None
+    lead.status_atualizado_em = timezone.now()
+    lead.save(update_fields=["status", "observacao", "status_atualizado_por", "status_atualizado_em"])
 
     if status_anterior != Lead.STATUS_CONCLUIDO and novo_status == Lead.STATUS_CONCLUIDO:
         _baixar_estoque_variacao_do_lead(lead)

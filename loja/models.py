@@ -326,6 +326,14 @@ class Lead(models.Model):
     endereco_completo = models.TextField(blank=True)
     mensagem = models.TextField(blank=True)
     observacao = models.TextField(blank=True)
+    status_atualizado_por = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        related_name="leads_status_atualizados",
+        null=True,
+        blank=True,
+    )
+    status_atualizado_em = models.DateTimeField(null=True, blank=True)
     ip = models.GenericIPAddressField(null=True, blank=True)
     navegador = models.CharField(max_length=255, blank=True)
     anonimizado_em = models.DateTimeField(null=True, blank=True)
@@ -351,6 +359,8 @@ class Lead(models.Model):
         self.endereco_completo = ""
         self.mensagem = ""
         self.observacao = ""
+        self.status_atualizado_por = None
+        self.status_atualizado_em = None
         self.ip = None
         self.navegador = ""
         self.anonimizado_em = timezone.now()
@@ -362,6 +372,8 @@ class Lead(models.Model):
                     "endereco_completo",
                     "mensagem",
                     "observacao",
+                    "status_atualizado_por",
+                    "status_atualizado_em",
                     "ip",
                     "navegador",
                     "anonimizado_em",
