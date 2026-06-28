@@ -16127,3 +16127,178 @@ body.storefront .product__body {
         align-self: flex-start;
     }
 }
+
+/* 31. Dashboard analytics premium dark polish */
+.merchant-dashboard #tab-dashboard {
+    gap: 18px !important;
+}
+
+.merchant-dashboard #tab-dashboard .dashboard-command-center--analytics .dashboard-hero {
+    align-items: center !important;
+    background:
+        linear-gradient(135deg, rgba(25, 19, 38, 0.98), rgba(15, 12, 23, 0.98)) !important;
+    border: 1px solid rgba(255, 255, 255, 0.10) !important;
+    box-shadow: 0 18px 48px rgba(0, 0, 0, 0.22) !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) auto !important;
+}
+
+.merchant-dashboard #tab-dashboard .dashboard-command-center--analytics .dashboard-hero h2 {
+    color: #ffffff !important;
+}
+
+.merchant-dashboard #tab-dashboard .dashboard-command-center--analytics .dashboard-hero p:not(.eyebrow) {
+    color: rgba(238, 235, 247, 0.78) !important;
+}
+
+.merchant-dashboard #tab-dashboard .dashboard-actions {
+    align-items: center !important;
+    justify-content: flex-end !important;
+}
+
+.merchant-dashboard #tab-dashboard .dashboard-actions a {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    color: #f7f3ff !important;
+}
+
+.merchant-dashboard #tab-dashboard .dashboard-actions a:not(.secondary) {
+    background: #ffffff !important;
+    border-color: #ffffff !important;
+    color: #171022 !important;
+}
+
+.merchant-dashboard #tab-dashboard .metric-grid {
+    gap: 12px !important;
+    grid-template-columns: repeat(auto-fit, minmax(158px, 1fr)) !important;
+}
+
+.merchant-dashboard #tab-dashboard .metric-grid article {
+    background:
+        linear-gradient(180deg, rgba(28, 23, 41, 0.98), rgba(17, 14, 26, 0.98)) !important;
+    border: 1px solid rgba(255, 255, 255, 0.10) !important;
+    border-radius: 18px !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 14px 34px rgba(0, 0, 0, 0.18) !important;
+    min-height: 102px !important;
+    overflow: hidden;
+    padding: 16px !important;
+    position: relative;
+}
+
+.merchant-dashboard #tab-dashboard .metric-grid article::before {
+    background: linear-gradient(90deg, rgba(192, 167, 255, 0.95), rgba(52, 211, 153, 0.75));
+    content: "";
+    height: 3px;
+    left: 14px;
+    position: absolute;
+    right: 14px;
+    top: 0;
+}
+
+.merchant-dashboard #tab-dashboard .metric-grid article:nth-child(2)::before,
+.merchant-dashboard #tab-dashboard .metric-grid article:nth-child(4)::before {
+    background: linear-gradient(90deg, rgba(251, 191, 36, 0.9), rgba(248, 113, 113, 0.75));
+}
+
+.merchant-dashboard #tab-dashboard .metric-grid article:hover {
+    border-color: rgba(192, 167, 255, 0.34) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07), 0 18px 42px rgba(0, 0, 0, 0.26) !important;
+    transform: translateY(-2px) !important;
+}
+
+.merchant-dashboard #tab-dashboard .metric-grid article span,
+.merchant-dashboard #tab-dashboard .conversion-grid article span {
+    color: rgba(221, 216, 235, 0.68) !important;
+    font-size: 0.72rem !important;
+    letter-spacing: 0.08em !important;
+}
+
+.merchant-dashboard #tab-dashboard .metric-grid article strong,
+.merchant-dashboard #tab-dashboard .conversion-grid article strong {
+    color: #ffffff !important;
+    font-size: clamp(1.45rem, 2.4vw, 1.95rem) !important;
+    letter-spacing: 0 !important;
+}
+
+.merchant-dashboard #tab-dashboard .dashboard-report-grid {
+    align-items: stretch !important;
+    gap: 14px !important;
+}
+
+.merchant-dashboard #tab-dashboard .dashboard-report-grid .panel-section {
+    background:
+        linear-gradient(180deg, rgba(24, 20, 35, 0.98), rgba(15, 12, 23, 0.98)) !important;
+    border: 1px solid rgba(255, 255, 255, 0.10) !important;
+    box-shadow: 0 18px 44px rgba(0, 0, 0, 0.18) !important;
+    min-height: 312px;
+}
+
+.merchant-dashboard #tab-dashboard .section-heading {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    margin-bottom: 14px !important;
+    padding-bottom: 12px;
+}
+
+.merchant-dashboard #tab-dashboard .section-heading h2 {
+    color: #ffffff !important;
+}
+
+.merchant-dashboard #tab-dashboard .section-heading > span {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 999px;
+    color: rgba(245, 241, 255, 0.86);
+    font-size: 0.76rem;
+    padding: 7px 10px;
+}
+
+.merchant-dashboard #tab-dashboard .chart-container {
+    background: rgba(4, 3, 8, 0.28);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 16px;
+    min-height: 236px !important;
+    padding: 14px;
+}
+
+.merchant-dashboard #tab-dashboard .chart-container canvas {
+    max-height: 236px;
+}
+
+.merchant-dashboard #tab-dashboard .chart-container .empty {
+    align-items: center;
+    color: rgba(221, 216, 235, 0.68) !important;
+    display: flex;
+    font-weight: 700;
+    justify-content: center;
+    min-height: 204px;
+    text-align: center;
+}
+
+.merchant-dashboard #tab-dashboard .conversion-grid {
+    gap: 10px !important;
+}
+
+.merchant-dashboard #tab-dashboard .conversion-grid article {
+    background: rgba(255, 255, 255, 0.055) !important;
+    border: 1px solid rgba(255, 255, 255, 0.09) !important;
+    border-radius: 14px !important;
+    min-height: 92px !important;
+}
+
+@media (max-width: 760px) {
+    .merchant-dashboard #tab-dashboard .dashboard-command-center--analytics .dashboard-hero {
+        grid-template-columns: minmax(0, 1fr) !important;
+    }
+
+    .merchant-dashboard #tab-dashboard .dashboard-actions {
+        justify-content: stretch !important;
+    }
+
+    .merchant-dashboard #tab-dashboard .metric-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+
+    .merchant-dashboard #tab-dashboard .dashboard-report-grid .panel-section {
+        min-height: 0;
+    }
+}
