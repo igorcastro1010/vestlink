@@ -5,3 +5,4 @@ media/
 *.pyc
 .pytest_cache/
 .coverage
+runserver*.log
