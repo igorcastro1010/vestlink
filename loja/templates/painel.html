@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Painel do catálogo</title>
     <link rel="stylesheet" href="/static/css/variables.css?v=76">
-    <link rel="stylesheet" href="/static/css/catalogo.css?v=77">
+    <link rel="stylesheet" href="/static/css/catalogo.css?v=91">
     <script>
         document.documentElement.setAttribute("data-theme", "dark");
     </script>
@@ -83,7 +83,13 @@
             <div class="panel-list stores-list">
                 {% for loja in lojas %}
                     <article class="store-card">
-                        <div class="store-card__avatar">{{ loja.nome|slice:":1" }}</div>
+                        <div class="store-card__avatar">
+                            {% if loja.logo %}
+                                <img src="{{ loja.logo.url }}" alt="Logo da loja {{ loja.nome }}">
+                            {% else %}
+                                {{ loja.nome|slice:":1" }}
+                            {% endif %}
+                        </div>
                         <div class="store-card__content">
                             <strong>{{ loja.nome }}</strong>
                             <span>/c/{{ loja.slug }}/</span>
@@ -94,7 +100,7 @@
                             {% endif %}
                         </div>
                         <div class="panel-actions">
-                            <a href="{% url 'painel_loja' loja.slug %}">Adicionar produtos</a>
+                            <a href="{% url 'painel_loja' loja.slug %}">Acessar painel</a>
                             <a href="{% url 'catalogo_curto' loja.slug %}">Ver catálogo</a>
                             <button class="copy-link-button" type="button" data-copy-url="{{ request.scheme }}://{{ request.get_host }}{% url 'catalogo_curto' loja.slug %}">Copiar link</button>
                         </div>
