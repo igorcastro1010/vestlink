@@ -17716,6 +17716,143 @@ form .option-label:has(input:required)::after {
         width: 132px;
     }
 }
+
+/* 38. Dark premium button system */
+html[data-theme="dark"] {
+    --vl-btn-primary-bg: linear-gradient(135deg, #3a236b 0%, #5b3fa0 52%, #2b1b55 100%);
+    --vl-btn-primary-border: rgba(199, 181, 255, 0.34);
+    --vl-btn-primary-text: #f8f5ff;
+    --vl-btn-primary-shadow: 0 14px 30px rgba(91, 63, 160, 0.24);
+    --vl-btn-secondary-bg: rgba(255, 255, 255, 0.075);
+    --vl-btn-secondary-border: rgba(218, 207, 255, 0.18);
+    --vl-btn-secondary-text: #f4efff;
+    --vl-btn-ghost-bg: rgba(255, 255, 255, 0.045);
+    --vl-btn-ghost-border: rgba(218, 207, 255, 0.13);
+    --vl-btn-danger-bg: rgba(120, 30, 40, 0.34);
+    --vl-btn-danger-border: rgba(255, 143, 143, 0.28);
+    --vl-btn-danger-text: #ffb7b7;
+    --vl-btn-success-bg: rgba(22, 104, 75, 0.34);
+    --vl-btn-success-border: rgba(94, 224, 168, 0.3);
+    --vl-btn-success-text: #9af0ce;
+}
+
+html[data-theme="dark"] .merchant-dashboard .dashboard-actions a:not(.secondary),
+html[data-theme="dark"] .merchant-dashboard .dashboard-actions button:not(.secondary),
+html[data-theme="dark"] .merchant-dashboard .store-status-bar a,
+html[data-theme="dark"] .merchant-dashboard .store-status-bar button,
+html[data-theme="dark"] .merchant-dashboard .copy-link-button,
+html[data-theme="dark"] .merchant-dashboard .qr-download-button,
+html[data-theme="dark"] .merchant-dashboard .panel-form button,
+html[data-theme="dark"] .merchant-dashboard .panel-filters button,
+html[data-theme="dark"] .merchant-dashboard .lead-toolbar__button--primary,
+html[data-theme="dark"] .merchant-dashboard .lead-status-form button,
+html[data-theme="dark"] .merchant-dashboard .seller-form button,
+html[data-theme="dark"] .merchant-dashboard #tab-configuracoes .settings-button--primary,
+html[data-theme="dark"] .stores-page .panel-actions a:first-child,
+html[data-theme="dark"] .stores-page .panel-form button,
+html[data-theme="dark"] body.storefront .add-cart-button,
+html[data-theme="dark"] .saas-landing .lp-button:not(.lp-button--ghost),
+html[data-theme="dark"] .auth-card button[type="submit"],
+html[data-theme="dark"] .plans-page .subscription-actions a:not(.danger) {
+    align-items: center;
+    background: var(--vl-btn-primary-bg) !important;
+    border: 1px solid var(--vl-btn-primary-border) !important;
+    border-radius: 999px !important;
+    box-shadow: var(--vl-btn-primary-shadow) !important;
+    color: var(--vl-btn-primary-text) !important;
+    display: inline-flex;
+    font-weight: 900 !important;
+    justify-content: center;
+    text-decoration: none !important;
+}
+
+html[data-theme="dark"] .merchant-dashboard .dashboard-actions .secondary,
+html[data-theme="dark"] .merchant-dashboard .dashboard-actions a.secondary,
+html[data-theme="dark"] .merchant-dashboard .dashboard-actions button.secondary,
+html[data-theme="dark"] .merchant-dashboard .quick-actions a:not(.danger-link):not(.danger),
+html[data-theme="dark"] .merchant-dashboard .panel-cancel:not(.danger),
+html[data-theme="dark"] .merchant-dashboard .seller-list button:not(.danger),
+html[data-theme="dark"] .merchant-dashboard .lead-toolbar__button,
+html[data-theme="dark"] .merchant-dashboard .btn-copy-address,
+html[data-theme="dark"] .stores-page .panel-actions a:not(:first-child),
+html[data-theme="dark"] .stores-page .panel-actions button,
+html[data-theme="dark"] body.storefront .favorite-button,
+html[data-theme="dark"] .auth-card .google-auth-button,
+html[data-theme="dark"] .plans-page .subscription-actions button,
+html[data-theme="dark"] .saas-landing .lp-button--ghost {
+    background: var(--vl-btn-secondary-bg) !important;
+    border: 1px solid var(--vl-btn-secondary-border) !important;
+    border-radius: 999px !important;
+    box-shadow: none !important;
+    color: var(--vl-btn-secondary-text) !important;
+    font-weight: 850 !important;
+    text-decoration: none !important;
+}
+
+html[data-theme="dark"] .merchant-dashboard .panel-header-nav .nav-link,
+html[data-theme="dark"] .merchant-dashboard .panel-header-user .logout-btn,
+html[data-theme="dark"] .merchant-dashboard #tab-configuracoes .settings-button--ghost,
+html[data-theme="dark"] .merchant-dashboard .tab-btn:not(.active) {
+    background: var(--vl-btn-ghost-bg) !important;
+    border: 1px solid var(--vl-btn-ghost-border) !important;
+    color: var(--vl-btn-secondary-text) !important;
+}
+
+html[data-theme="dark"] .merchant-dashboard .danger,
+html[data-theme="dark"] .merchant-dashboard .danger-button,
+html[data-theme="dark"] .merchant-dashboard .danger-link,
+html[data-theme="dark"] .merchant-dashboard .panel-cancel.danger,
+html[data-theme="dark"] .merchant-dashboard .seller-actions button.danger,
+html[data-theme="dark"] .merchant-dashboard #tab-configuracoes .settings-button--danger,
+html[data-theme="dark"] .stores-page .danger,
+html[data-theme="dark"] .plans-page .subscription-actions .danger {
+    background: var(--vl-btn-danger-bg) !important;
+    border: 1px solid var(--vl-btn-danger-border) !important;
+    border-radius: 999px !important;
+    box-shadow: none !important;
+    color: var(--vl-btn-danger-text) !important;
+}
+
+html[data-theme="dark"] .merchant-dashboard .store-status-dot.active + strong,
+html[data-theme="dark"] .merchant-dashboard .lead-status-badge--concluido,
+html[data-theme="dark"] .merchant-dashboard .seller-status--active,
+html[data-theme="dark"] .merchant-dashboard .settings-status-badge.is-active {
+    color: var(--vl-btn-success-text) !important;
+}
+
+html[data-theme="dark"] .merchant-dashboard .lead-status-badge--concluido,
+html[data-theme="dark"] .merchant-dashboard .seller-status--active,
+html[data-theme="dark"] .merchant-dashboard .settings-status-badge.is-active {
+    background: var(--vl-btn-success-bg) !important;
+    border-color: var(--vl-btn-success-border) !important;
+}
+
+html[data-theme="dark"] .merchant-dashboard .dashboard-actions a:hover,
+html[data-theme="dark"] .merchant-dashboard .dashboard-actions button:hover,
+html[data-theme="dark"] .merchant-dashboard .store-status-bar a:hover,
+html[data-theme="dark"] .merchant-dashboard .store-status-bar button:hover,
+html[data-theme="dark"] .merchant-dashboard .copy-link-button:hover,
+html[data-theme="dark"] .merchant-dashboard .qr-download-button:hover,
+html[data-theme="dark"] .merchant-dashboard .panel-form button:hover,
+html[data-theme="dark"] .merchant-dashboard .panel-filters button:hover,
+html[data-theme="dark"] .merchant-dashboard .lead-toolbar__button:hover,
+html[data-theme="dark"] .merchant-dashboard .lead-status-form button:hover,
+html[data-theme="dark"] .merchant-dashboard .seller-form button:hover,
+html[data-theme="dark"] .merchant-dashboard .seller-list button:hover,
+html[data-theme="dark"] .merchant-dashboard .settings-button:hover,
+html[data-theme="dark"] .stores-page .panel-actions a:hover,
+html[data-theme="dark"] .stores-page .panel-actions button:hover,
+html[data-theme="dark"] .stores-page .panel-form button:hover,
+html[data-theme="dark"] body.storefront .add-cart-button:hover,
+html[data-theme="dark"] body.storefront .favorite-button:hover,
+html[data-theme="dark"] .auth-card button:hover,
+html[data-theme="dark"] .plans-page .subscription-actions a:hover,
+html[data-theme="dark"] .plans-page .subscription-actions button:hover,
+html[data-theme="dark"] .saas-landing .lp-button:hover {
+    filter: brightness(1.08) saturate(1.06);
+    transform: translateY(-1px);
+}
+
 /* 39. Leads quick filters and pagination */
 .merchant-dashboard #tab-leads .lead-quick-filters {
     align-items: center;
