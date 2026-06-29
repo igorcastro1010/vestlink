@@ -18656,3 +18656,377 @@ html[data-theme="dark"] body.storefront .cart-empty p {
         min-height: 190px;
     }
 }
+
+/* 42. Mobile panel ergonomics */
+@media (max-width: 760px) {
+    html,
+    body {
+        max-width: 100%;
+        overflow-x: hidden;
+    }
+
+    .merchant-dashboard *,
+    .stores-page *,
+    body.storefront *,
+    body.auth-page * {
+        min-width: 0;
+    }
+
+    .merchant-dashboard .panel-header--dashboard {
+        gap: 10px !important;
+    }
+
+    .merchant-dashboard .panel-header-nav {
+        display: flex !important;
+        gap: 8px !important;
+        margin-inline: -2px;
+        padding-inline: 2px;
+        scroll-snap-type: x proximity;
+    }
+
+    .merchant-dashboard .panel-store-link,
+    .merchant-dashboard .panel-header-nav .nav-link,
+    .merchant-dashboard .logout-btn {
+        align-items: center;
+        display: inline-flex;
+        min-height: 42px !important;
+    }
+
+    .merchant-dashboard .panel-store-link {
+        overflow-wrap: anywhere;
+    }
+
+    .merchant-dashboard .panel-tabs-container {
+        border-radius: 16px !important;
+        margin-inline: -2px;
+        padding: 5px !important;
+    }
+
+    .merchant-dashboard .panel-tabs {
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        gap: 6px !important;
+        overflow-x: auto;
+        overscroll-behavior-inline: contain;
+        padding: 0 2px 2px !important;
+        scroll-padding-inline: 6px;
+        scroll-snap-type: x proximity;
+    }
+
+    .merchant-dashboard .tab-btn {
+        flex: 0 0 auto;
+        min-height: 42px !important;
+        padding: 8px 11px !important;
+        scroll-snap-align: start;
+        white-space: nowrap;
+    }
+
+    .merchant-dashboard .tab-btn.active {
+        box-shadow: 0 10px 24px rgba(91, 70, 167, 0.34) !important;
+    }
+
+    .merchant-dashboard .tab-badge {
+        min-width: 22px;
+    }
+
+    .merchant-dashboard .store-status-bar {
+        align-items: stretch !important;
+        gap: 10px !important;
+        padding: 12px !important;
+    }
+
+    .merchant-dashboard .store-status-bar > div:last-child {
+        display: grid !important;
+        gap: 8px !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        width: 100%;
+    }
+
+    .merchant-dashboard .store-status-bar > div:last-child a,
+    .merchant-dashboard .store-status-bar > div:last-child button {
+        justify-content: center !important;
+        min-height: 42px !important;
+        width: 100% !important;
+    }
+
+    .merchant-dashboard .dashboard-shell--redesign,
+    .stores-page .stores-shell,
+    .stores-page .panel-shell {
+        padding-inline: 12px !important;
+    }
+
+    .merchant-dashboard .tab-pane.active {
+        gap: 12px !important;
+    }
+
+    .merchant-dashboard .dashboard-command-center .dashboard-hero,
+    .merchant-dashboard .dashboard-side-stack .plan-strip,
+    .merchant-dashboard .dashboard-side-stack .store-identity-card,
+    .merchant-dashboard .panel-section,
+    .merchant-dashboard .leads-dashboard,
+    .merchant-dashboard .seller-form,
+    .stores-page .panel-section,
+    .stores-page .store-card,
+    .stores-page .stores-list-card,
+    .stores-page .stores-form-card,
+    .auth-card {
+        border-radius: 16px !important;
+        padding: 14px !important;
+    }
+
+    .merchant-dashboard .section-heading {
+        gap: 8px !important;
+        margin-bottom: 12px !important;
+    }
+
+    .merchant-dashboard .section-heading h2,
+    .merchant-dashboard .panel-section h2,
+    .stores-page .section-heading h2 {
+        font-size: 1.16rem !important;
+        line-height: 1.18 !important;
+    }
+
+    .merchant-dashboard .dashboard-actions,
+    .merchant-dashboard .panel-actions,
+    .merchant-dashboard .panel-product-actions,
+    .merchant-dashboard .seller-actions,
+    .merchant-dashboard .settings-actions,
+    .stores-page .panel-actions {
+        align-items: stretch !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 8px !important;
+        width: 100% !important;
+    }
+
+    .merchant-dashboard .dashboard-actions a,
+    .merchant-dashboard .dashboard-actions button,
+    .merchant-dashboard .panel-actions a,
+    .merchant-dashboard .panel-actions button,
+    .merchant-dashboard .panel-product-actions a,
+    .merchant-dashboard .panel-product-actions button,
+    .merchant-dashboard .seller-actions a,
+    .merchant-dashboard .seller-actions button,
+    .merchant-dashboard .settings-actions a,
+    .merchant-dashboard .settings-actions button,
+    .stores-page .panel-actions a,
+    .stores-page .panel-actions button,
+    .stores-page .panel-form button {
+        justify-content: center !important;
+        min-height: 42px !important;
+        text-align: center !important;
+        white-space: normal !important;
+        width: 100% !important;
+    }
+
+    .merchant-dashboard .panel-filters,
+    .stores-page .panel-form,
+    .auth-card .panel-form {
+        gap: 10px !important;
+        grid-template-columns: minmax(0, 1fr) !important;
+    }
+
+    .merchant-dashboard .panel-filters input,
+    .merchant-dashboard .panel-filters select,
+    .merchant-dashboard .panel-filters button,
+    .stores-page .panel-form input,
+    .stores-page .panel-form select,
+    .stores-page .panel-form textarea,
+    .auth-card .panel-form input,
+    .auth-card .panel-form select,
+    .auth-card .panel-form textarea {
+        max-width: 100%;
+        min-height: 42px !important;
+        width: 100% !important;
+    }
+
+    .merchant-dashboard #tab-produtos .dashboard-products article,
+    .merchant-dashboard #tab-produtos .category-list article,
+    .merchant-dashboard #tab-leads .lead-card,
+    .merchant-dashboard #tab-vendedores .seller-card,
+    .stores-page .store-card {
+        gap: 12px !important;
+        padding: 14px !important;
+    }
+
+    .merchant-dashboard #tab-produtos .dashboard-product-info,
+    .merchant-dashboard #tab-produtos .panel-product-actions,
+    .merchant-dashboard #tab-vendedores .seller-form-actions,
+    .merchant-dashboard #tab-vendedores .seller-form-actions--refined {
+        max-width: 100%;
+        overflow: visible !important;
+        width: 100% !important;
+    }
+
+    .merchant-dashboard #tab-vendedores .seller-form-actions,
+    .merchant-dashboard #tab-vendedores .seller-form-actions--refined {
+        align-items: stretch !important;
+        display: grid !important;
+        gap: 10px !important;
+        grid-template-columns: minmax(0, 1fr) !important;
+    }
+
+    .merchant-dashboard #tab-vendedores .seller-active-field {
+        width: 100%;
+    }
+
+    .merchant-dashboard #tab-leads .lead-quick-filters {
+        flex-wrap: nowrap;
+        margin-inline: -2px;
+        overflow-x: auto;
+        padding: 0 2px 6px;
+        scrollbar-width: none;
+    }
+
+    .merchant-dashboard #tab-leads .lead-quick-filters::-webkit-scrollbar {
+        display: none;
+    }
+
+    .merchant-dashboard #tab-leads .lead-quick-filters a {
+        flex: 0 0 auto !important;
+        min-height: 42px !important;
+        white-space: nowrap;
+    }
+
+    .merchant-dashboard #tab-leads .lead-pagination {
+        display: grid !important;
+        gap: 8px !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        padding: 8px !important;
+    }
+
+    .merchant-dashboard #tab-leads .lead-pagination strong {
+        grid-column: 1 / -1;
+        text-align: center;
+    }
+
+    .merchant-dashboard #tab-leads .lead-pagination a,
+    .merchant-dashboard #tab-leads .lead-pagination .disabled {
+        min-height: 42px !important;
+        min-width: 0 !important;
+        width: 100%;
+    }
+
+    .merchant-dashboard #tab-configuracoes .settings-grid,
+    .merchant-dashboard #tab-configuracoes .settings-card,
+    .merchant-dashboard #tab-configuracoes .settings-card__side {
+        grid-template-columns: minmax(0, 1fr) !important;
+    }
+
+    .merchant-dashboard #tab-configuracoes .settings-qr img,
+    .merchant-dashboard .dashboard-side-stack .qr-card img {
+        height: auto !important;
+        max-width: 148px;
+        width: min(148px, 100%) !important;
+    }
+
+    .stores-page .stores-list .store-card {
+        align-items: stretch !important;
+        grid-template-columns: minmax(0, 1fr) !important;
+    }
+
+    .stores-page .store-card__avatar {
+        height: 54px !important;
+        width: 54px !important;
+    }
+
+    body.storefront .cart-panel {
+        max-width: calc(100vw - 24px) !important;
+        right: 12px !important;
+        width: calc(100vw - 24px) !important;
+    }
+
+    body.storefront .categories,
+    body.storefront .store-filters,
+    body.storefront .filter-pills {
+        overflow-x: auto;
+        overscroll-behavior-inline: contain;
+        scrollbar-width: none;
+    }
+
+    body.storefront .categories::-webkit-scrollbar,
+    body.storefront .store-filters::-webkit-scrollbar,
+    body.storefront .filter-pills::-webkit-scrollbar {
+        display: none;
+    }
+
+    body.storefront .choice-option,
+    body.storefront .cart-toggle,
+    body.storefront .add-cart-button,
+    body.storefront .whatsapp {
+        min-height: 42px !important;
+    }
+
+    .stores-page .stores-list .store-card .panel-actions,
+    .merchant-dashboard #tab-produtos .dashboard-products article .panel-product-actions {
+        align-items: stretch !important;
+        display: flex !important;
+        flex-direction: column !important;
+        flex-wrap: nowrap !important;
+        gap: 8px !important;
+        max-width: 100% !important;
+        overflow: visible !important;
+        width: 100% !important;
+    }
+
+    .stores-page .stores-list .store-card .panel-actions a,
+    .stores-page .stores-list .store-card .panel-actions button,
+    .merchant-dashboard #tab-produtos .dashboard-products article .panel-product-actions a,
+    .merchant-dashboard #tab-produtos .dashboard-products article .panel-product-actions button,
+    .merchant-dashboard #tab-produtos .dashboard-products article .panel-product-actions form {
+        flex: 0 0 auto !important;
+        max-width: 100% !important;
+        min-height: 42px !important;
+        width: 100% !important;
+    }
+
+    .merchant-dashboard #tab-produtos .dashboard-products article .panel-product-actions form button {
+        width: 100% !important;
+    }
+
+    .merchant-dashboard #tab-produtos .category-list article {
+        align-items: stretch !important;
+        gap: 8px !important;
+    }
+
+    .merchant-dashboard #tab-produtos .category-list a,
+    .merchant-dashboard #tab-produtos .stock-builder button,
+    .merchant-dashboard #tab-produtos .stock-builder input,
+    .merchant-dashboard #tab-produtos .stock-builder select {
+        min-height: 42px !important;
+    }
+
+    .merchant-dashboard #tab-produtos .stock-builder {
+        gap: 8px !important;
+    }
+
+    .merchant-dashboard #tab-produtos .tag-chips-container input,
+    .merchant-dashboard #tab-produtos .tag-chips-container button {
+        min-height: 42px !important;
+    }
+
+    body.storefront .product-detail-link {
+        align-items: center;
+        display: inline-flex;
+        justify-content: center;
+        min-height: 42px !important;
+    }
+}
+
+@media (max-width: 420px) {
+    .merchant-dashboard .dashboard-shell--redesign,
+    .stores-page .stores-shell,
+    .stores-page .panel-shell {
+        padding-inline: 10px !important;
+    }
+
+    .merchant-dashboard .store-status-bar > div:last-child,
+    .merchant-dashboard #tab-leads .lead-pagination {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .merchant-dashboard .tab-btn {
+        font-size: 0.84rem !important;
+        padding-inline: 10px !important;
+    }
+}
