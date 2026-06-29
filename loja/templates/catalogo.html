@@ -427,7 +427,7 @@
             const render = () => {
                 count.textContent = items.length;
                 if (!items.length) {
-                    list.innerHTML = "<p>Nenhum produto adicionado.</p>";
+                    list.innerHTML = "<div class=\"cart-empty empty-state\"><strong>Sacolinha vazia.</strong><p>Nenhum produto adicionado.</p></div>";
                     send.href = cartTrackUrl;
                     return;
                 }

@@ -110,7 +110,7 @@
                         <small>R$ {{ pagamento.valor }} - {{ pagamento.criado_em|date:"d/m/Y H:i" }}</small>
                     </article>
                 {% empty %}
-                    <article>
+                    <article class="empty-state">
                         <div>
                             <strong>Nenhum pagamento criado ainda.</strong>
                             <span>Ao clicar no checkout, o VestLink cria uma preferência no Mercado Pago.</span>

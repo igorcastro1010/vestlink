@@ -126,7 +126,10 @@
         </div>
     </article>
 {% empty %}
-    <p class="empty">Nenhum produto encontrado.</p>
+    <div class="empty empty-state storefront-empty">
+        <strong>Nenhum produto encontrado.</strong>
+        <p>A loja ainda não tem produtos publicados com esses filtros.</p>
+    </div>
 {% endfor %}
 
 {% if produtos.has_next %}
