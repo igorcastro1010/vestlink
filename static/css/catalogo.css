@@ -18279,3 +18279,225 @@ html[data-theme="dark"] body.storefront a.active,
 html[data-theme="dark"] body.auth-page .auth-card .panel-form > button[type="submit"] {
     color: var(--vl-btn-primary-text) !important;
 }
+
+/* 40. Premium dark cards and alerts */
+html[data-theme="dark"] {
+    --vl-card-bg: linear-gradient(180deg, rgba(27, 21, 42, 0.94), rgba(15, 12, 24, 0.9));
+    --vl-card-bg-soft: rgba(24, 19, 36, 0.82);
+    --vl-card-border: rgba(218, 207, 255, 0.14);
+    --vl-card-border-strong: rgba(199, 181, 255, 0.22);
+    --vl-card-shadow: 0 18px 42px rgba(4, 2, 10, 0.26), inset 0 1px 0 rgba(255, 255, 255, 0.035);
+    --vl-card-radius: 18px;
+    --vl-card-radius-sm: 14px;
+    --vl-card-title: #f4efff;
+    --vl-card-text: #d7cfe7;
+    --vl-card-muted: rgba(226, 219, 241, 0.72);
+    --vl-alert-info-bg: rgba(77, 87, 177, 0.18);
+    --vl-alert-info-border: rgba(177, 190, 255, 0.24);
+    --vl-alert-info-text: #dbe3ff;
+    --vl-alert-success-bg: rgba(22, 104, 75, 0.22);
+    --vl-alert-success-border: rgba(112, 232, 176, 0.25);
+    --vl-alert-success-text: #bdf5dc;
+    --vl-alert-warning-bg: rgba(128, 88, 28, 0.24);
+    --vl-alert-warning-border: rgba(247, 199, 115, 0.26);
+    --vl-alert-warning-text: #f9dfa8;
+    --vl-alert-danger-bg: rgba(122, 38, 52, 0.24);
+    --vl-alert-danger-border: rgba(255, 142, 166, 0.28);
+    --vl-alert-danger-text: #ffc4d0;
+}
+
+html[data-theme="dark"] .stores-page .panel-section,
+html[data-theme="dark"] .stores-page .store-card,
+html[data-theme="dark"] .merchant-dashboard .panel-section,
+html[data-theme="dark"] .merchant-dashboard .dashboard-command-center .dashboard-hero,
+html[data-theme="dark"] .merchant-dashboard .store-status-bar,
+html[data-theme="dark"] .merchant-dashboard .notification-panel,
+html[data-theme="dark"] .merchant-dashboard .whatsapp-template-panel,
+html[data-theme="dark"] .merchant-dashboard .product-form-card,
+html[data-theme="dark"] .merchant-dashboard .product-list-card,
+html[data-theme="dark"] .merchant-dashboard .lead-card,
+html[data-theme="dark"] .merchant-dashboard .lead-info-box,
+html[data-theme="dark"] .merchant-dashboard .seller-card,
+html[data-theme="dark"] .merchant-dashboard #tab-configuracoes .settings-card,
+html[data-theme="dark"] .auth-card,
+html[data-theme="dark"] .checkout-card,
+html[data-theme="dark"] .subscription-status-card,
+html[data-theme="dark"] .blocked-store-card,
+html[data-theme="dark"] .maintenance-card,
+html[data-theme="dark"] body.storefront .store-summary article,
+html[data-theme="dark"] body.storefront .promo-card,
+html[data-theme="dark"] body.storefront .cart-box,
+html[data-theme="dark"] body.storefront .product-detail-card {
+    background: var(--vl-card-bg) !important;
+    border: 1px solid var(--vl-card-border) !important;
+    border-radius: var(--vl-card-radius) !important;
+    box-shadow: var(--vl-card-shadow) !important;
+}
+
+html[data-theme="dark"] .merchant-dashboard .metric-grid article,
+html[data-theme="dark"] .merchant-dashboard .dashboard-insights-grid .metric-grid article,
+html[data-theme="dark"] .merchant-dashboard .lead-summary article,
+html[data-theme="dark"] .merchant-dashboard #tab-dashboard .conversion-grid article,
+html[data-theme="dark"] .merchant-dashboard #tab-vendedores .seller-summary-badge,
+html[data-theme="dark"] .merchant-dashboard #tab-vendedores .seller-overview article {
+    background: var(--vl-card-bg-soft) !important;
+    border: 1px solid var(--vl-card-border) !important;
+    border-radius: var(--vl-card-radius-sm) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.032) !important;
+}
+
+html[data-theme="dark"] .stores-page .panel-section,
+html[data-theme="dark"] .merchant-dashboard .panel-section,
+html[data-theme="dark"] .merchant-dashboard .dashboard-command-center .dashboard-hero,
+html[data-theme="dark"] .merchant-dashboard .store-status-bar,
+html[data-theme="dark"] .merchant-dashboard .notification-panel,
+html[data-theme="dark"] .merchant-dashboard .whatsapp-template-panel,
+html[data-theme="dark"] .merchant-dashboard .product-form-card,
+html[data-theme="dark"] .merchant-dashboard .product-list-card,
+html[data-theme="dark"] .merchant-dashboard #tab-configuracoes .settings-card,
+html[data-theme="dark"] .auth-card,
+html[data-theme="dark"] .checkout-card,
+html[data-theme="dark"] .subscription-status-card {
+    padding: clamp(18px, 2.2vw, 26px) !important;
+}
+
+html[data-theme="dark"] .stores-page .store-card,
+html[data-theme="dark"] .merchant-dashboard .lead-card,
+html[data-theme="dark"] .merchant-dashboard .seller-card,
+html[data-theme="dark"] .merchant-dashboard .lead-info-box,
+html[data-theme="dark"] body.storefront .store-summary article,
+html[data-theme="dark"] body.storefront .promo-card,
+html[data-theme="dark"] body.storefront .cart-box {
+    padding: clamp(14px, 1.8vw, 20px) !important;
+}
+
+html[data-theme="dark"] .stores-page .panel-shell,
+html[data-theme="dark"] .merchant-dashboard .dashboard-shell,
+html[data-theme="dark"] .merchant-dashboard .settings-panel,
+html[data-theme="dark"] .merchant-dashboard .dashboard-report-grid,
+html[data-theme="dark"] .merchant-dashboard .lead-list,
+html[data-theme="dark"] .merchant-dashboard .seller-list,
+html[data-theme="dark"] .merchant-dashboard .product-list,
+html[data-theme="dark"] .merchant-dashboard .panel-products,
+html[data-theme="dark"] body.storefront .products,
+html[data-theme="dark"] body.storefront .store-summary {
+    gap: clamp(14px, 1.8vw, 22px) !important;
+}
+
+html[data-theme="dark"] .stores-page .section-heading h2,
+html[data-theme="dark"] .stores-page .store-card__content strong,
+html[data-theme="dark"] .merchant-dashboard .section-heading h2,
+html[data-theme="dark"] .merchant-dashboard .panel-section h2,
+html[data-theme="dark"] .merchant-dashboard .lead-card__head strong,
+html[data-theme="dark"] .merchant-dashboard .lead-info-box strong,
+html[data-theme="dark"] .merchant-dashboard .seller-card strong,
+html[data-theme="dark"] .merchant-dashboard #tab-configuracoes .settings-card h3,
+html[data-theme="dark"] .auth-card h1,
+html[data-theme="dark"] .auth-card h2,
+html[data-theme="dark"] .checkout-card h2,
+html[data-theme="dark"] .subscription-status-card h2,
+html[data-theme="dark"] .subscription-status-card strong,
+html[data-theme="dark"] body.storefront .promo-card h2,
+html[data-theme="dark"] body.storefront .product-detail-card h1 {
+    color: var(--vl-card-title) !important;
+}
+
+html[data-theme="dark"] .stores-page .store-card__content span,
+html[data-theme="dark"] .stores-page .store-card__content small,
+html[data-theme="dark"] .merchant-dashboard .panel-section p,
+html[data-theme="dark"] .merchant-dashboard .panel-section small,
+html[data-theme="dark"] .merchant-dashboard .lead-card__head span,
+html[data-theme="dark"] .merchant-dashboard .lead-info-box p,
+html[data-theme="dark"] .merchant-dashboard .seller-card__meta,
+html[data-theme="dark"] .merchant-dashboard #tab-configuracoes .settings-card p,
+html[data-theme="dark"] .auth-card p,
+html[data-theme="dark"] .checkout-card p,
+html[data-theme="dark"] .subscription-status-card p,
+html[data-theme="dark"] body.storefront .promo-card p,
+html[data-theme="dark"] body.storefront .promo-card span,
+html[data-theme="dark"] body.storefront .store-summary span {
+    color: var(--vl-card-muted) !important;
+}
+
+html[data-theme="dark"] .stores-page .panel-section:hover,
+html[data-theme="dark"] .stores-page .store-card:hover,
+html[data-theme="dark"] .merchant-dashboard .panel-section:hover,
+html[data-theme="dark"] .merchant-dashboard .lead-card:hover,
+html[data-theme="dark"] .merchant-dashboard .seller-card:hover,
+html[data-theme="dark"] .merchant-dashboard #tab-configuracoes .settings-card:hover,
+html[data-theme="dark"] body.storefront .promo-card:hover {
+    border-color: var(--vl-card-border-strong) !important;
+    box-shadow: 0 20px 48px rgba(4, 2, 10, 0.32), 0 0 0 1px rgba(199, 181, 255, 0.045) !important;
+}
+
+html[data-theme="dark"] .auth-message,
+html[data-theme="dark"] .payment-alert,
+html[data-theme="dark"] .merchant-dashboard .lead-alert,
+html[data-theme="dark"] .merchant-dashboard .notification-panel,
+html[data-theme="dark"] .merchant-dashboard .limit-warning,
+html[data-theme="dark"] .merchant-dashboard .product-blocked-warning,
+html[data-theme="dark"] .merchant-dashboard .empty-dashboard,
+html[data-theme="dark"] .stores-page .empty-dashboard,
+html[data-theme="dark"] .empty {
+    background: var(--vl-alert-info-bg) !important;
+    border: 1px solid var(--vl-alert-info-border) !important;
+    border-radius: var(--vl-card-radius-sm) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.035) !important;
+    color: var(--vl-alert-info-text) !important;
+}
+
+html[data-theme="dark"] .auth-message--success,
+html[data-theme="dark"] .merchant-dashboard .lead-alert-pill {
+    background: var(--vl-alert-success-bg) !important;
+    border-color: var(--vl-alert-success-border) !important;
+    color: var(--vl-alert-success-text) !important;
+}
+
+html[data-theme="dark"] .merchant-dashboard .limit-warning,
+html[data-theme="dark"] .merchant-dashboard .product-blocked-warning,
+html[data-theme="dark"] .merchant-dashboard .store-status-bar:has(.store-status-dot.warning) {
+    background: var(--vl-alert-warning-bg) !important;
+    border-color: var(--vl-alert-warning-border) !important;
+    color: var(--vl-alert-warning-text) !important;
+}
+
+html[data-theme="dark"] .auth-message--error,
+html[data-theme="dark"] .errorlist,
+html[data-theme="dark"] .form-error,
+html[data-theme="dark"] .payment-alert,
+html[data-theme="dark"] .danger-zone {
+    background: var(--vl-alert-danger-bg) !important;
+    border-color: var(--vl-alert-danger-border) !important;
+    color: var(--vl-alert-danger-text) !important;
+}
+
+html[data-theme="dark"] .merchant-dashboard .empty-dashboard strong,
+html[data-theme="dark"] .stores-page .empty-dashboard strong {
+    color: var(--vl-card-title) !important;
+}
+
+html[data-theme="dark"] .merchant-dashboard .empty-dashboard p,
+html[data-theme="dark"] .stores-page .empty-dashboard p,
+html[data-theme="dark"] .merchant-dashboard .limit-warning p,
+html[data-theme="dark"] .merchant-dashboard .product-blocked-warning p {
+    color: var(--vl-card-muted) !important;
+}
+
+html[data-theme="dark"] .merchant-dashboard .lead-alert a {
+    background: var(--vl-btn-primary-bg) !important;
+    border: 1px solid var(--vl-btn-primary-border) !important;
+    color: var(--vl-btn-primary-text) !important;
+}
+
+@media (max-width: 640px) {
+    html[data-theme="dark"] .stores-page .panel-section,
+    html[data-theme="dark"] .merchant-dashboard .panel-section,
+    html[data-theme="dark"] .merchant-dashboard .dashboard-command-center .dashboard-hero,
+    html[data-theme="dark"] .merchant-dashboard .product-form-card,
+    html[data-theme="dark"] .merchant-dashboard .product-list-card,
+    html[data-theme="dark"] .merchant-dashboard #tab-configuracoes .settings-card,
+    html[data-theme="dark"] .auth-card {
+        border-radius: 16px !important;
+        padding: 16px !important;
+    }
+}
