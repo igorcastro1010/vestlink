@@ -45,6 +45,48 @@
         </section>
     {% endif %}
 
+    <section class="panel-section stock-alert-panel" aria-label="Atenção ao estoque">
+        <div class="section-heading">
+            <div>
+                <p class="eyebrow">Estoque</p>
+                <h2>Atenção ao estoque</h2>
+                <p>Itens com estoque crítico (até 3 unidades) ou esgotados.</p>
+            </div>
+            <a href="#produtos" class="secondary" style="flex-shrink: 0; text-decoration: none; display: inline-block;">
+                Gerenciar estoque
+            </a>
+        </div>
+
+        <div class="stock-alert-list" style="display: grid; gap: 8px;">
+            {% for item in variacoes_criticas %}
+                <div class="stock-item-row" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; background: rgba(255, 255, 255, 0.02); border: 1px solid var(--line, rgba(255,255,255,0.05)); border-radius: 12px; min-height: 48px;">
+                    <div class="stock-item-info" style="display: flex; flex-direction: column; gap: 4px; min-width: 0; text-align: left;">
+                        <strong class="stock-item-name" style="font-size: 0.95rem; font-weight: 600; color: var(--ink, #ffffff); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block;">{{ item.produto.nome }}</strong>
+                        {% if item.cor or item.tamanho %}
+                            <small class="stock-item-details" style="font-size: 0.82rem; color: var(--muted, #8a819b); font-weight: 500;">
+                                {% if item.cor %}Cor: {{ item.cor }}{% endif %}
+                                {% if item.cor and item.tamanho %} &bull; {% endif %}
+                                {% if item.tamanho %}Tamanho: {{ item.tamanho }}{% endif %}
+                            </small>
+                        {% endif %}
+                    </div>
+                    <div class="stock-item-status" style="display: flex; align-items: center; gap: 12px; flex-shrink: 0;">
+                        <span class="stock-item-count" style="font-size: 0.88rem; font-weight: 600; color: var(--ink, #ffffff);">{{ item.estoque }} un.</span>
+                        {% if item.estoque == 0 or not item.disponivel %}
+                            <span class="status-pill sold" style="text-transform: none; display: inline-flex; align-items: center;">Esgotado</span>
+                        {% else %}
+                            <span class="status-pill warning" style="text-transform: none; display: inline-flex; align-items: center;">Estoque baixo</span>
+                        {% endif %}
+                    </div>
+                </div>
+            {% empty %}
+                <div class="stock-empty-state" style="padding: 24px 16px; text-align: center; color: var(--muted, #8a819b); font-size: 0.92rem; font-weight: 500; background: rgba(255, 255, 255, 0.01); border: 1px dashed var(--line, rgba(255,255,255,0.05)); border-radius: 12px;">
+                    Nenhum item crítico no estoque agora.
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+
     {% if is_owner and avisos %}
         <section class="notification-panel" aria-label="Avisos do painel">
             <div class="section-heading">

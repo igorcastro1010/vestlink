@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.test import TestCase
 from django.urls import reverse
 
-from loja.models import Categoria, Lead, Loja, Produto, Vendedor
+from loja.models import Categoria, Lead, Loja, Produto, Vendedor, ProdutoVariacao
 
 
 class DashboardTests(TestCase):
@@ -293,3 +293,186 @@ class DashboardVendedorTests(TestCase):
         valores = json.loads(response.context["chart_vendedores_valores"])
         self.assertIn("Maria com Tel", labels)
         self.assertIn(1, valores)
+
+
+class DashboardStockAlertTests(TestCase):
+    def setUp(self):
+        # Lojista and Store A
+        self.user_a = User.objects.create_user(username="lojista_a", password="password123")
+        self.loja_a = Loja.objects.create(
+            usuario=self.user_a,
+            nome="Loja A",
+            slug="loja-a",
+            telefone="85999999999",
+        )
+        self.prod_a = Produto.objects.create(
+            loja=self.loja_a,
+            nome="Produto A",
+            preco="50.00",
+            imagem="produtos/a.png",
+        )
+
+        # Lojista and Store B
+        self.user_b = User.objects.create_user(username="lojista_b", password="password123")
+        self.loja_b = Loja.objects.create(
+            usuario=self.user_b,
+            nome="Loja B",
+            slug="loja-b",
+            telefone="85988888888",
+        )
+        self.prod_b = Produto.objects.create(
+            loja=self.loja_b,
+            nome="Produto B",
+            preco="60.00",
+            imagem="produtos/b.png",
+        )
+
+    def test_painel_shows_low_stock_variation(self):
+        self.client.force_login(self.user_a)
+        # Create a low stock variation (estoque = 2, disponivel = True)
+        var = ProdutoVariacao.objects.create(
+            produto=self.prod_a,
+            cor="Preto",
+            tamanho="M",
+            estoque=2,
+            disponivel=True,
+        )
+        response = self.client.get(reverse("painel_loja", kwargs={"slug": self.loja_a.slug}))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("variacoes_criticas", response.context)
+        self.assertEqual(len(response.context["variacoes_criticas"]), 1)
+        self.assertEqual(response.context["variacoes_criticas"][0], var)
+        self.assertContains(response, "Produto A")
+        self.assertContains(response, "Cor: Preto")
+        self.assertContains(response, "Tamanho: M")
+        self.assertContains(response, "2 un.")
+        self.assertContains(response, "Estoque baixo")
+
+    def test_painel_shows_sold_out_variation(self):
+        self.client.force_login(self.user_a)
+        # Create a sold out variation (estoque = 0)
+        var1 = ProdutoVariacao.objects.create(
+            produto=self.prod_a,
+            cor="Branco",
+            tamanho="P",
+            estoque=0,
+            disponivel=True,
+        )
+        # Create a variation with estoque > 3 but unavailable
+        var2 = ProdutoVariacao.objects.create(
+            produto=self.prod_a,
+            cor="Azul",
+            tamanho="G",
+            estoque=5,
+            disponivel=False,
+        )
+        response = self.client.get(reverse("painel_loja", kwargs={"slug": self.loja_a.slug}))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.context["variacoes_criticas"]), 2)
+        self.assertIn(var1, response.context["variacoes_criticas"])
+        self.assertIn(var2, response.context["variacoes_criticas"])
+        self.assertContains(response, "Cor: Branco")
+        self.assertContains(response, "Tamanho: P")
+        self.assertContains(response, "0 un.")
+        self.assertContains(response, "Cor: Azul")
+        self.assertContains(response, "Tamanho: G")
+        self.assertContains(response, "5 un.")
+
+    def test_painel_limits_to_5_items_and_orders_correctly(self):
+        self.client.force_login(self.user_a)
+        # Create 6 variations:
+        # V1: low stock 3, disp True
+        # V2: low stock 1, disp True
+        # V3: stock 0, disp True (Esgotado)
+        # V4: stock 5, disp False (Esgotado)
+        # V5: stock 2, disp True
+        # V6: stock 0, disp False (Esgotado)
+        
+        v1 = ProdutoVariacao.objects.create(produto=self.prod_a, cor="C1", tamanho="T1", estoque=3, disponivel=True)
+        v2 = ProdutoVariacao.objects.create(produto=self.prod_a, cor="C2", tamanho="T2", estoque=1, disponivel=True)
+        v3 = ProdutoVariacao.objects.create(produto=self.prod_a, cor="C3", tamanho="T3", estoque=0, disponivel=True)
+        v4 = ProdutoVariacao.objects.create(produto=self.prod_a, cor="C4", tamanho="T4", estoque=5, disponivel=False)
+        v5 = ProdutoVariacao.objects.create(produto=self.prod_a, cor="C5", tamanho="T5", estoque=2, disponivel=True)
+        v6 = ProdutoVariacao.objects.create(produto=self.prod_a, cor="C6", tamanho="T6", estoque=0, disponivel=False)
+
+        response = self.client.get(reverse("painel_loja", kwargs={"slug": self.loja_a.slug}))
+        self.assertEqual(response.status_code, 200)
+        
+        criticas = response.context["variacoes_criticas"]
+        self.assertEqual(len(criticas), 5)  # Limit 5
+        
+        # Check sorting:
+        # Esgotados: v3, v4, v6 (is_esgotado=True)
+        # Low stock: v2, v5, v1 (is_esgotado=False)
+        # Ordered by -is_esgotado, estoque, product_name, cor, tamanho
+        # Esgotados sorted by estoque:
+        # v3 (0), v6 (0), v4 (5) -> v3 and v6 have estoque=0. v3 has cor "C3", v6 has cor "C6". C3 comes before C6.
+        # So esgotados order: v3, v6, v4
+        # Low stock sorted by estoque:
+        # v2 (1), v5 (2), v1 (3)
+        # So expected top 5: v3, v6, v4, v2, v5
+        expected = [v3, v6, v4, v2, v5]
+        self.assertEqual(criticas, expected)
+
+    def test_painel_shows_positive_state_when_no_critical_stock(self):
+        self.client.force_login(self.user_a)
+        # Create a healthy variation (estoque = 10, disponivel = True)
+        ProdutoVariacao.objects.create(
+            produto=self.prod_a,
+            cor="Preto",
+            tamanho="M",
+            estoque=10,
+            disponivel=True,
+        )
+        response = self.client.get(reverse("painel_loja", kwargs={"slug": self.loja_a.slug}))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.context["variacoes_criticas"]), 0)
+        self.assertContains(response, "Nenhum item crítico no estoque agora.")
+
+    def test_vendedor_isolation_and_permissions(self):
+        # Create seller for Loja A
+        vendedor_user = User.objects.create_user(username="vendedor_a", password="password123")
+        Vendedor.objects.create(
+            loja=self.loja_a,
+            usuario=vendedor_user,
+            nome="Vendedor A",
+            codigo="venda-a",
+        )
+
+        # Create seller for Loja B
+        vendedor_b_user = User.objects.create_user(username="vendedor_b", password="password123")
+        Vendedor.objects.create(
+            loja=self.loja_b,
+            usuario=vendedor_b_user,
+            nome="Vendedor B",
+            codigo="venda-b",
+        )
+
+        # Create a critical variation in Loja A
+        var_a = ProdutoVariacao.objects.create(
+            produto=self.prod_a,
+            cor="Rosa",
+            tamanho="G",
+            estoque=1,
+            disponivel=True,
+        )
+
+        # Create a critical variation in Loja B
+        var_b = ProdutoVariacao.objects.create(
+            produto=self.prod_b,
+            cor="Verde",
+            tamanho="GG",
+            estoque=1,
+            disponivel=True,
+        )
+
+        # Log in as Vendedor A and request Loja A's dashboard
+        self.client.force_login(vendedor_user)
+        response = self.client.get(reverse("painel_loja", kwargs={"slug": self.loja_a.slug}))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(var_a, response.context["variacoes_criticas"])
+        self.assertNotIn(var_b, response.context["variacoes_criticas"])
+
+        # Try to request Loja B's dashboard as Vendedor A -> should be forbidden (403)
+        response = self.client.get(reverse("painel_loja", kwargs={"slug": self.loja_b.slug}))
+        self.assertEqual(response.status_code, 403)

@@ -5,10 +5,10 @@ from io import BytesIO
 from urllib.parse import quote
 from django.conf import settings
 from django.urls import reverse
-from django.db.models import Count, Q
+from django.db.models import Count, Q, Case, When, Value, BooleanField
 from django.db.models.functions import ExtractHour, TruncDate
 
-from loja.models import Produto, Lead, Vendedor, Categoria, Loja
+from loja.models import Produto, Lead, Vendedor, Categoria, Loja, ProdutoVariacao
 
 logger = logging.getLogger(__name__)
 
@@ -176,6 +176,24 @@ def obter_contexto_dashboard(request, loja, usuario_logado, vendedor_logado, bus
     ]
     onboarding_concluidos = sum(1 for passo in onboarding if passo["feito"])
     
+    variacoes_criticas = ProdutoVariacao.objects.filter(
+        produto__loja=loja
+    ).filter(
+        Q(estoque__lte=3) | Q(disponivel=False)
+    ).annotate(
+        is_esgotado=Case(
+            When(Q(estoque=0) | Q(disponivel=False), then=Value(True)),
+            default=Value(False),
+            output_field=BooleanField(),
+        )
+    ).select_related('produto').order_by(
+        '-is_esgotado',
+        'estoque',
+        'produto__nome',
+        'cor',
+        'tamanho',
+    )[:5]
+    
     return {
         "loja": loja,
         "is_owner": usuario_logado == loja.usuario,
@@ -225,4 +243,5 @@ def obter_contexto_dashboard(request, loja, usuario_logado, vendedor_logado, bus
         "chart_produtos_valores": chart_produtos_valores,
         "chart_vendedores_labels": chart_vendedores_labels,
         "chart_vendedores_valores": chart_vendedores_valores,
+        "variacoes_criticas": list(variacoes_criticas),
     }
