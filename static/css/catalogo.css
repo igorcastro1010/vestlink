@@ -17853,6 +17853,183 @@ html[data-theme="dark"] .saas-landing .lp-button:hover {
     transform: translateY(-1px);
 }
 
+/* 38.1 Global dark badges and button refinements */
+html[data-theme="dark"] {
+    --vl-badge-bg: rgba(18, 14, 29, 0.76);
+    --vl-badge-border: rgba(220, 210, 255, 0.16);
+    --vl-badge-text: #e9e3f6;
+    --vl-badge-new-bg: rgba(99, 77, 166, 0.28);
+    --vl-badge-new-border: rgba(193, 177, 255, 0.32);
+    --vl-badge-new-text: #d8ccff;
+    --vl-badge-success-bg: rgba(22, 104, 75, 0.3);
+    --vl-badge-success-border: rgba(112, 232, 176, 0.28);
+    --vl-badge-success-text: #a7f3d0;
+    --vl-badge-warning-bg: rgba(128, 88, 28, 0.28);
+    --vl-badge-warning-border: rgba(247, 199, 115, 0.28);
+    --vl-badge-warning-text: #f8d99b;
+    --vl-badge-danger-bg: rgba(122, 38, 52, 0.3);
+    --vl-badge-danger-border: rgba(255, 142, 166, 0.28);
+    --vl-badge-danger-text: #ffb8c8;
+    --vl-badge-muted-bg: rgba(255, 255, 255, 0.055);
+    --vl-badge-muted-border: rgba(223, 216, 245, 0.15);
+    --vl-badge-muted-text: #cfc6dd;
+    --vl-btn-focus: 0 0 0 3px rgba(189, 168, 255, 0.18);
+}
+
+html[data-theme="dark"] .status-pill,
+html[data-theme="dark"] .storefront .badges span,
+html[data-theme="dark"] .merchant-dashboard .lead-status-badge,
+html[data-theme="dark"] .merchant-dashboard .seller-status,
+html[data-theme="dark"] .merchant-dashboard .settings-status-badge,
+html[data-theme="dark"] .merchant-dashboard .tab-badge,
+html[data-theme="dark"] .delivery-badge {
+    align-items: center;
+    backdrop-filter: blur(12px);
+    background: var(--vl-badge-bg) !important;
+    border: 1px solid var(--vl-badge-border) !important;
+    border-radius: 999px;
+    color: var(--vl-badge-text) !important;
+    display: inline-flex;
+    font-size: 0.72rem;
+    font-weight: 850;
+    gap: 6px;
+    letter-spacing: 0;
+    line-height: 1;
+    min-height: 28px;
+    padding: 7px 11px;
+    text-transform: none;
+}
+
+html[data-theme="dark"] .storefront .badges span,
+html[data-theme="dark"] .status-pill:not(.active):not(.warning):not(.sold) {
+    background: var(--vl-badge-new-bg) !important;
+    border-color: var(--vl-badge-new-border) !important;
+    color: var(--vl-badge-new-text) !important;
+}
+
+html[data-theme="dark"] .status-pill.active,
+html[data-theme="dark"] .merchant-dashboard .lead-status-badge--done,
+html[data-theme="dark"] .merchant-dashboard .lead-status-badge--concluido,
+html[data-theme="dark"] .merchant-dashboard .seller-status--active,
+html[data-theme="dark"] .merchant-dashboard .settings-status-badge.is-active,
+html[data-theme="dark"] .delivery-badge-pickup {
+    background: var(--vl-badge-success-bg) !important;
+    border-color: var(--vl-badge-success-border) !important;
+    color: var(--vl-badge-success-text) !important;
+}
+
+html[data-theme="dark"] .status-pill.warning,
+html[data-theme="dark"] .merchant-dashboard .lead-status-badge--pending,
+html[data-theme="dark"] .merchant-dashboard .settings-status-badge.is-warning,
+html[data-theme="dark"] .delivery-badge-ship {
+    background: var(--vl-badge-warning-bg) !important;
+    border-color: var(--vl-badge-warning-border) !important;
+    color: var(--vl-badge-warning-text) !important;
+}
+
+html[data-theme="dark"] .status-pill.sold,
+html[data-theme="dark"] .merchant-dashboard .seller-status--inactive,
+html[data-theme="dark"] .storefront .product--sold .badges span {
+    background: var(--vl-badge-danger-bg) !important;
+    border-color: var(--vl-badge-danger-border) !important;
+    color: var(--vl-badge-danger-text) !important;
+}
+
+html[data-theme="dark"] .merchant-dashboard .store-status-dot {
+    background: var(--vl-badge-muted-text);
+    border: 1px solid var(--vl-badge-muted-border);
+    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.035);
+}
+
+html[data-theme="dark"] .merchant-dashboard .store-status-dot.active {
+    background: var(--vl-badge-success-text);
+    box-shadow: 0 0 0 4px rgba(112, 232, 176, 0.12);
+}
+
+html[data-theme="dark"] .merchant-dashboard .store-status-dot.warning {
+    background: var(--vl-badge-warning-text);
+    box-shadow: 0 0 0 4px rgba(247, 199, 115, 0.12);
+}
+
+html[data-theme="dark"] .merchant-dashboard #tab-produtos .panel-product-actions .publish-button {
+    background: var(--vl-btn-success-bg) !important;
+    border-color: var(--vl-btn-success-border) !important;
+    border-radius: 999px !important;
+    color: var(--vl-btn-success-text) !important;
+    font-weight: 900 !important;
+}
+
+html[data-theme="dark"] .merchant-dashboard .dashboard-actions a,
+html[data-theme="dark"] .merchant-dashboard .dashboard-actions button,
+html[data-theme="dark"] .merchant-dashboard .store-status-bar a,
+html[data-theme="dark"] .merchant-dashboard .store-status-bar button,
+html[data-theme="dark"] .merchant-dashboard .panel-form button,
+html[data-theme="dark"] .merchant-dashboard .panel-filters button,
+html[data-theme="dark"] .merchant-dashboard .lead-toolbar__button,
+html[data-theme="dark"] .merchant-dashboard .lead-status-form button,
+html[data-theme="dark"] .merchant-dashboard .seller-form button,
+html[data-theme="dark"] .merchant-dashboard .seller-actions a,
+html[data-theme="dark"] .merchant-dashboard .seller-actions button,
+html[data-theme="dark"] .merchant-dashboard .panel-product-actions a,
+html[data-theme="dark"] .merchant-dashboard .panel-product-actions button,
+html[data-theme="dark"] .merchant-dashboard #tab-configuracoes .settings-button,
+html[data-theme="dark"] .merchant-dashboard .copy-link-button,
+html[data-theme="dark"] .merchant-dashboard .qr-download-button,
+html[data-theme="dark"] .stores-page .panel-actions a,
+html[data-theme="dark"] .stores-page .panel-actions button,
+html[data-theme="dark"] .stores-page .panel-form button,
+html[data-theme="dark"] body.storefront .add-cart-button,
+html[data-theme="dark"] body.storefront .whatsapp,
+html[data-theme="dark"] body.storefront .favorite-button,
+html[data-theme="dark"] .auth-card button,
+html[data-theme="dark"] .auth-card .google-auth-button,
+html[data-theme="dark"] .plans-page .subscription-actions a,
+html[data-theme="dark"] .plans-page .subscription-actions button,
+html[data-theme="dark"] .saas-landing .lp-button {
+    min-height: 42px;
+    transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease, box-shadow 160ms ease, filter 160ms ease, transform 160ms ease;
+}
+
+html[data-theme="dark"] .merchant-dashboard .dashboard-actions a:focus-visible,
+html[data-theme="dark"] .merchant-dashboard .dashboard-actions button:focus-visible,
+html[data-theme="dark"] .merchant-dashboard .store-status-bar a:focus-visible,
+html[data-theme="dark"] .merchant-dashboard .store-status-bar button:focus-visible,
+html[data-theme="dark"] .merchant-dashboard .panel-form button:focus-visible,
+html[data-theme="dark"] .merchant-dashboard .panel-filters button:focus-visible,
+html[data-theme="dark"] .merchant-dashboard .lead-toolbar__button:focus-visible,
+html[data-theme="dark"] .merchant-dashboard .lead-status-form button:focus-visible,
+html[data-theme="dark"] .merchant-dashboard .seller-form button:focus-visible,
+html[data-theme="dark"] .merchant-dashboard .seller-actions a:focus-visible,
+html[data-theme="dark"] .merchant-dashboard .seller-actions button:focus-visible,
+html[data-theme="dark"] .merchant-dashboard .panel-product-actions a:focus-visible,
+html[data-theme="dark"] .merchant-dashboard .panel-product-actions button:focus-visible,
+html[data-theme="dark"] .merchant-dashboard #tab-configuracoes .settings-button:focus-visible,
+html[data-theme="dark"] .merchant-dashboard .copy-link-button:focus-visible,
+html[data-theme="dark"] .merchant-dashboard .qr-download-button:focus-visible,
+html[data-theme="dark"] body.storefront .add-cart-button:focus-visible,
+html[data-theme="dark"] body.storefront .whatsapp:focus-visible,
+html[data-theme="dark"] body.storefront .favorite-button:focus-visible,
+html[data-theme="dark"] .auth-card button:focus-visible,
+html[data-theme="dark"] .auth-card .google-auth-button:focus-visible,
+html[data-theme="dark"] .plans-page .subscription-actions a:focus-visible,
+html[data-theme="dark"] .plans-page .subscription-actions button:focus-visible,
+html[data-theme="dark"] .saas-landing .lp-button:focus-visible {
+    box-shadow: var(--vl-btn-focus), var(--vl-btn-primary-shadow) !important;
+    outline: 0;
+}
+
+html[data-theme="dark"] button:disabled,
+html[data-theme="dark"] .button-disabled,
+html[data-theme="dark"] body.storefront .whatsapp[disabled] {
+    background: var(--vl-badge-muted-bg) !important;
+    border-color: var(--vl-badge-muted-border) !important;
+    box-shadow: none !important;
+    color: var(--vl-badge-muted-text) !important;
+    cursor: not-allowed;
+    opacity: 0.74;
+    transform: none !important;
+}
+
 /* 39. Leads quick filters and pagination */
 .merchant-dashboard #tab-leads .lead-quick-filters {
     align-items: center;
@@ -17963,4 +18140,142 @@ html[data-theme="dark"] .saas-landing .lp-button:hover {
     .merchant-dashboard #tab-leads .lead-pagination .disabled {
         flex: 1 1 auto;
     }
+}
+
+/* 39.1 Final component normalizer: keep global badge/button tone above legacy tab rules */
+html[data-theme="dark"] .merchant-dashboard #tab-produtos .status-pill,
+html[data-theme="dark"] .merchant-dashboard #tab-leads .lead-status-badge,
+html[data-theme="dark"] .merchant-dashboard #tab-vendedores .seller-status,
+html[data-theme="dark"] .merchant-dashboard #tab-configuracoes .settings-status-badge,
+html[data-theme="dark"] body.storefront .badges span {
+    backdrop-filter: blur(12px);
+    background: var(--vl-badge-bg) !important;
+    border: 1px solid var(--vl-badge-border) !important;
+    border-radius: 999px !important;
+    color: var(--vl-badge-text) !important;
+    font-size: 0.72rem !important;
+    font-weight: 850 !important;
+    letter-spacing: 0 !important;
+    line-height: 1 !important;
+    min-height: 28px !important;
+    padding: 7px 11px !important;
+    text-transform: none !important;
+}
+
+html[data-theme="dark"] .merchant-dashboard #tab-produtos .status-pill:not(.active):not(.warning):not(.sold),
+html[data-theme="dark"] body.storefront .badges span {
+    background: var(--vl-badge-new-bg) !important;
+    border-color: var(--vl-badge-new-border) !important;
+    color: var(--vl-badge-new-text) !important;
+}
+
+html[data-theme="dark"] .merchant-dashboard #tab-produtos .status-pill.active,
+html[data-theme="dark"] .merchant-dashboard #tab-leads .lead-status-badge--done,
+html[data-theme="dark"] .merchant-dashboard #tab-vendedores .seller-status--active,
+html[data-theme="dark"] .merchant-dashboard #tab-configuracoes .settings-status-badge.is-active {
+    background: var(--vl-badge-success-bg) !important;
+    border-color: var(--vl-badge-success-border) !important;
+    color: var(--vl-badge-success-text) !important;
+}
+
+html[data-theme="dark"] .merchant-dashboard #tab-produtos .status-pill.warning,
+html[data-theme="dark"] .merchant-dashboard #tab-leads .lead-status-badge--pending,
+html[data-theme="dark"] .merchant-dashboard #tab-configuracoes .settings-status-badge.is-warning {
+    background: var(--vl-badge-warning-bg) !important;
+    border-color: var(--vl-badge-warning-border) !important;
+    color: var(--vl-badge-warning-text) !important;
+}
+
+html[data-theme="dark"] .merchant-dashboard #tab-produtos .status-pill.sold,
+html[data-theme="dark"] .merchant-dashboard #tab-vendedores .seller-status--inactive,
+html[data-theme="dark"] body.storefront .product--sold .badges span {
+    background: var(--vl-badge-danger-bg) !important;
+    border-color: var(--vl-badge-danger-border) !important;
+    color: var(--vl-badge-danger-text) !important;
+}
+
+html[data-theme="dark"] .merchant-dashboard .store-status-bar a,
+html[data-theme="dark"] .merchant-dashboard .store-status-bar button,
+html[data-theme="dark"] .merchant-dashboard #tab-produtos .panel-product-actions a,
+html[data-theme="dark"] .merchant-dashboard #tab-produtos .panel-product-actions button,
+html[data-theme="dark"] .merchant-dashboard #tab-leads .lead-toolbar__button,
+html[data-theme="dark"] .merchant-dashboard #tab-leads .lead-status-form button,
+html[data-theme="dark"] .merchant-dashboard #tab-vendedores .seller-actions a,
+html[data-theme="dark"] .merchant-dashboard #tab-vendedores .seller-actions button,
+html[data-theme="dark"] .merchant-dashboard #tab-configuracoes .settings-button {
+    border-radius: 999px !important;
+    min-height: 42px !important;
+}
+
+html[data-theme="dark"] .merchant-dashboard #tab-produtos .panel-product-actions .copy-link-button,
+html[data-theme="dark"] .merchant-dashboard #tab-vendedores .seller-actions .copy-link-button {
+    background: var(--vl-btn-secondary-bg) !important;
+    border-color: var(--vl-btn-secondary-border) !important;
+    color: var(--vl-btn-secondary-text) !important;
+}
+
+html[data-theme="dark"] .merchant-dashboard #tab-dashboard .dashboard-actions a:not(.secondary),
+html[data-theme="dark"] .merchant-dashboard #tab-leads .lead-toolbar__button--primary,
+html[data-theme="dark"] .merchant-dashboard #tab-leads .leads-filters button,
+html[data-theme="dark"] .merchant-dashboard #tab-leads .lead-status-form button,
+html[data-theme="dark"] .merchant-dashboard #tab-vendedores .seller-form-actions--refined > button,
+html[data-theme="dark"] .merchant-dashboard #tab-produtos .stock-builder > button,
+html[data-theme="dark"] .merchant-dashboard #tab-produtos .panel-filters button,
+html[data-theme="dark"] .merchant-dashboard #tab-produtos .compact-form button,
+html[data-theme="dark"] .merchant-dashboard #tab-produtos .product-form-submit button {
+    background: var(--vl-btn-primary-bg) !important;
+    border-color: var(--vl-btn-primary-border) !important;
+    box-shadow: var(--vl-btn-primary-shadow) !important;
+    color: var(--vl-btn-primary-text) !important;
+}
+
+html[data-theme="dark"] .merchant-dashboard #tab-dashboard .dashboard-actions a.secondary,
+html[data-theme="dark"] .merchant-dashboard #tab-leads .lead-toolbar__button:not(.lead-toolbar__button--primary),
+html[data-theme="dark"] .merchant-dashboard #tab-leads .lead-quick-filters a,
+html[data-theme="dark"] .merchant-dashboard #tab-produtos .panel-product-actions a:not(.danger),
+html[data-theme="dark"] .merchant-dashboard #tab-produtos .panel-product-actions button:not(.danger):not(.publish-button),
+html[data-theme="dark"] .merchant-dashboard #tab-vendedores .seller-actions a,
+html[data-theme="dark"] .merchant-dashboard #tab-vendedores .seller-actions button:not(.danger) {
+    background: var(--vl-btn-secondary-bg) !important;
+    border-color: var(--vl-btn-secondary-border) !important;
+    box-shadow: none !important;
+    color: var(--vl-btn-secondary-text) !important;
+}
+
+html[data-theme="dark"] .merchant-dashboard #tab-leads .lead-quick-filters a.active {
+    background: var(--vl-btn-primary-bg) !important;
+    border-color: var(--vl-btn-primary-border) !important;
+    color: var(--vl-btn-primary-text) !important;
+}
+
+html[data-theme="dark"] .merchant-dashboard #tab-dashboard .dashboard-actions a,
+html[data-theme="dark"] .merchant-dashboard #tab-leads .lead-toolbar__button,
+html[data-theme="dark"] .merchant-dashboard #tab-leads .leads-filters button,
+html[data-theme="dark"] .merchant-dashboard #tab-leads .lead-status-form button,
+html[data-theme="dark"] .merchant-dashboard #tab-vendedores .seller-form-actions--refined > button,
+html[data-theme="dark"] .merchant-dashboard #tab-produtos .stock-builder > button,
+html[data-theme="dark"] .merchant-dashboard #tab-produtos .panel-filters button,
+html[data-theme="dark"] .merchant-dashboard #tab-produtos .compact-form button,
+html[data-theme="dark"] .merchant-dashboard #tab-produtos .product-form-submit button {
+    border-radius: 999px !important;
+    min-height: 42px !important;
+}
+
+html[data-theme="dark"] body.storefront .cart-toggle,
+html[data-theme="dark"] body.storefront .cart-send,
+html[data-theme="dark"] body.storefront .catalog-banner__cta,
+html[data-theme="dark"] body.storefront .search button,
+html[data-theme="dark"] body.storefront .categories a.active,
+html[data-theme="dark"] body.storefront .filter-pills a.active,
+html[data-theme="dark"] body.storefront .store-filters a.active,
+html[data-theme="dark"] .auth-card button[type="submit"] {
+    color: var(--vl-btn-primary-text) !important;
+}
+
+html[data-theme="dark"] body.storefront .store-header a,
+html[data-theme="dark"] body.storefront .whatsapp,
+html[data-theme="dark"] body.storefront .store-whatsapp-footer,
+html[data-theme="dark"] body.storefront a.active,
+html[data-theme="dark"] body.auth-page .auth-card .panel-form > button[type="submit"] {
+    color: var(--vl-btn-primary-text) !important;
 }
