@@ -17716,3 +17716,114 @@ form .option-label:has(input:required)::after {
         width: 132px;
     }
 }
+/* 39. Leads quick filters and pagination */
+.merchant-dashboard #tab-leads .lead-quick-filters {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0 0 12px;
+}
+
+.merchant-dashboard #tab-leads .lead-quick-filters a {
+    align-items: center;
+    background: rgba(255, 255, 255, 0.055);
+    border: 1px solid rgba(218, 207, 255, 0.15);
+    border-radius: 999px;
+    color: #d8d0e8;
+    display: inline-flex;
+    font-size: 0.86rem;
+    font-weight: 850;
+    min-height: 36px;
+    padding: 8px 13px;
+    text-decoration: none;
+}
+
+.merchant-dashboard #tab-leads .lead-quick-filters a:hover,
+.merchant-dashboard #tab-leads .lead-quick-filters a.active {
+    background: linear-gradient(135deg, rgba(99, 73, 180, 0.72), rgba(60, 42, 118, 0.88));
+    border-color: rgba(199, 181, 255, 0.32);
+    color: #ffffff;
+}
+
+.merchant-dashboard #tab-leads .lead-results-meta {
+    align-items: center;
+    color: rgba(226, 219, 241, 0.72);
+    display: flex;
+    flex-wrap: wrap;
+    font-size: 0.88rem;
+    font-weight: 750;
+    gap: 8px;
+    justify-content: space-between;
+    margin: 0 0 12px;
+}
+
+.merchant-dashboard #tab-leads .lead-results-meta small {
+    background: rgba(255, 255, 255, 0.055);
+    border: 1px solid rgba(218, 207, 255, 0.14);
+    border-radius: 999px;
+    color: rgba(226, 219, 241, 0.78);
+    font-weight: 850;
+    padding: 5px 10px;
+}
+
+.merchant-dashboard #tab-leads .lead-pagination {
+    align-items: center;
+    background: rgba(14, 11, 20, 0.66);
+    border: 1px solid rgba(218, 207, 255, 0.14);
+    border-radius: 18px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 14px;
+    padding: 10px;
+}
+
+.merchant-dashboard #tab-leads .lead-pagination a,
+.merchant-dashboard #tab-leads .lead-pagination .disabled {
+    align-items: center;
+    border-radius: 999px;
+    display: inline-flex;
+    font-weight: 900;
+    justify-content: center;
+    min-height: 38px;
+    min-width: 104px;
+    padding: 8px 14px;
+    text-decoration: none;
+}
+
+.merchant-dashboard #tab-leads .lead-pagination a {
+    background: rgba(255, 255, 255, 0.075);
+    border: 1px solid rgba(218, 207, 255, 0.18);
+    color: #f4efff;
+}
+
+.merchant-dashboard #tab-leads .lead-pagination a:hover {
+    background: linear-gradient(135deg, rgba(99, 73, 180, 0.72), rgba(60, 42, 118, 0.88));
+    border-color: rgba(199, 181, 255, 0.32);
+}
+
+.merchant-dashboard #tab-leads .lead-pagination .disabled {
+    background: rgba(255, 255, 255, 0.035);
+    border: 1px solid rgba(218, 207, 255, 0.08);
+    color: rgba(226, 219, 241, 0.42);
+}
+
+.merchant-dashboard #tab-leads .lead-pagination strong {
+    color: #f8f5ff;
+    font-size: 0.9rem;
+}
+
+@media (max-width: 640px) {
+    .merchant-dashboard #tab-leads .lead-results-meta {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .merchant-dashboard #tab-leads .lead-quick-filters a,
+    .merchant-dashboard #tab-leads .lead-pagination a,
+    .merchant-dashboard #tab-leads .lead-pagination .disabled {
+        flex: 1 1 auto;
+    }
+}

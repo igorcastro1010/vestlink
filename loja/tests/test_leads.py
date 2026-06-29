@@ -601,6 +601,24 @@ class FiltrosLeadsEControleAcessoTests(TestCase):
         self.assertEqual(leads[0], self.lead_direto)
         self.assertEqual(response.context["total_leads"], 1)
 
+    def test_dono_filtra_por_status_novo_pendente(self):
+        self.client.force_login(self.owner_user)
+        response = self.client.get(reverse("painel_loja", kwargs={"slug": self.loja.slug}), {"status_leads": Lead.STATUS_NOVO})
+
+        self.assertEqual(response.status_code, 200)
+        leads = list(response.context["leads_recentes"])
+        self.assertEqual(leads, [self.lead_vendedor1])
+        self.assertEqual(response.context["total_leads"], 1)
+
+    def test_dono_filtra_por_status_em_atendimento(self):
+        self.client.force_login(self.owner_user)
+        response = self.client.get(reverse("painel_loja", kwargs={"slug": self.loja.slug}), {"status_leads": Lead.STATUS_ATENDIMENTO})
+
+        self.assertEqual(response.status_code, 200)
+        leads = list(response.context["leads_recentes"])
+        self.assertEqual(leads, [self.lead_vendedor2])
+        self.assertEqual(response.context["total_leads"], 1)
+
     def test_dono_filtra_por_termo_busca(self):
         self.client.force_login(self.owner_user)
         
@@ -638,3 +656,64 @@ class FiltrosLeadsEControleAcessoTests(TestCase):
         self.assertContains(response, "Carlos")
         self.assertNotContains(response, "Alice")
         self.assertNotContains(response, "Bob")
+
+    def test_paginacao_limita_leads_exibidos(self):
+        for indice in range(12):
+            Lead.objects.create(
+                loja=self.loja,
+                produto=self.produto,
+                origem=Lead.ORIGEM_PRODUTO,
+                cliente_nome=f"Cliente extra {indice}",
+                status=Lead.STATUS_NOVO,
+            )
+        self.client.force_login(self.owner_user)
+
+        response = self.client.get(reverse("painel_loja", kwargs={"slug": self.loja.slug}))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context["total_leads"], 15)
+        self.assertEqual(len(list(response.context["leads_recentes"])), 10)
+        self.assertEqual(response.context["leads_page_obj"].number, 1)
+        self.assertContains(response, "Exibindo 1-10 de 15 pedido(s)")
+
+    def test_paginacao_preserva_filtros_ativos(self):
+        for indice in range(12):
+            Lead.objects.create(
+                loja=self.loja,
+                produto=self.produto,
+                origem=Lead.ORIGEM_PRODUTO,
+                cliente_nome=f"Concluido extra {indice}",
+                status=Lead.STATUS_CONCLUIDO,
+            )
+        self.client.force_login(self.owner_user)
+
+        response = self.client.get(
+            reverse("painel_loja", kwargs={"slug": self.loja.slug}),
+            {"status_leads": Lead.STATUS_CONCLUIDO},
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context["total_leads"], 13)
+        self.assertEqual(len(list(response.context["leads_recentes"])), 10)
+        self.assertEqual(response.context["leads_querystring_sem_pagina"], "status_leads=concluido")
+        self.assertContains(response, "page_leads=2")
+
+    def test_paginacao_respeita_permissao_do_vendedor(self):
+        for indice in range(12):
+            Lead.objects.create(
+                loja=self.loja,
+                vendedor=self.vendedor2,
+                produto=self.produto,
+                origem=Lead.ORIGEM_PRODUTO,
+                cliente_nome=f"Lead outro vendedor {indice}",
+                status=Lead.STATUS_NOVO,
+            )
+        self.client.force_login(self.vendedor_user1)
+
+        response = self.client.get(reverse("painel_loja", kwargs={"slug": self.loja.slug}))
+
+        self.assertEqual(response.status_code, 200)
+        leads = list(response.context["leads_recentes"])
+        self.assertEqual(leads, [self.lead_vendedor1])
+        self.assertEqual(response.context["total_leads"], 1)
+        self.assertEqual(response.context["total_leads_global"], 1)

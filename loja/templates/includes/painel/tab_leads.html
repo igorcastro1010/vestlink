@@ -18,6 +18,23 @@
                     </div>
                 </div>
 
+                <div class="lead-quick-filters" aria-label="Filtros rápidos por status">
+                    {% for filtro in status_filtros_rapidos %}
+                        <a href="?{{ filtro.querystring }}#leads" class="{% if status_leads_ativo == filtro.valor %}active{% endif %}">
+                            {{ filtro.rotulo }}
+                        </a>
+                    {% endfor %}
+                </div>
+
+                <div class="lead-results-meta">
+                    <span>
+                        Exibindo {{ leads_exibidos_inicio }}-{{ leads_exibidos_fim }} de {{ total_leads }} pedido(s)
+                    </span>
+                    {% if status_leads_ativo %}
+                        <small>Filtro ativo: {{ status_leads_ativo }}</small>
+                    {% endif %}
+                </div>
+
                 <form class="panel-filters leads-filters" method="get" action="?#leads">
                     <input type="search" name="q_leads" value="{{ busca_leads }}" placeholder="Buscar por cliente, WhatsApp ou produto">
                     {% if is_owner %}
@@ -176,5 +193,23 @@
                         </div>
                     {% endfor %}
                 </div>
+
+                {% if leads_paginator.num_pages > 1 %}
+                    <nav class="lead-pagination" aria-label="Paginação de leads">
+                        {% if leads_page_obj.has_previous %}
+                            <a href="?{{ leads_querystring_sem_pagina }}{% if leads_querystring_sem_pagina %}&{% endif %}page_leads={{ leads_page_obj.previous_page_number }}#leads">Anterior</a>
+                        {% else %}
+                            <span class="disabled">Anterior</span>
+                        {% endif %}
+
+                        <strong>Página {{ leads_page_obj.number }} de {{ leads_paginator.num_pages }}</strong>
+
+                        {% if leads_page_obj.has_next %}
+                            <a href="?{{ leads_querystring_sem_pagina }}{% if leads_querystring_sem_pagina %}&{% endif %}page_leads={{ leads_page_obj.next_page_number }}#leads">Próxima</a>
+                        {% else %}
+                            <span class="disabled">Próxima</span>
+                        {% endif %}
+                    </nav>
+                {% endif %}
             </section>
         </div>

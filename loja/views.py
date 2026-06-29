@@ -9,6 +9,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
 from django.core.exceptions import PermissionDenied
+from django.core.paginator import Paginator
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -27,6 +28,8 @@ from .services import billing, lead, store, catalog, products, auth
 
 
 logger = logging.getLogger(__name__)
+
+LEADS_POR_PAGINA = 10
 
 
 class LoginLojistaView(LoginView):
@@ -393,6 +396,16 @@ def _obter_leads_filtrados(request, loja):
     return leads
 
 
+def _querystring_leads(request, **overrides):
+    query = request.GET.copy()
+    query.pop("page_leads", None)
+    for chave, valor in overrides.items():
+        query.pop(chave, None)
+        if valor not in (None, ""):
+            query[chave] = valor
+    return query.urlencode()
+
+
 @login_required
 def painel_loja(request, slug):
     loja = _loja_do_usuario(request, slug)
@@ -483,6 +496,37 @@ def painel_loja(request, slug):
         categoria_id=categoria_id,
         leads_filtrados=leads_filtrados,
     )
+    leads_paginator = Paginator(leads_filtrados, LEADS_POR_PAGINA)
+    leads_page_obj = leads_paginator.get_page(request.GET.get("page_leads"))
+    status_filtros_rapidos = [
+        {
+            "valor": "",
+            "rotulo": "Todos",
+            "querystring": _querystring_leads(request, status_leads="", page_leads=""),
+        },
+        {
+            "valor": Lead.STATUS_NOVO,
+            "rotulo": "Novos/Pendentes",
+            "querystring": _querystring_leads(request, status_leads=Lead.STATUS_NOVO, page_leads=""),
+        },
+        {
+            "valor": Lead.STATUS_ATENDIMENTO,
+            "rotulo": "Em atendimento",
+            "querystring": _querystring_leads(request, status_leads=Lead.STATUS_ATENDIMENTO, page_leads=""),
+        },
+        {
+            "valor": Lead.STATUS_CONCLUIDO,
+            "rotulo": "Concluídos",
+            "querystring": _querystring_leads(request, status_leads=Lead.STATUS_CONCLUIDO, page_leads=""),
+        },
+    ]
+    contexto["leads_recentes"] = leads_page_obj.object_list
+    contexto["leads_page_obj"] = leads_page_obj
+    contexto["leads_paginator"] = leads_paginator
+    contexto["leads_exibidos_inicio"] = leads_page_obj.start_index() if leads_paginator.count else 0
+    contexto["leads_exibidos_fim"] = leads_page_obj.end_index() if leads_paginator.count else 0
+    contexto["leads_querystring_sem_pagina"] = _querystring_leads(request)
+    contexto["status_filtros_rapidos"] = status_filtros_rapidos
     contexto["form"] = form
     contexto["categoria_form"] = categoria_form
     contexto["vendedor_form"] = vendedor_form
