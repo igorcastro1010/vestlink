@@ -19030,3 +19030,258 @@ html[data-theme="dark"] body.storefront .cart-empty p {
         padding-inline: 10px !important;
     }
 }
+
+/* 43. Final premium entry, header and motion polish */
+html[data-theme="dark"] {
+    --vl-final-surface: linear-gradient(180deg, rgba(28, 22, 43, 0.96), rgba(14, 11, 22, 0.94));
+    --vl-final-surface-soft: rgba(27, 21, 42, 0.72);
+    --vl-final-border: rgba(221, 211, 255, 0.16);
+    --vl-final-border-strong: rgba(221, 211, 255, 0.26);
+    --vl-final-text: #f5f1ff;
+    --vl-final-muted: rgba(226, 219, 241, 0.72);
+    --vl-final-shadow: 0 22px 64px rgba(4, 2, 10, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    --vl-final-hover: 0 18px 44px rgba(4, 2, 10, 0.28), 0 0 0 1px rgba(199, 181, 255, 0.08);
+    --vl-final-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+html[data-theme="dark"] body.auth-page {
+    background:
+        linear-gradient(145deg, rgba(18, 14, 28, 0.98), rgba(11, 9, 17, 1) 52%, rgba(22, 17, 34, 0.98)) !important;
+}
+
+html[data-theme="dark"] .auth-layout {
+    gap: clamp(28px, 5vw, 64px);
+}
+
+html[data-theme="dark"] .auth-copy {
+    color: var(--vl-final-muted) !important;
+}
+
+html[data-theme="dark"] .auth-copy h1,
+html[data-theme="dark"] .auth-logo,
+html[data-theme="dark"] .auth-card h1,
+html[data-theme="dark"] .auth-card h2 {
+    color: var(--vl-final-text) !important;
+}
+
+html[data-theme="dark"] .auth-highlights span,
+html[data-theme="dark"] .auth-back-link {
+    background: rgba(255, 255, 255, 0.055) !important;
+    border: 1px solid rgba(221, 211, 255, 0.14) !important;
+    color: var(--vl-final-muted) !important;
+}
+
+html[data-theme="dark"] .auth-card,
+html[data-theme="dark"] .auth-card--wide {
+    background: var(--vl-final-surface) !important;
+    border: 1px solid var(--vl-final-border) !important;
+    box-shadow: var(--vl-final-shadow) !important;
+}
+
+html[data-theme="dark"] .auth-card .panel-form p,
+html[data-theme="dark"] .auth-card .signup-wizard section,
+html[data-theme="dark"] .auth-card .legal-acceptance,
+html[data-theme="dark"] .auth-card .password-requirements {
+    background: rgba(255, 255, 255, 0.045) !important;
+    border-color: rgba(221, 211, 255, 0.13) !important;
+}
+
+html[data-theme="dark"] .auth-card label,
+html[data-theme="dark"] .auth-card .panel-form label,
+html[data-theme="dark"] .auth-card .password-requirements strong {
+    color: rgba(245, 241, 255, 0.9) !important;
+}
+
+html[data-theme="dark"] .auth-card .helptext,
+html[data-theme="dark"] .auth-card .auth-legal-note,
+html[data-theme="dark"] .auth-card .auth-switch,
+html[data-theme="dark"] .auth-card .password-requirements li {
+    color: var(--vl-final-muted) !important;
+}
+
+html[data-theme="dark"] .auth-card .panel-form input,
+html[data-theme="dark"] .auth-card .panel-form select,
+html[data-theme="dark"] .auth-card .panel-form textarea {
+    background: rgba(12, 10, 18, 0.86) !important;
+    border-color: rgba(221, 211, 255, 0.18) !important;
+    color: var(--vl-final-text) !important;
+}
+
+html[data-theme="dark"] .auth-card .panel-form input:focus,
+html[data-theme="dark"] .auth-card .panel-form select:focus,
+html[data-theme="dark"] .auth-card .panel-form textarea:focus {
+    border-color: rgba(190, 170, 255, 0.72) !important;
+    box-shadow: 0 0 0 4px rgba(138, 111, 224, 0.22), 0 10px 24px rgba(4, 2, 10, 0.24) !important;
+}
+
+html[data-theme="dark"] .auth-card .panel-form > button[type="submit"],
+html[data-theme="dark"] body.auth-page .auth-card .panel-form > button[type="submit"] {
+    background: var(--vl-btn-primary-bg) !important;
+    border: 1px solid var(--vl-btn-primary-border) !important;
+    box-shadow: var(--vl-btn-primary-shadow) !important;
+    color: var(--vl-btn-primary-text) !important;
+}
+
+html[data-theme="dark"] .auth-card .google-auth-button {
+    background: rgba(255, 255, 255, 0.06) !important;
+    border-color: rgba(221, 211, 255, 0.18) !important;
+    color: var(--vl-final-text) !important;
+}
+
+html[data-theme="dark"] .auth-card .google-auth-button:hover,
+html[data-theme="dark"] .auth-back-link:hover,
+html[data-theme="dark"] .auth-card a:hover {
+    border-color: var(--vl-final-border-strong) !important;
+    color: #ffffff !important;
+}
+
+html[data-theme="dark"] .auth-card .auth-legal-note a,
+html[data-theme="dark"] .auth-card .auth-switch a,
+html[data-theme="dark"] .auth-card .legal-acceptance a {
+    align-items: center;
+    border-radius: 999px;
+    display: inline-flex;
+    min-height: 32px;
+    padding-inline: 2px;
+}
+
+html[data-theme="dark"] .auth-card input[type="checkbox"] {
+    min-height: 18px !important;
+    width: 18px;
+}
+
+html[data-theme="dark"] .auth-message,
+html[data-theme="dark"] .auth-card .errorlist,
+html[data-theme="dark"] .auth-card .form-error {
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.035) !important;
+}
+
+html[data-theme="dark"] .lp-header,
+html[data-theme="dark"] .panel-header,
+html[data-theme="dark"] .panel-header--stores,
+html[data-theme="dark"] .panel-header--dashboard,
+html[data-theme="dark"] body.storefront .store-header {
+    background: rgba(17, 13, 26, 0.86) !important;
+    border-color: rgba(221, 211, 255, 0.13) !important;
+    box-shadow: 0 16px 44px rgba(4, 2, 10, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.035) !important;
+}
+
+html[data-theme="dark"] .lp-logo,
+html[data-theme="dark"] .panel-header-brand h1,
+html[data-theme="dark"] body.storefront .store-header h1 {
+    color: var(--vl-final-text) !important;
+}
+
+html[data-theme="dark"] .lp-header nav a:not(.lp-header__cta),
+html[data-theme="dark"] .panel-header-nav .nav-link,
+html[data-theme="dark"] .panel-header-user .user-name,
+html[data-theme="dark"] .panel-header-user .logout-btn,
+html[data-theme="dark"] body.storefront .store-header__actions span {
+    color: var(--vl-final-muted) !important;
+}
+
+html[data-theme="dark"] .lp-header nav a:not(.lp-header__cta):hover,
+html[data-theme="dark"] .panel-header-nav .nav-link:hover,
+html[data-theme="dark"] .panel-header-user .logout-btn:hover {
+    background: rgba(255, 255, 255, 0.065) !important;
+    border-color: rgba(221, 211, 255, 0.18) !important;
+    color: #ffffff !important;
+}
+
+html[data-theme="dark"] .lp-header__cta,
+html[data-theme="dark"] body.storefront .store-header__actions a {
+    background: var(--vl-btn-primary-bg) !important;
+    border: 1px solid var(--vl-btn-primary-border) !important;
+    box-shadow: var(--vl-btn-primary-shadow) !important;
+    color: var(--vl-btn-primary-text) !important;
+}
+
+html[data-theme="dark"] .panel-header-brand .panel-store-link,
+html[data-theme="dark"] .panel-header-brand .panel-header-subtitle,
+html[data-theme="dark"] body.storefront .store-header p,
+html[data-theme="dark"] body.storefront .store-header__meta span {
+    color: var(--vl-final-muted) !important;
+}
+
+html[data-theme="dark"] .panel-header-brand .panel-store-link,
+html[data-theme="dark"] body.storefront .store-header__meta span {
+    background: rgba(255, 255, 255, 0.055) !important;
+    border-color: rgba(221, 211, 255, 0.14) !important;
+}
+
+html[data-theme="dark"] a,
+html[data-theme="dark"] button,
+html[data-theme="dark"] input,
+html[data-theme="dark"] select,
+html[data-theme="dark"] textarea,
+html[data-theme="dark"] .panel-section,
+html[data-theme="dark"] .store-card,
+html[data-theme="dark"] .product,
+html[data-theme="dark"] .product-card,
+html[data-theme="dark"] .auth-card,
+html[data-theme="dark"] .lead-card,
+html[data-theme="dark"] .seller-card,
+html[data-theme="dark"] .tab-btn,
+html[data-theme="dark"] .status-pill,
+html[data-theme="dark"] .lead-status-badge,
+html[data-theme="dark"] .empty,
+html[data-theme="dark"] .empty-dashboard,
+html[data-theme="dark"] .auth-message {
+    transition:
+        background-color 170ms var(--vl-final-ease),
+        border-color 170ms var(--vl-final-ease),
+        color 170ms var(--vl-final-ease),
+        box-shadow 170ms var(--vl-final-ease),
+        opacity 170ms var(--vl-final-ease),
+        transform 170ms var(--vl-final-ease);
+}
+
+html[data-theme="dark"] .panel-section:hover,
+html[data-theme="dark"] .store-card:hover,
+html[data-theme="dark"] .product:hover,
+html[data-theme="dark"] .product-card:hover,
+html[data-theme="dark"] .lead-card:hover,
+html[data-theme="dark"] .seller-card:hover {
+    transform: translateY(-2px);
+}
+
+html[data-theme="dark"] .tab-btn:hover,
+html[data-theme="dark"] .status-pill:hover,
+html[data-theme="dark"] .lead-status-badge:hover,
+html[data-theme="dark"] body.storefront .badges span:hover {
+    transform: translateY(-1px);
+}
+
+html[data-theme="dark"] .empty:hover,
+html[data-theme="dark"] .empty-dashboard:hover,
+html[data-theme="dark"] .auth-message:hover {
+    border-color: var(--vl-final-border-strong) !important;
+    box-shadow: var(--vl-final-hover) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    html[data-theme="dark"] *,
+    html[data-theme="dark"] *::before,
+    html[data-theme="dark"] *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 0.001ms !important;
+    }
+
+    html[data-theme="dark"] .panel-section:hover,
+    html[data-theme="dark"] .store-card:hover,
+    html[data-theme="dark"] .product:hover,
+    html[data-theme="dark"] .product-card:hover,
+    html[data-theme="dark"] .lead-card:hover,
+    html[data-theme="dark"] .seller-card:hover,
+    html[data-theme="dark"] .tab-btn:hover,
+    html[data-theme="dark"] .status-pill:hover,
+    html[data-theme="dark"] .lead-status-badge:hover {
+        transform: none !important;
+    }
+}
