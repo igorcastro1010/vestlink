@@ -1,24 +1,24 @@
 <div class="tab-pane" id="tab-leads" data-tab-content="leads">
-            <section class="leads-dashboard panel-section" id="leads">
-                <div class="section-heading" style="display: flex; justify-content: space-between; align-items: center; gap: 15px; flex-wrap: wrap; margin-bottom: 2rem;">
+            <section class="leads-dashboard panel-section leads-panel" id="leads">
+                <div class="section-heading leads-panel__heading">
                     <div>
                         <p class="eyebrow">Leads</p>
                         <h2>Interesses recebidos</h2>
                     </div>
-                    <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
-                        <a href="{% url 'exportar_leads_csv' loja.slug %}?q_leads={{ busca_leads }}&vendedor_leads={{ vendedor_leads_ativo }}&status_leads={{ status_leads_ativo }}" class="panel-cancel" style="background: var(--brand, #5e35b1); color: #ffffff; text-decoration: none; padding: 10px 14px; border-radius: 8px; font-weight: 700; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 6px;">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right: 2px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                            Exportar CSV (Excel)
+                    <div class="lead-toolbar">
+                        <a href="{% url 'exportar_leads_csv' loja.slug %}?q_leads={{ busca_leads }}&vendedor_leads={{ vendedor_leads_ativo }}&status_leads={{ status_leads_ativo }}" class="lead-toolbar__button lead-toolbar__button--primary">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                            Exportar CSV
                         </a>
-                        <a href="{% url 'exportar_leads_impressao' loja.slug %}?q_leads={{ busca_leads }}&vendedor_leads={{ vendedor_leads_ativo }}&status_leads={{ status_leads_ativo }}" target="_blank" class="panel-cancel secondary" style="background: var(--surface); color: var(--ink); border: 1px solid var(--line); text-decoration: none; padding: 10px 14px; border-radius: 8px; font-weight: 700; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 6px;">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right: 2px;"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+                        <a href="{% url 'exportar_leads_impressao' loja.slug %}?q_leads={{ busca_leads }}&vendedor_leads={{ vendedor_leads_ativo }}&status_leads={{ status_leads_ativo }}" target="_blank" class="lead-toolbar__button">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
                             Imprimir / PDF
                         </a>
-                        <span style="font-size: 0.9rem; font-weight: 700; padding: 10px 12px; background: var(--line); color: var(--ink); border-radius: 8px; display: inline-block;">{{ total_leads }} lead(s)</span>
+                        <span class="lead-toolbar__count">{{ total_leads }} lead(s)</span>
                     </div>
                 </div>
 
-                <form class="panel-filters" method="get" action="?#leads" style="margin-bottom: 24px;">
+                <form class="panel-filters leads-filters" method="get" action="?#leads">
                     <input type="search" name="q_leads" value="{{ busca_leads }}" placeholder="Buscar por cliente, WhatsApp ou produto">
                     {% if is_owner %}
                         <select name="vendedor_leads">
@@ -38,7 +38,7 @@
                     <button type="submit">Filtrar</button>
                 </form>
 
-                <div class="lead-summary">
+                <div class="lead-summary lead-summary--compact">
                     <article>
                         <span>Produto</span>
                         <strong>{{ leads_produto }}</strong>
@@ -65,68 +65,98 @@
                     </article>
                 </div>
 
-                <div class="lead-list">
+                <div class="lead-list lead-list--refined">
                     {% for lead in leads_recentes %}
-                        <article>
-                            <div>
-                                <strong>
-                                    {% if lead.produto %}
-                                        {{ lead.produto.nome }}
-                                    {% else %}
-                                        Pedido pela sacolinha
-                                    {% endif %}
-                                </strong>
-                                <span>
-                                    {{ lead.get_origem_display }} - {{ lead.criado_em|date:"d/m/Y H:i" }}
-                                    {% if lead.status == "concluido" %}
-                                        <span class="status-pill active" style="margin-left: 8px;">Concluído</span>
-                                    {% else %}
-                                        <span class="status-pill warning" style="margin-left: 8px;">Pendente</span>
-                                    {% endif %}
-                                </span>
-                            </div>
-                            <p>
-                                {% if lead.cliente_nome %}Cliente: {{ lead.cliente_nome }}{% endif %}
-                                {% if lead.cliente_telefone %}{% if lead.cliente_nome %} - {% endif %}WhatsApp: {{ lead.cliente_telefone }}{% endif %}
-                                {% if lead.cliente_nome or lead.cliente_telefone %}<br>{% endif %}
-                                {% if lead.vendedor %}Vendedor: {{ lead.vendedor.nome }}<br>{% endif %}
-                                {% if lead.tamanho %}Tamanho: {{ lead.tamanho }}{% endif %}
-                                {% if lead.cor %}{% if lead.tamanho %} - {% endif %}Cor: {{ lead.cor }}{% endif %}
-                                {% if not lead.tamanho and not lead.cor %}{{ lead.mensagem|truncatechars:120 }}{% endif %}
-                                {% if lead.tipo_entrega %}
-                                    <br><strong>Recebimento:</strong>
-                                    {% if lead.tipo_entrega == 'entrega' %}
-                                        <span class="delivery-badge delivery-badge-ship">
-                                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="vertical-align: -1px; margin-right: 2px;"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>Entrega
-                                        </span>
-                                    {% else %}
-                                        <span class="delivery-badge delivery-badge-pickup">
-                                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="vertical-align: -1px; margin-right: 2px;"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>Retirada
-                                        </span>
-                                    {% endif %}
-                                    {% if lead.endereco_completo %}
-                                        <br><strong>Endereço:</strong> <span style="font-size: 0.9rem;">{{ lead.endereco_completo }}</span>
-                                        <button type="button" class="btn-copy-address" data-address="{{ lead.endereco_completo }}" title="Copiar Endereço" style="background: none; border: 0; padding: 2px; cursor: pointer; color: var(--muted, #6b7280); vertical-align: middle; margin-left: 4px; display: inline-flex; align-items: center; justify-content: center; transition: all 0.15s;">
-                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="pointer-events: none;"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" style="pointer-events: none;"></path></svg>
-                                        </button>
-                                    {% endif %}
-                                {% endif %}
-                                {% if lead.observacao %}<br><strong>Obs. interna:</strong> {{ lead.observacao|truncatechars:100 }}{% endif %}
-                                {% if lead.status_atualizado_por and lead.status_atualizado_em %}
-                                    <br><strong>Atualizado por:</strong>
-                                    {% if lead.status_atualizado_por == loja.usuario %}
-                                        {{ lead.status_atualizado_por.get_full_name|default:lead.status_atualizado_por.username }} (dono/lojista)
-                                    {% else %}
-                                        {% if lead.status_atualizado_por.vendedor_perfil %}
-                                            {{ lead.status_atualizado_por.vendedor_perfil.nome }}
+                        <article class="lead-card">
+                            <div class="lead-card__head">
+                                <div>
+                                    <strong>
+                                        {% if lead.produto %}
+                                            {{ lead.produto.nome }}
                                         {% else %}
-                                            {{ lead.status_atualizado_por.get_full_name|default:lead.status_atualizado_por.username }}
+                                            Pedido pela sacolinha
                                         {% endif %}
-                                    {% endif %}
-                                    <br><strong>Em:</strong> {{ lead.status_atualizado_em|date:"d/m/Y H:i" }}
+                                    </strong>
+                                    <span>{{ lead.get_origem_display }} - {{ lead.criado_em|date:"d/m/Y H:i" }}</span>
+                                </div>
+                                {% if lead.status == "concluido" %}
+                                    <span class="lead-status-badge lead-status-badge--done">Concluído</span>
+                                {% else %}
+                                    <span class="lead-status-badge lead-status-badge--pending">Pendente</span>
                                 {% endif %}
-                            </p>
-                            <form class="lead-status-form" method="post">
+                            </div>
+
+                            <div class="lead-card__grid">
+                                <section class="lead-info-box">
+                                    <span class="lead-info-box__label">Resumo do pedido</span>
+                                    <strong>
+                                        {% if lead.produto %}
+                                            {{ lead.produto.nome }}
+                                        {% else %}
+                                            Pedido pela sacolinha
+                                        {% endif %}
+                                    </strong>
+                                    <p>
+                                        {% if lead.tamanho %}Tamanho: {{ lead.tamanho }}{% endif %}
+                                        {% if lead.cor %}{% if lead.tamanho %} - {% endif %}Cor: {{ lead.cor }}{% endif %}
+                                        {% if not lead.tamanho and not lead.cor %}{{ lead.mensagem|truncatechars:120 }}{% endif %}
+                                    </p>
+                                </section>
+
+                                <section class="lead-info-box">
+                                    <span class="lead-info-box__label">Cliente e contato</span>
+                                    <strong>{% if lead.cliente_nome %}{{ lead.cliente_nome }}{% else %}Cliente não informado{% endif %}</strong>
+                                    <p>
+                                        {% if lead.cliente_telefone %}WhatsApp: {{ lead.cliente_telefone }}{% endif %}
+                                        {% if lead.vendedor %}<br>Vendedor: {{ lead.vendedor.nome }}{% endif %}
+                                    </p>
+                                </section>
+
+                                <section class="lead-info-box lead-info-box--wide">
+                                    <span class="lead-info-box__label">Entrega / recebimento</span>
+                                    {% if lead.tipo_entrega %}
+                                        {% if lead.tipo_entrega == 'entrega' %}
+                                            <span class="delivery-badge delivery-badge-ship">Entrega</span>
+                                        {% else %}
+                                            <span class="delivery-badge delivery-badge-pickup">Retirada</span>
+                                        {% endif %}
+                                        {% if lead.endereco_completo %}
+                                            <p class="lead-address">
+                                                <strong>Endereço:</strong> {{ lead.endereco_completo }}
+                                                <button type="button" class="btn-copy-address" data-address="{{ lead.endereco_completo }}" title="Copiar endereço">
+                                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="pointer-events: none;"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" style="pointer-events: none;"></path></svg>
+                                                </button>
+                                            </p>
+                                        {% endif %}
+                                    {% else %}
+                                        <p>Recebimento não informado.</p>
+                                    {% endif %}
+                                </section>
+
+                                <section class="lead-info-box lead-info-box--wide lead-audit">
+                                    <span class="lead-info-box__label">Status e auditoria</span>
+                                    {% if lead.observacao %}<p><strong>Obs. interna:</strong> {{ lead.observacao|truncatechars:100 }}</p>{% endif %}
+                                    {% if lead.status_atualizado_por and lead.status_atualizado_em %}
+                                        <p>
+                                            Atualizado por:
+                                            {% if lead.status_atualizado_por == loja.usuario %}
+                                                {{ lead.status_atualizado_por.get_full_name|default:lead.status_atualizado_por.username }} (dono/lojista)
+                                            {% else %}
+                                                {% if lead.status_atualizado_por.vendedor_perfil %}
+                                                    {{ lead.status_atualizado_por.vendedor_perfil.nome }}
+                                                {% else %}
+                                                    {{ lead.status_atualizado_por.get_full_name|default:lead.status_atualizado_por.username }}
+                                                {% endif %}
+                                            {% endif %}
+                                            <br>Em: {{ lead.status_atualizado_em|date:"d/m/Y H:i" }}
+                                        </p>
+                                    {% else %}
+                                        <p>Sem atualização registrada.</p>
+                                    {% endif %}
+                                </section>
+                            </div>
+
+                            <form class="lead-status-form lead-status-form--compact" method="post">
                                 {% csrf_token %}
                                 <input type="hidden" name="acao" value="atualizar_lead_status">
                                 <input type="hidden" name="lead_id" value="{{ lead.id }}">
@@ -136,7 +166,7 @@
                                     {% endfor %}
                                 </select>
                                 <input type="text" name="observacao" value="{{ lead.observacao }}" placeholder="Observação interna">
-                                <button type="submit">Atualizar</button>
+                                <button type="submit">Atualizar status</button>
                             </form>
                         </article>
                     {% empty %}

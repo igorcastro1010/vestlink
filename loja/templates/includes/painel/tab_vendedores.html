@@ -1,66 +1,117 @@
 <div class="tab-pane" id="tab-vendedores" data-tab-content="vendedores">
-            <section class="panel-section sales-panel" id="vendedores">
-                <div class="section-heading">
+            <section class="panel-section sales-panel sellers-panel" id="vendedores">
+                <div class="section-heading sellers-panel__heading">
                     <div>
                         <p class="eyebrow">Painel de vendas</p>
                         <h2>Vendedores e links de referência</h2>
-                        <p>Cadastre cada vendedor e copie o link individual para separar os leads no mesmo catálogo.</p>
+                        <p>Cadastre vendedores, gere links individuais e acompanhe os leads por origem.</p>
                     </div>
-                    <span>{{ total_vendedores }} vendedor(es)</span>
+                    <div class="seller-summary-badge">
+                        <span>{{ total_vendedores }}</span>
+                        <small>vendedor(es)</small>
+                    </div>
                 </div>
 
-                <form class="seller-form" method="post">
+                <div class="seller-overview">
+                    <article>
+                        <span>Links individuais</span>
+                        <strong>{{ total_vendedores }}</strong>
+                    </article>
+                    <article>
+                        <span>Leads rastreados</span>
+                        <strong>{{ vendedores|length }}</strong>
+                    </article>
+                </div>
+
+                <form class="seller-form seller-form--refined" method="post">
                     {% csrf_token %}
                     <input type="hidden" name="acao" value="criar_vendedor">
-                    <div class="seller-form-row">
-                        <div>
-                            {{ vendedor_form.nome.label_tag }}
-                            {{ vendedor_form.nome }}
-                            {{ vendedor_form.nome.errors }}
+
+                    <div class="seller-form-block">
+                        <div class="seller-form-block__title">
+                            <span>1</span>
+                            <strong>Dados do vendedor</strong>
                         </div>
-                        <div style="position: relative;">
+                        <div class="seller-form-grid">
+                            <div>
+                                {{ vendedor_form.nome.label_tag }}
+                                {{ vendedor_form.nome }}
+                                {{ vendedor_form.nome.errors }}
+                            </div>
+                            <div>
+                                {{ vendedor_form.telefone.label_tag }}
+                                {{ vendedor_form.telefone }}
+                                {{ vendedor_form.telefone.errors }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="seller-form-block">
+                        <div class="seller-form-block__title">
+                            <span>2</span>
+                            <strong>Link de referência</strong>
+                        </div>
+                        <div>
                             {{ vendedor_form.codigo.label_tag }}
                             {{ vendedor_form.codigo }}
                             {{ vendedor_form.codigo.errors }}
                             <small class="helper-text">Opcional. Se deixar vazio, usamos o nome.</small>
                         </div>
-                        <div>
-                            {{ vendedor_form.telefone.label_tag }}
-                            {{ vendedor_form.telefone }}
-                            {{ vendedor_form.telefone.errors }}
+                    </div>
+
+                    <div class="seller-form-block">
+                        <div class="seller-form-block__title">
+                            <span>3</span>
+                            <strong>Acesso/login</strong>
+                        </div>
+                        <div class="seller-form-grid">
+                            <div>
+                                {{ vendedor_form.username.label_tag }}
+                                {{ vendedor_form.username }}
+                                {{ vendedor_form.username.errors }}
+                            </div>
+                            <div>
+                                {{ vendedor_form.password.label_tag }}
+                                {{ vendedor_form.password }}
+                                {{ vendedor_form.password.errors }}
+                            </div>
                         </div>
                     </div>
-                    <div class="seller-form-row seller-access-row">
-                        <div>
-                            {{ vendedor_form.username.label_tag }}
-                            {{ vendedor_form.username }}
-                            {{ vendedor_form.username.errors }}
-                        </div>
-                        <div>
-                            {{ vendedor_form.password.label_tag }}
-                            {{ vendedor_form.password }}
-                            {{ vendedor_form.password.errors }}
-                        </div>
-                    </div>
-                    <div class="seller-form-actions">
+
+                    <div class="seller-form-actions seller-form-actions--refined">
                         <label class="seller-active-field">
                             {{ vendedor_form.ativo }}
-                            {{ vendedor_form.ativo.label }}
+                            <span>
+                                <strong>{{ vendedor_form.ativo.label }}</strong>
+                                <small>Permite usar o link e receber novos leads.</small>
+                            </span>
                         </label>
                         <button type="submit">Adicionar vendedor</button>
                     </div>
                 </form>
 
-                <div class="seller-list">
+                <div class="seller-list seller-list--refined">
                     {% for vendedor in vendedores %}
                         {% with vendedor_link=catalogo_url|add:"?vendedor="|add:vendedor.codigo %}
-                        <article>
-                            <div>
-                                <strong>{{ vendedor.nome }}</strong>
-                                <span>{% if vendedor.ativo %}Ativo{% else %}Inativo{% endif %} - {{ vendedor.total_leads }} lead(s) - {{ vendedor.leads_concluidos }} concluído(s)</span>
-                                {% if vendedor.telefone %}<small>WhatsApp: {{ vendedor.telefone }}</small>{% endif %}
+                        <article class="seller-card">
+                            <div class="seller-card__identity">
+                                <div class="seller-avatar">{{ vendedor.nome|first|upper }}</div>
+                                <div>
+                                    <strong>{{ vendedor.nome }}</strong>
+                                    <span class="seller-status {% if vendedor.ativo %}seller-status--active{% else %}seller-status--inactive{% endif %}">
+                                        {% if vendedor.ativo %}Ativo{% else %}Inativo{% endif %}
+                                    </span>
+                                </div>
                             </div>
+
+                            <div class="seller-card__meta">
+                                <span>{{ vendedor.total_leads }} lead(s)</span>
+                                <span>{{ vendedor.leads_concluidos }} concluído(s)</span>
+                                {% if vendedor.telefone %}<span>WhatsApp: {{ vendedor.telefone }}</span>{% endif %}
+                            </div>
+
                             <code>{{ vendedor_link }}</code>
+
                             <div class="seller-actions">
                                 <button class="copy-link-button" type="button" data-copy-url="{{ vendedor_link }}">Copiar link</button>
                                 <form method="post">
@@ -79,9 +130,9 @@
                         </article>
                         {% endwith %}
                     {% empty %}
-                        <div class="empty-dashboard">
+                        <div class="empty-dashboard sellers-empty">
                             <strong>Nenhum vendedor cadastrado.</strong>
-                            <p>Cadastre vendedores para separar os leads recebidos pelo mesmo catálogo.</p>
+                            <p>Adicione vendedores para separar leads por link e acompanhar cada atendimento.</p>
                         </div>
                     {% endfor %}
                 </div>

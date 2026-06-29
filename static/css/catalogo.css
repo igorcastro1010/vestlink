@@ -16301,4 +16301,1418 @@ body.storefront .product__body {
     .merchant-dashboard #tab-dashboard .dashboard-report-grid .panel-section {
         min-height: 0;
     }
+
+}
+
+/* 33. Products tab dark premium polish */
+.merchant-dashboard #tab-produtos {
+    --products-surface: rgba(24, 18, 34, 0.96);
+    --products-surface-soft: rgba(34, 26, 49, 0.92);
+    --products-surface-elevated: rgba(43, 34, 62, 0.9);
+    --products-line: rgba(204, 189, 255, 0.16);
+    --products-line-strong: rgba(204, 189, 255, 0.28);
+    --products-text: #f8f5ff;
+    --products-muted: rgba(226, 219, 241, 0.72);
+    --products-subtle: rgba(226, 219, 241, 0.56);
+    --products-accent: #c7b5ff;
+    --products-accent-strong: #ffffff;
+    --products-success: #5ee0a8;
+    --products-danger: #ff8f8f;
+}
+
+.merchant-dashboard #tab-produtos .panel-section,
+.merchant-dashboard #tab-produtos .product-form-card,
+.merchant-dashboard #tab-produtos .product-list-card {
+    background:
+        linear-gradient(145deg, rgba(35, 27, 50, 0.96), rgba(19, 15, 28, 0.98)) !important;
+    border: 1px solid var(--products-line) !important;
+    box-shadow: 0 22px 60px rgba(0, 0, 0, 0.24) !important;
+}
+
+.merchant-dashboard #tab-produtos .management-grid,
+.merchant-dashboard #tab-produtos .dashboard-grid,
+.merchant-dashboard #tab-produtos .product-form-card,
+.merchant-dashboard #tab-produtos .product-list-card {
+    max-width: none !important;
+    width: 100% !important;
+}
+
+.merchant-dashboard #tab-produtos .section-heading {
+    align-items: center;
+    border-bottom: 1px solid var(--products-line);
+    gap: 12px;
+    margin-bottom: 16px !important;
+    padding-bottom: 14px;
+}
+
+.merchant-dashboard #tab-produtos .section-heading h2,
+.merchant-dashboard #tab-produtos .form-block h3,
+.merchant-dashboard #tab-produtos .dashboard-product-info strong,
+.merchant-dashboard #tab-produtos .category-list strong,
+.merchant-dashboard #tab-produtos .product-preview strong {
+    color: var(--products-text) !important;
+}
+
+.merchant-dashboard #tab-produtos .section-heading .eyebrow,
+.merchant-dashboard #tab-produtos .section-heading > span,
+.merchant-dashboard #tab-produtos .panel-form label,
+.merchant-dashboard #tab-produtos .dashboard-product-info small,
+.merchant-dashboard #tab-produtos .category-list span,
+.merchant-dashboard #tab-produtos .product-preview p:not(.eyebrow),
+.merchant-dashboard #tab-produtos .product-form-submit span,
+.merchant-dashboard #tab-produtos .helptext,
+.merchant-dashboard #tab-produtos [id$="_helptext"] {
+    color: var(--products-muted) !important;
+}
+
+.merchant-dashboard #tab-produtos .panel-form,
+.merchant-dashboard #tab-produtos .compact-form {
+    gap: 12px !important;
+}
+
+.merchant-dashboard #tab-produtos .compact-form {
+    align-items: end;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.merchant-dashboard #tab-produtos .compact-form p {
+    margin: 0 !important;
+}
+
+.merchant-dashboard #tab-produtos .product-form-intro,
+.merchant-dashboard #tab-produtos .form-block,
+.merchant-dashboard #tab-produtos .stock-builder,
+.merchant-dashboard #tab-produtos .product-preview,
+.merchant-dashboard #tab-produtos .dashboard-products article,
+.merchant-dashboard #tab-produtos .category-list article {
+    background: var(--products-surface-soft) !important;
+    border: 1px solid var(--products-line) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.merchant-dashboard #tab-produtos .product-form-intro {
+    align-items: center;
+    display: grid;
+    gap: 14px;
+    grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
+    margin-bottom: 16px;
+    padding: 16px !important;
+}
+
+.merchant-dashboard #tab-produtos .product-form-intro strong {
+    color: var(--products-text) !important;
+}
+
+.merchant-dashboard #tab-produtos .product-form-intro p {
+    color: var(--products-muted) !important;
+    margin-top: 4px;
+}
+
+.merchant-dashboard #tab-produtos .product-form-steps {
+    display: grid;
+    gap: 8px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.merchant-dashboard #tab-produtos .product-form-steps span {
+    background: rgba(199, 181, 255, 0.12) !important;
+    border: 1px solid rgba(199, 181, 255, 0.22) !important;
+    color: var(--products-accent-strong) !important;
+    min-height: 34px;
+    padding: 8px 10px !important;
+    text-align: center;
+}
+
+.merchant-dashboard #tab-produtos .product-form-card .product-form-layout {
+    align-items: start;
+    gap: 16px !important;
+}
+
+.merchant-dashboard #tab-produtos .product-form-card .panel-form {
+    display: grid;
+    gap: 14px !important;
+}
+
+.merchant-dashboard #tab-produtos .product-form-card .form-block {
+    padding: 16px !important;
+}
+
+.merchant-dashboard #tab-produtos .product-form-card .form-block--variants {
+    padding: 14px !important;
+}
+
+.merchant-dashboard #tab-produtos .product-form-card .form-block h3 {
+    font-size: 1rem !important;
+    letter-spacing: 0;
+    margin-bottom: 12px !important;
+}
+
+.merchant-dashboard #tab-produtos .variant-field-grid {
+    align-items: start !important;
+    gap: 10px 12px !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+}
+
+.merchant-dashboard #tab-produtos .variant-field-grid p,
+.merchant-dashboard #tab-produtos .variant-stock-field,
+.merchant-dashboard #tab-produtos .product-form-card .form-block > p,
+.merchant-dashboard #tab-produtos .product-form-card .form-block > div {
+    margin-bottom: 0 !important;
+}
+
+.merchant-dashboard #tab-produtos .variant-field-grid p {
+    display: flex !important;
+    flex-direction: column;
+    gap: 7px !important;
+}
+
+.merchant-dashboard #tab-produtos .variant-field-grid textarea {
+    min-height: 92px !important;
+}
+
+.merchant-dashboard #tab-produtos .variant-field-grid .helptext {
+    line-height: 1.25 !important;
+    margin-top: 0 !important;
+}
+
+.merchant-dashboard #tab-produtos .variant-field-grid [class*="builder"],
+.merchant-dashboard #tab-produtos .variant-field-grid [class*="picker"],
+.merchant-dashboard #tab-produtos .variant-field-grid [data-option-builder] {
+    padding: 12px !important;
+}
+
+.merchant-dashboard #tab-produtos .panel-form input,
+.merchant-dashboard #tab-produtos .panel-form select,
+.merchant-dashboard #tab-produtos .panel-form textarea,
+.merchant-dashboard #tab-produtos .panel-filters input,
+.merchant-dashboard #tab-produtos .panel-filters select {
+    background: rgba(12, 10, 18, 0.72) !important;
+    border: 1px solid var(--products-line-strong) !important;
+    box-shadow: none !important;
+    color: var(--products-text) !important;
+}
+
+.merchant-dashboard #tab-produtos .panel-form input::placeholder,
+.merchant-dashboard #tab-produtos .panel-form textarea::placeholder,
+.merchant-dashboard #tab-produtos .panel-filters input::placeholder {
+    color: var(--products-subtle) !important;
+}
+
+.merchant-dashboard #tab-produtos .panel-form input:focus,
+.merchant-dashboard #tab-produtos .panel-form select:focus,
+.merchant-dashboard #tab-produtos .panel-form textarea:focus,
+.merchant-dashboard #tab-produtos .panel-filters input:focus,
+.merchant-dashboard #tab-produtos .panel-filters select:focus {
+    border-color: rgba(199, 181, 255, 0.68) !important;
+    box-shadow: 0 0 0 4px rgba(199, 181, 255, 0.12) !important;
+}
+
+.merchant-dashboard #tab-produtos .panel-form input[type="file"] {
+    background: rgba(12, 10, 18, 0.72) !important;
+    color: var(--products-muted) !important;
+}
+
+.merchant-dashboard #tab-produtos .stock-builder {
+    align-items: center;
+    gap: 10px;
+    grid-template-columns: minmax(0, 1fr) auto;
+    margin-top: 10px !important;
+    padding: 12px 14px !important;
+}
+
+.merchant-dashboard #tab-produtos .stock-builder strong {
+    color: var(--products-text) !important;
+}
+
+.merchant-dashboard #tab-produtos .stock-builder small,
+.merchant-dashboard #tab-produtos .stock-builder__grid p {
+    color: var(--products-muted) !important;
+}
+
+.merchant-dashboard #tab-produtos .stock-builder > button,
+.merchant-dashboard #tab-produtos .panel-filters button,
+.merchant-dashboard #tab-produtos .compact-form button {
+    background: rgba(199, 181, 255, 0.14) !important;
+    border: 1px solid rgba(199, 181, 255, 0.32) !important;
+    color: #ffffff !important;
+}
+
+.merchant-dashboard #tab-produtos .stock-row {
+    background: rgba(12, 10, 18, 0.66) !important;
+    border-color: var(--products-line) !important;
+}
+
+.merchant-dashboard #tab-produtos .stock-row span {
+    color: var(--products-text) !important;
+}
+
+.merchant-dashboard #tab-produtos .variant-stock-field {
+    display: flex !important;
+    flex-direction: column;
+    gap: 7px !important;
+    margin-top: 10px !important;
+}
+
+.merchant-dashboard #tab-produtos .variant-stock-field textarea {
+    min-height: 84px !important;
+}
+
+.merchant-dashboard #tab-produtos .status-toggle {
+    background: rgba(12, 10, 18, 0.66) !important;
+    border: 1px solid var(--products-line) !important;
+    min-height: 70px;
+}
+
+.merchant-dashboard #tab-produtos .status-toggle strong {
+    color: var(--products-text) !important;
+}
+
+.merchant-dashboard #tab-produtos .status-toggle small {
+    color: var(--products-muted) !important;
+}
+
+.merchant-dashboard #tab-produtos .status-toggle input[type="checkbox"],
+.merchant-dashboard #tab-produtos .form-block--status input[type="checkbox"] {
+    accent-color: var(--products-accent);
+}
+
+.merchant-dashboard #tab-produtos .product-form-submit {
+    align-items: center;
+    background: linear-gradient(135deg, rgba(199, 181, 255, 0.14), rgba(94, 224, 168, 0.08)) !important;
+    border: 1px solid var(--products-line) !important;
+    gap: 12px;
+    margin-top: 14px !important;
+    padding: 14px !important;
+}
+
+.merchant-dashboard #tab-produtos .product-form-submit button {
+    background: #ffffff !important;
+    border-color: #ffffff !important;
+    box-shadow: 0 14px 34px rgba(199, 181, 255, 0.2) !important;
+    color: #171022 !important;
+}
+
+.merchant-dashboard #tab-produtos .product-preview {
+    padding: 16px !important;
+}
+
+.merchant-dashboard #tab-produtos .product-preview__image {
+    background:
+        linear-gradient(135deg, rgba(199, 181, 255, 0.18), rgba(94, 224, 168, 0.12)),
+        rgba(12, 10, 18, 0.74) !important;
+    border: 1px dashed var(--products-line-strong) !important;
+    color: var(--products-muted) !important;
+}
+
+.merchant-dashboard #tab-produtos .product-preview > span,
+.merchant-dashboard #tab-produtos .dashboard-product-info span {
+    color: var(--products-success) !important;
+}
+
+.merchant-dashboard #tab-produtos .category-list {
+    gap: 10px !important;
+}
+
+.merchant-dashboard #tab-produtos .category-list article {
+    align-items: center;
+    border-radius: 14px !important;
+    display: grid;
+    gap: 10px;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    padding: 12px 14px !important;
+}
+
+.merchant-dashboard #tab-produtos .category-list a,
+.merchant-dashboard #tab-produtos .panel-product-actions a,
+.merchant-dashboard #tab-produtos .panel-product-actions button {
+    align-items: center;
+    background: rgba(255, 255, 255, 0.08) !important;
+    border: 1px solid rgba(255, 255, 255, 0.14) !important;
+    border-radius: 999px !important;
+    color: #ffffff !important;
+    display: inline-flex;
+    font-size: 0.86rem !important;
+    font-weight: 800 !important;
+    justify-content: center;
+    min-height: 38px;
+    padding: 9px 13px !important;
+    text-decoration: none !important;
+}
+
+.merchant-dashboard #tab-produtos .category-list a:hover,
+.merchant-dashboard #tab-produtos .panel-product-actions a:hover,
+.merchant-dashboard #tab-produtos .panel-product-actions button:hover {
+    background: rgba(199, 181, 255, 0.18) !important;
+    border-color: rgba(199, 181, 255, 0.38) !important;
+}
+
+.merchant-dashboard #tab-produtos .category-list .danger-link,
+.merchant-dashboard #tab-produtos .panel-product-actions .danger {
+    background: rgba(255, 143, 143, 0.1) !important;
+    border-color: rgba(255, 143, 143, 0.25) !important;
+    color: var(--products-danger) !important;
+}
+
+.merchant-dashboard #tab-produtos .panel-filters {
+    background: rgba(12, 10, 18, 0.45);
+    border: 1px solid var(--products-line);
+    border-radius: 18px;
+    gap: 10px !important;
+    margin-bottom: 14px;
+    padding: 12px;
+}
+
+.merchant-dashboard #tab-produtos .dashboard-products {
+    gap: 12px !important;
+}
+
+.merchant-dashboard #tab-produtos .dashboard-products article {
+    align-items: center;
+    border-radius: 18px !important;
+    gap: 14px !important;
+    grid-template-columns: 82px minmax(0, 1fr);
+    padding: 14px !important;
+}
+
+.merchant-dashboard #tab-produtos .dashboard-products img {
+    aspect-ratio: 1;
+    border: 1px solid var(--products-line) !important;
+    border-radius: 16px !important;
+    height: 82px !important;
+    object-fit: cover;
+    width: 82px !important;
+}
+
+.merchant-dashboard #tab-produtos .dashboard-product-info {
+    gap: 9px !important;
+}
+
+.merchant-dashboard #tab-produtos .dashboard-product-info > div:first-child {
+    align-items: baseline;
+    gap: 8px 14px;
+}
+
+.merchant-dashboard #tab-produtos .product-status-row {
+    gap: 6px !important;
+}
+
+.merchant-dashboard #tab-produtos .status-pill {
+    background: rgba(199, 181, 255, 0.12) !important;
+    border: 1px solid rgba(199, 181, 255, 0.22) !important;
+    color: var(--products-accent) !important;
+}
+
+.merchant-dashboard #tab-produtos .status-pill.active {
+    background: rgba(94, 224, 168, 0.12) !important;
+    border-color: rgba(94, 224, 168, 0.22) !important;
+    color: var(--products-success) !important;
+}
+
+.merchant-dashboard #tab-produtos .status-pill.warning {
+    background: rgba(251, 191, 36, 0.12) !important;
+    border-color: rgba(251, 191, 36, 0.22) !important;
+    color: #fcd77c !important;
+}
+
+.merchant-dashboard #tab-produtos .status-pill.sold {
+    background: rgba(255, 143, 143, 0.1) !important;
+    border-color: rgba(255, 143, 143, 0.24) !important;
+    color: var(--products-danger) !important;
+}
+
+.merchant-dashboard #tab-produtos .panel-product-actions {
+    display: flex !important;
+    flex-wrap: wrap;
+    gap: 8px !important;
+    justify-content: flex-start;
+}
+
+.merchant-dashboard #tab-produtos .panel-product-actions .publish-button {
+    background: rgba(94, 224, 168, 0.14) !important;
+    border-color: rgba(94, 224, 168, 0.28) !important;
+    color: #d9ffef !important;
+}
+
+@media (max-width: 900px) {
+    .merchant-dashboard #tab-produtos .product-form-intro,
+    .merchant-dashboard #tab-produtos .product-form-card .product-form-layout,
+    .merchant-dashboard #tab-produtos .variant-field-grid,
+    .merchant-dashboard #tab-produtos .compact-form {
+        grid-template-columns: minmax(0, 1fr) !important;
+    }
+
+    .merchant-dashboard #tab-produtos .product-form-steps {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 640px) {
+    .merchant-dashboard #tab-produtos .section-heading,
+    .merchant-dashboard #tab-produtos .category-list article,
+    .merchant-dashboard #tab-produtos .dashboard-product-info > div:first-child {
+        align-items: flex-start;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .merchant-dashboard #tab-produtos .dashboard-products article {
+        align-items: flex-start;
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .merchant-dashboard #tab-produtos .dashboard-products img {
+        height: 140px !important;
+        width: 100% !important;
+    }
+
+    .merchant-dashboard #tab-produtos .panel-product-actions a,
+    .merchant-dashboard #tab-produtos .panel-product-actions button,
+    .merchant-dashboard #tab-produtos .compact-form button,
+    .merchant-dashboard #tab-produtos .panel-filters button,
+    .merchant-dashboard #tab-produtos .stock-builder > button,
+    .merchant-dashboard #tab-produtos .product-form-submit button {
+        width: 100% !important;
+    }
+}
+
+/* 34. Required field markers */
+form label:has(+ input:required)::after,
+form label:has(+ select:required)::after,
+form label:has(+ textarea:required)::after,
+form p:has(> input:required) > label::after,
+form p:has(> select:required) > label::after,
+form p:has(> textarea:required) > label::after,
+form div:has(> input:required) > label::after,
+form div:has(> select:required) > label::after,
+form div:has(> textarea:required) > label::after,
+form label:has(input:required)::after,
+form label:has(select:required)::after,
+form label:has(textarea:required)::after {
+    color: #ff8f8f;
+    content: " *";
+    font-weight: 900;
+}
+
+form .status-toggle:has(input:required)::after,
+form .option-label:has(input:required)::after {
+    margin-left: 2px;
+}
+
+.merchant-dashboard #tab-produtos label[for="id_nova_categoria"]::after {
+    content: "" !important;
+}
+
+.merchant-dashboard #tab-produtos .product-form-card .form-block--basic > div:has(#id_nova_categoria) {
+    background: rgba(12, 10, 18, 0.66) !important;
+    border-color: var(--products-line) !important;
+}
+
+.merchant-dashboard #tab-produtos #id_nova_categoria {
+    background: rgba(12, 10, 18, 0.72) !important;
+    border-color: var(--products-line-strong) !important;
+    color: var(--products-text) !important;
+}
+
+.merchant-dashboard #tab-produtos #id_nova_categoria::placeholder {
+    color: var(--products-subtle) !important;
+}
+
+.merchant-dashboard #tab-produtos #id_nova_categoria_helptext {
+    background: transparent !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    color: var(--products-muted) !important;
+    display: block !important;
+    margin-top: 6px !important;
+    min-height: 0 !important;
+    padding: 0 !important;
+}
+
+/* 35. Leads tab compact command layout */
+.merchant-dashboard #tab-leads {
+    --leads-surface: rgba(25, 19, 35, 0.96);
+    --leads-surface-soft: rgba(36, 28, 50, 0.9);
+    --leads-line: rgba(204, 189, 255, 0.16);
+    --leads-line-strong: rgba(204, 189, 255, 0.28);
+    --leads-text: #f8f5ff;
+    --leads-muted: rgba(226, 219, 241, 0.72);
+    --leads-subtle: rgba(226, 219, 241, 0.56);
+    --leads-accent: #c7b5ff;
+    --leads-success: #5ee0a8;
+    --leads-warning: #fcd77c;
+}
+
+.merchant-dashboard #tab-leads .leads-panel {
+    background: linear-gradient(145deg, rgba(35, 27, 50, 0.96), rgba(17, 13, 26, 0.98)) !important;
+    border: 1px solid var(--leads-line) !important;
+    box-shadow: 0 22px 60px rgba(0, 0, 0, 0.24) !important;
+}
+
+.merchant-dashboard #tab-leads .leads-panel__heading {
+    align-items: center !important;
+    border-bottom: 1px solid var(--leads-line);
+    display: flex !important;
+    gap: 14px !important;
+    justify-content: space-between !important;
+    margin-bottom: 14px !important;
+    padding-bottom: 14px;
+}
+
+.merchant-dashboard #tab-leads .lead-toolbar {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+.merchant-dashboard #tab-leads .lead-toolbar__button,
+.merchant-dashboard #tab-leads .lead-toolbar__count {
+    align-items: center;
+    background: rgba(255, 255, 255, 0.08) !important;
+    border: 1px solid rgba(255, 255, 255, 0.14) !important;
+    border-radius: 999px;
+    color: #ffffff !important;
+    display: inline-flex;
+    font-size: 0.86rem;
+    font-weight: 850;
+    gap: 6px;
+    min-height: 38px;
+    padding: 9px 13px;
+    text-decoration: none;
+}
+
+.merchant-dashboard #tab-leads .lead-toolbar__button--primary {
+    background: rgba(199, 181, 255, 0.18) !important;
+    border-color: rgba(199, 181, 255, 0.34) !important;
+}
+
+.merchant-dashboard #tab-leads .lead-toolbar__count {
+    color: var(--leads-accent) !important;
+}
+
+.merchant-dashboard #tab-leads .leads-filters {
+    background: rgba(12, 10, 18, 0.45) !important;
+    border: 1px solid var(--leads-line) !important;
+    border-radius: 18px !important;
+    display: grid !important;
+    gap: 10px !important;
+    grid-template-columns: minmax(220px, 1fr) minmax(160px, 0.35fr) minmax(150px, 0.3fr) auto;
+    margin-bottom: 14px !important;
+    padding: 12px !important;
+}
+
+.merchant-dashboard #tab-leads .leads-filters input,
+.merchant-dashboard #tab-leads .leads-filters select,
+.merchant-dashboard #tab-leads .lead-status-form input,
+.merchant-dashboard #tab-leads .lead-status-form select {
+    background: rgba(12, 10, 18, 0.72) !important;
+    border: 1px solid var(--leads-line-strong) !important;
+    color: var(--leads-text) !important;
+    min-height: 42px !important;
+}
+
+.merchant-dashboard #tab-leads .leads-filters button,
+.merchant-dashboard #tab-leads .lead-status-form button {
+    background: #ffffff !important;
+    border: 1px solid #ffffff !important;
+    border-radius: 999px !important;
+    color: #171022 !important;
+    font-weight: 900 !important;
+    min-height: 40px !important;
+    padding-inline: 14px !important;
+}
+
+.merchant-dashboard #tab-leads .lead-summary--compact {
+    gap: 10px !important;
+    grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+    margin-bottom: 14px;
+}
+
+.merchant-dashboard #tab-leads .lead-summary--compact article {
+    background: rgba(36, 28, 50, 0.74) !important;
+    border: 1px solid var(--leads-line) !important;
+    border-radius: 16px !important;
+    min-height: 72px !important;
+    padding: 12px !important;
+}
+
+.merchant-dashboard #tab-leads .lead-summary--compact span {
+    color: var(--leads-subtle) !important;
+    font-size: 0.72rem !important;
+}
+
+.merchant-dashboard #tab-leads .lead-summary--compact strong {
+    color: var(--leads-text) !important;
+    font-size: clamp(1.2rem, 2vw, 1.55rem) !important;
+}
+
+.merchant-dashboard #tab-leads .lead-list--refined {
+    display: grid;
+    gap: 12px;
+}
+
+.merchant-dashboard #tab-leads .lead-card {
+    background: rgba(25, 19, 35, 0.9) !important;
+    border: 1px solid var(--leads-line) !important;
+    border-radius: 18px !important;
+    display: grid;
+    gap: 12px;
+    grid-template-columns: minmax(0, 1fr) !important;
+    padding: 14px !important;
+}
+
+.merchant-dashboard #tab-leads .lead-card__head {
+    align-items: flex-start;
+    border-bottom: 1px solid var(--leads-line);
+    display: flex;
+    gap: 12px;
+    justify-content: space-between;
+    padding-bottom: 10px;
+}
+
+.merchant-dashboard #tab-leads .lead-card__head strong,
+.merchant-dashboard #tab-leads .lead-info-box strong {
+    color: var(--leads-text) !important;
+}
+
+.merchant-dashboard #tab-leads .lead-card__head span,
+.merchant-dashboard #tab-leads .lead-info-box p {
+    color: var(--leads-muted) !important;
+}
+
+.merchant-dashboard #tab-leads .lead-card__grid {
+    display: grid;
+    gap: 8px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.merchant-dashboard #tab-leads .lead-info-box {
+    background: rgba(12, 10, 18, 0.48);
+    border: 1px solid var(--leads-line);
+    border-radius: 12px;
+    display: grid;
+    gap: 4px;
+    min-height: 0;
+    padding: 10px;
+}
+
+.merchant-dashboard #tab-leads .lead-info-box--wide {
+    grid-column: auto;
+}
+
+.merchant-dashboard #tab-leads .lead-info-box__label {
+    color: var(--leads-subtle) !important;
+    font-size: 0.68rem;
+    font-weight: 900;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.merchant-dashboard #tab-leads .lead-audit {
+    background: rgba(199, 181, 255, 0.06);
+}
+
+.merchant-dashboard #tab-leads .lead-status-badge {
+    border-radius: 999px;
+    flex: 0 0 auto;
+    font-size: 0.78rem;
+    font-weight: 900;
+    padding: 7px 11px;
+}
+
+.merchant-dashboard #tab-leads .lead-status-badge--done {
+    background: rgba(94, 224, 168, 0.14);
+    border: 1px solid rgba(94, 224, 168, 0.26);
+    color: var(--leads-success);
+}
+
+.merchant-dashboard #tab-leads .lead-status-badge--pending {
+    background: rgba(252, 215, 124, 0.12);
+    border: 1px solid rgba(252, 215, 124, 0.24);
+    color: var(--leads-warning);
+}
+
+.merchant-dashboard #tab-leads .lead-address {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.merchant-dashboard #tab-leads .btn-copy-address {
+    align-items: center;
+    background: rgba(255, 255, 255, 0.08) !important;
+    border: 1px solid rgba(255, 255, 255, 0.14) !important;
+    border-radius: 999px !important;
+    color: var(--leads-muted) !important;
+    cursor: pointer;
+    display: inline-flex;
+    height: 30px;
+    justify-content: center;
+    padding: 0 !important;
+    width: 30px;
+}
+
+.merchant-dashboard #tab-leads .lead-status-form--compact {
+    align-items: center;
+    background: rgba(12, 10, 18, 0.5) !important;
+    border: 1px solid var(--leads-line) !important;
+    display: grid !important;
+    gap: 10px !important;
+    grid-template-columns: minmax(150px, 0.28fr) minmax(220px, 1fr) auto;
+    padding: 8px !important;
+}
+
+@media (max-width: 1100px) {
+    .merchant-dashboard #tab-leads .lead-summary--compact {
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    }
+
+    .merchant-dashboard #tab-leads .leads-filters {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .merchant-dashboard #tab-leads .lead-card__grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 720px) {
+    .merchant-dashboard #tab-leads .leads-panel__heading,
+    .merchant-dashboard #tab-leads .lead-card__head {
+        align-items: stretch !important;
+        flex-direction: column;
+    }
+
+    .merchant-dashboard #tab-leads .lead-toolbar,
+    .merchant-dashboard #tab-leads .lead-toolbar__button,
+    .merchant-dashboard #tab-leads .lead-toolbar__count {
+        justify-content: center;
+        width: 100%;
+    }
+
+    .merchant-dashboard #tab-leads .leads-filters,
+    .merchant-dashboard #tab-leads .lead-card__grid,
+    .merchant-dashboard #tab-leads .lead-status-form--compact,
+    .merchant-dashboard #tab-leads .lead-summary--compact {
+        grid-template-columns: minmax(0, 1fr) !important;
+    }
+
+    .merchant-dashboard #tab-leads .lead-info-box--wide {
+        grid-column: auto;
+    }
+
+    .merchant-dashboard #tab-leads .lead-status-form--compact button {
+        width: 100%;
+    }
+}
+
+/* 36. Sellers tab premium dark layout */
+.merchant-dashboard #tab-vendedores {
+    --seller-surface: rgba(25, 19, 35, 0.96);
+    --seller-surface-soft: rgba(36, 28, 50, 0.9);
+    --seller-line: rgba(204, 189, 255, 0.16);
+    --seller-line-strong: rgba(204, 189, 255, 0.28);
+    --seller-text: #f8f5ff;
+    --seller-muted: rgba(226, 219, 241, 0.72);
+    --seller-subtle: rgba(226, 219, 241, 0.56);
+    --seller-accent: #c7b5ff;
+    --seller-success: #5ee0a8;
+    --seller-danger: #ff8f8f;
+}
+
+.merchant-dashboard #tab-vendedores .sellers-panel {
+    background: linear-gradient(145deg, rgba(35, 27, 50, 0.96), rgba(17, 13, 26, 0.98)) !important;
+    border: 1px solid var(--seller-line) !important;
+    box-shadow: 0 22px 60px rgba(0, 0, 0, 0.24) !important;
+}
+
+.merchant-dashboard #tab-vendedores .sellers-panel__heading {
+    align-items: center !important;
+    border-bottom: 1px solid var(--seller-line);
+    display: flex !important;
+    gap: 14px !important;
+    justify-content: space-between !important;
+    margin-bottom: 14px !important;
+    padding-bottom: 14px;
+}
+
+.merchant-dashboard #tab-vendedores .sellers-panel__heading h2,
+.merchant-dashboard #tab-vendedores .seller-form-block__title strong,
+.merchant-dashboard #tab-vendedores .seller-card strong,
+.merchant-dashboard #tab-vendedores .sellers-empty strong {
+    color: var(--seller-text) !important;
+}
+
+.merchant-dashboard #tab-vendedores .sellers-panel__heading p:not(.eyebrow),
+.merchant-dashboard #tab-vendedores .seller-card__meta,
+.merchant-dashboard #tab-vendedores .helper-text,
+.merchant-dashboard #tab-vendedores .seller-active-field small,
+.merchant-dashboard #tab-vendedores .sellers-empty p {
+    color: var(--seller-muted) !important;
+}
+
+.merchant-dashboard #tab-vendedores .seller-summary-badge {
+    align-items: center;
+    background: rgba(199, 181, 255, 0.12);
+    border: 1px solid rgba(199, 181, 255, 0.24);
+    border-radius: 16px;
+    display: grid;
+    justify-items: center;
+    min-width: 112px;
+    padding: 10px 14px;
+}
+
+.merchant-dashboard #tab-vendedores .seller-summary-badge span {
+    color: var(--seller-text);
+    font-size: 1.4rem;
+    font-weight: 950;
+    line-height: 1;
+}
+
+.merchant-dashboard #tab-vendedores .seller-summary-badge small {
+    color: var(--seller-muted);
+    font-weight: 800;
+}
+
+.merchant-dashboard #tab-vendedores .seller-overview {
+    display: grid;
+    gap: 10px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin-bottom: 14px;
+}
+
+.merchant-dashboard #tab-vendedores .seller-overview article,
+.merchant-dashboard #tab-vendedores .seller-form--refined,
+.merchant-dashboard #tab-vendedores .seller-form-block,
+.merchant-dashboard #tab-vendedores .seller-card,
+.merchant-dashboard #tab-vendedores .sellers-empty {
+    background: rgba(25, 19, 35, 0.9) !important;
+    border: 1px solid var(--seller-line) !important;
+    border-radius: 18px !important;
+}
+
+.merchant-dashboard #tab-vendedores .seller-overview article {
+    display: grid;
+    gap: 4px;
+    min-height: 74px;
+    padding: 14px;
+}
+
+.merchant-dashboard #tab-vendedores .seller-overview span {
+    color: var(--seller-subtle) !important;
+    font-size: 0.72rem;
+    font-weight: 900;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.merchant-dashboard #tab-vendedores .seller-overview strong {
+    color: var(--seller-text);
+    font-size: 1.55rem;
+    line-height: 1;
+}
+
+.merchant-dashboard #tab-vendedores .seller-form--refined {
+    display: grid;
+    gap: 12px !important;
+    padding: 14px !important;
+}
+
+.merchant-dashboard #tab-vendedores .seller-form-block {
+    display: grid;
+    gap: 10px;
+    padding: 14px;
+}
+
+.merchant-dashboard #tab-vendedores .seller-form-block__title {
+    align-items: center;
+    display: flex;
+    gap: 9px;
+}
+
+.merchant-dashboard #tab-vendedores .seller-form-block__title span {
+    align-items: center;
+    background: rgba(199, 181, 255, 0.16);
+    border: 1px solid rgba(199, 181, 255, 0.26);
+    border-radius: 999px;
+    color: #ffffff;
+    display: inline-flex;
+    font-size: 0.78rem;
+    font-weight: 950;
+    height: 28px;
+    justify-content: center;
+    width: 28px;
+}
+
+.merchant-dashboard #tab-vendedores .seller-form-grid {
+    display: grid;
+    gap: 12px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.merchant-dashboard #tab-vendedores .seller-form label {
+    color: var(--seller-muted) !important;
+    font-size: 0.82rem !important;
+}
+
+.merchant-dashboard #tab-vendedores .seller-form input[type="text"],
+.merchant-dashboard #tab-vendedores .seller-form input[type="password"] {
+    background: rgba(12, 10, 18, 0.72) !important;
+    border: 1px solid var(--seller-line-strong) !important;
+    color: var(--seller-text) !important;
+    min-height: 42px !important;
+}
+
+.merchant-dashboard #tab-vendedores .seller-form-actions--refined {
+    align-items: center;
+    background: rgba(12, 10, 18, 0.48);
+    border: 1px solid var(--seller-line);
+    border-radius: 18px;
+    display: flex;
+    gap: 12px;
+    justify-content: space-between;
+    padding: 12px;
+}
+
+.merchant-dashboard #tab-vendedores .seller-active-field {
+    align-items: center;
+    background: rgba(94, 224, 168, 0.08) !important;
+    border: 1px solid rgba(94, 224, 168, 0.2) !important;
+    border-radius: 16px !important;
+    color: var(--seller-text) !important;
+    display: flex;
+    gap: 10px;
+    padding: 10px 12px !important;
+}
+
+.merchant-dashboard #tab-vendedores .seller-active-field input {
+    accent-color: var(--seller-success);
+}
+
+.merchant-dashboard #tab-vendedores .seller-active-field span {
+    display: grid;
+    gap: 2px;
+}
+
+.merchant-dashboard #tab-vendedores .seller-form-actions--refined > button {
+    background: #ffffff !important;
+    border: 1px solid #ffffff !important;
+    border-radius: 999px !important;
+    color: #171022 !important;
+    font-weight: 950 !important;
+    min-height: 44px;
+    padding-inline: 18px !important;
+}
+
+.merchant-dashboard #tab-vendedores .seller-list--refined {
+    display: grid;
+    gap: 12px;
+    margin-top: 14px;
+}
+
+.merchant-dashboard #tab-vendedores .seller-card {
+    display: grid !important;
+    gap: 12px;
+    grid-template-columns: minmax(210px, 0.7fr) minmax(190px, 0.6fr) minmax(240px, 1fr) auto !important;
+    padding: 14px !important;
+}
+
+.merchant-dashboard #tab-vendedores .seller-card__identity {
+    align-items: center;
+    display: flex;
+    gap: 12px;
+}
+
+.merchant-dashboard #tab-vendedores .seller-avatar {
+    align-items: center;
+    background: linear-gradient(135deg, rgba(199, 181, 255, 0.8), rgba(94, 224, 168, 0.55));
+    border-radius: 16px;
+    color: #ffffff;
+    display: inline-flex;
+    flex: 0 0 48px;
+    font-size: 1.25rem;
+    font-weight: 950;
+    height: 48px;
+    justify-content: center;
+    width: 48px;
+}
+
+.merchant-dashboard #tab-vendedores .seller-status {
+    border-radius: 999px;
+    display: inline-flex;
+    font-size: 0.72rem;
+    font-weight: 900;
+    margin-top: 4px;
+    padding: 5px 9px;
+}
+
+.merchant-dashboard #tab-vendedores .seller-status--active {
+    background: rgba(94, 224, 168, 0.13);
+    border: 1px solid rgba(94, 224, 168, 0.26);
+    color: var(--seller-success);
+}
+
+.merchant-dashboard #tab-vendedores .seller-status--inactive {
+    background: rgba(255, 143, 143, 0.1);
+    border: 1px solid rgba(255, 143, 143, 0.24);
+    color: var(--seller-danger);
+}
+
+.merchant-dashboard #tab-vendedores .seller-card__meta {
+    align-content: center;
+    display: grid;
+    gap: 4px;
+}
+
+.merchant-dashboard #tab-vendedores .seller-card code {
+    align-self: center;
+    background: rgba(12, 10, 18, 0.64) !important;
+    border: 1px solid var(--seller-line) !important;
+    border-radius: 14px;
+    color: var(--seller-accent) !important;
+    display: block;
+    max-width: 100%;
+    overflow: hidden;
+    padding: 10px 12px;
+    text-overflow: ellipsis;
+}
+
+.merchant-dashboard #tab-vendedores .seller-actions {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px !important;
+    justify-content: flex-end;
+}
+
+.merchant-dashboard #tab-vendedores .seller-actions button {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border: 1px solid rgba(255, 255, 255, 0.14) !important;
+    border-radius: 999px !important;
+    color: #ffffff !important;
+    min-height: 38px;
+}
+
+.merchant-dashboard #tab-vendedores .seller-actions button.danger {
+    background: rgba(255, 143, 143, 0.1) !important;
+    border-color: rgba(255, 143, 143, 0.24) !important;
+    color: var(--seller-danger) !important;
+}
+
+.merchant-dashboard #tab-vendedores .sellers-empty {
+    padding: 26px !important;
+    text-align: center;
+}
+
+@media (max-width: 1120px) {
+    .merchant-dashboard #tab-vendedores .seller-card {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+}
+
+@media (max-width: 720px) {
+    .merchant-dashboard #tab-vendedores .sellers-panel__heading,
+    .merchant-dashboard #tab-vendedores .seller-form-actions--refined {
+        align-items: stretch !important;
+        flex-direction: column;
+    }
+
+    .merchant-dashboard #tab-vendedores .seller-summary-badge,
+    .merchant-dashboard #tab-vendedores .seller-form-actions--refined > button {
+        width: 100%;
+    }
+
+    .merchant-dashboard #tab-vendedores .seller-overview,
+    .merchant-dashboard #tab-vendedores .seller-form-grid,
+    .merchant-dashboard #tab-vendedores .seller-card {
+        grid-template-columns: minmax(0, 1fr) !important;
+    }
+
+    .merchant-dashboard #tab-vendedores .seller-actions {
+        justify-content: stretch;
+    }
+
+    .merchant-dashboard #tab-vendedores .seller-actions button,
+    .merchant-dashboard #tab-vendedores .seller-actions form {
+        width: 100%;
+    }
+}
+
+/* 37. Settings tab premium dark layout */
+.merchant-dashboard #tab-configuracoes {
+    --settings-card: rgba(24, 18, 35, 0.88);
+    --settings-card-soft: rgba(35, 27, 49, 0.78);
+    --settings-line: rgba(199, 181, 255, 0.16);
+    --settings-line-strong: rgba(199, 181, 255, 0.28);
+    --settings-text: #f7f3ff;
+    --settings-muted: #c8bed6;
+    --settings-soft: #9f94ae;
+    --settings-accent: #c7b5ff;
+    --settings-success: #5ee0a8;
+    --settings-danger: #ff8f8f;
+}
+
+.merchant-dashboard #tab-configuracoes .settings-panel {
+    display: grid;
+    gap: 16px;
+}
+
+.merchant-dashboard #tab-configuracoes .settings-hero,
+.merchant-dashboard #tab-configuracoes .settings-card {
+    background:
+        linear-gradient(135deg, rgba(199, 181, 255, 0.07), rgba(94, 224, 168, 0.025)),
+        var(--settings-card) !important;
+    border: 1px solid var(--settings-line) !important;
+    border-radius: 20px;
+    box-shadow: 0 18px 44px rgba(0, 0, 0, 0.2);
+}
+
+.merchant-dashboard #tab-configuracoes .settings-hero {
+    align-items: center;
+    display: flex;
+    gap: 16px;
+    justify-content: space-between;
+    padding: 18px;
+}
+
+.merchant-dashboard #tab-configuracoes .settings-hero__content {
+    display: grid;
+    gap: 5px;
+    max-width: 660px;
+}
+
+.merchant-dashboard #tab-configuracoes .eyebrow {
+    color: var(--settings-soft) !important;
+    font-size: 0.72rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    margin: 0;
+    text-transform: uppercase;
+}
+
+.merchant-dashboard #tab-configuracoes h2,
+.merchant-dashboard #tab-configuracoes h3 {
+    color: var(--settings-text);
+    letter-spacing: 0;
+    margin: 0;
+}
+
+.merchant-dashboard #tab-configuracoes h2 {
+    font-size: clamp(1.35rem, 2vw, 1.75rem);
+    line-height: 1.1;
+}
+
+.merchant-dashboard #tab-configuracoes h3 {
+    font-size: 1.08rem;
+    line-height: 1.25;
+    overflow-wrap: anywhere;
+}
+
+.merchant-dashboard #tab-configuracoes p {
+    color: var(--settings-muted);
+    line-height: 1.45;
+    margin: 0;
+}
+
+.merchant-dashboard #tab-configuracoes .settings-actions,
+.merchant-dashboard #tab-configuracoes .settings-card__side {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.merchant-dashboard #tab-configuracoes .settings-button {
+    align-items: center;
+    border-radius: 999px !important;
+    cursor: pointer;
+    display: inline-flex;
+    font-weight: 900 !important;
+    gap: 7px;
+    justify-content: center;
+    min-height: 42px;
+    padding: 10px 16px !important;
+    text-decoration: none !important;
+    transition: transform 0.16s ease, border-color 0.16s ease, background 0.16s ease;
+    white-space: nowrap;
+}
+
+.merchant-dashboard #tab-configuracoes .settings-button:hover {
+    transform: translateY(-1px);
+}
+
+.merchant-dashboard #tab-configuracoes .settings-button--primary {
+    background: linear-gradient(135deg, #c7b5ff, #a893ff) !important;
+    border: 1px solid rgba(255, 255, 255, 0.22) !important;
+    color: #171022 !important;
+}
+
+.merchant-dashboard #tab-configuracoes .settings-button--ghost {
+    background: rgba(255, 255, 255, 0.07) !important;
+    border: 1px solid var(--settings-line-strong) !important;
+    color: var(--settings-text) !important;
+}
+
+.merchant-dashboard #tab-configuracoes .settings-button--danger {
+    background: rgba(255, 143, 143, 0.1) !important;
+    border: 1px solid rgba(255, 143, 143, 0.28) !important;
+    color: var(--settings-danger) !important;
+}
+
+.merchant-dashboard #tab-configuracoes .settings-card {
+    display: flex;
+    gap: 14px;
+    justify-content: space-between;
+    min-height: 0;
+    padding: 16px;
+}
+
+.merchant-dashboard #tab-configuracoes .settings-card__main {
+    display: grid;
+    gap: 7px;
+    min-width: 0;
+}
+
+.merchant-dashboard #tab-configuracoes .settings-card--subscription {
+    align-items: center;
+}
+
+.merchant-dashboard #tab-configuracoes .settings-status-badge {
+    align-items: center;
+    border-radius: 999px;
+    display: inline-flex;
+    font-size: 0.75rem;
+    font-weight: 900;
+    min-height: 30px;
+    padding: 6px 11px;
+}
+
+.merchant-dashboard #tab-configuracoes .settings-status-badge.is-active {
+    background: rgba(94, 224, 168, 0.12);
+    border: 1px solid rgba(94, 224, 168, 0.28);
+    color: var(--settings-success);
+}
+
+.merchant-dashboard #tab-configuracoes .settings-status-badge.is-warning {
+    background: rgba(255, 209, 102, 0.12);
+    border: 1px solid rgba(255, 209, 102, 0.26);
+    color: #ffd166;
+}
+
+.merchant-dashboard #tab-configuracoes .settings-grid {
+    display: grid;
+    gap: 16px;
+    grid-template-columns: minmax(0, 1.1fr) minmax(260px, 0.9fr);
+}
+
+.merchant-dashboard #tab-configuracoes .settings-card--link,
+.merchant-dashboard #tab-configuracoes .settings-card--theme {
+    flex-direction: column;
+}
+
+.merchant-dashboard #tab-configuracoes .settings-card--qr {
+    align-items: center;
+    grid-row: span 2;
+}
+
+.merchant-dashboard #tab-configuracoes .settings-qr {
+    align-items: center;
+    display: grid;
+    gap: 12px;
+    justify-items: center;
+    min-width: 168px;
+}
+
+.merchant-dashboard #tab-configuracoes .settings-qr img {
+    background: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.32);
+    border-radius: 18px;
+    box-shadow: 0 16px 34px rgba(0, 0, 0, 0.22);
+    height: 142px;
+    padding: 9px;
+    width: 142px;
+}
+
+.merchant-dashboard #tab-configuracoes .settings-qr .qr-download-button {
+    width: 100%;
+}
+
+.merchant-dashboard #tab-configuracoes .settings-swatches {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 2px;
+}
+
+.merchant-dashboard #tab-configuracoes .settings-swatches .theme-dot {
+    border: 2px solid rgba(255, 255, 255, 0.18);
+    border-radius: 999px;
+    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.04);
+    display: inline-block;
+    height: 28px;
+    width: 28px;
+}
+
+.merchant-dashboard #tab-configuracoes .theme-dot--elegante {
+    background: #5e35b1;
+}
+
+.merchant-dashboard #tab-configuracoes .theme-dot--minimalista {
+    background: #303030;
+}
+
+.merchant-dashboard #tab-configuracoes .theme-dot--boutique {
+    background: #d94695;
+}
+
+.merchant-dashboard #tab-configuracoes .theme-dot--streetwear {
+    background: #d7ff3f;
+}
+
+@media (max-width: 900px) {
+    .merchant-dashboard #tab-configuracoes .settings-hero,
+    .merchant-dashboard #tab-configuracoes .settings-card,
+    .merchant-dashboard #tab-configuracoes .settings-card--subscription,
+    .merchant-dashboard #tab-configuracoes .settings-card--qr {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .merchant-dashboard #tab-configuracoes .settings-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .merchant-dashboard #tab-configuracoes .settings-card--qr {
+        grid-row: auto;
+    }
+
+    .merchant-dashboard #tab-configuracoes .settings-actions,
+    .merchant-dashboard #tab-configuracoes .settings-card__side {
+        justify-content: flex-start;
+    }
+}
+
+@media (max-width: 560px) {
+    .merchant-dashboard #tab-configuracoes .settings-hero,
+    .merchant-dashboard #tab-configuracoes .settings-card {
+        border-radius: 16px;
+        padding: 14px;
+    }
+
+    .merchant-dashboard #tab-configuracoes .settings-button,
+    .merchant-dashboard #tab-configuracoes .settings-actions a,
+    .merchant-dashboard #tab-configuracoes .settings-card__side a {
+        width: 100%;
+    }
+
+    .merchant-dashboard #tab-configuracoes .settings-qr img {
+        height: 132px;
+        width: 132px;
+    }
 }

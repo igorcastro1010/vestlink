@@ -1,78 +1,79 @@
 <div class="tab-pane" id="tab-configuracoes" data-tab-content="configuracoes">
-            <section class="management-grid">
-                <section class="panel-section" id="dados-da-loja" style="grid-column: 1 / -1;">
-                    <div class="section-heading">
-                        <div>
-                            <p class="eyebrow">Dados da loja</p>
-                            <h2>Configuração Geral</h2>
-                        </div>
-                        <span>Ações da marca</span>
+            <section class="settings-panel">
+                <div class="settings-hero" id="dados-da-loja">
+                    <div class="settings-hero__content">
+                        <p class="eyebrow">Dados da loja</p>
+                        <h2>Configuração da loja</h2>
+                        <p>Atualize as informações principais da vitrine e mantenha os links prontos para vender.</p>
                     </div>
-                    <div class="quick-actions" style="display: flex; gap: 12px; margin-top: 14px;">
-                        <a href="{% url 'editar_loja' loja.slug %}" class="panel-cancel" style="background: var(--brand, #5e35b1); color: #ffffff; text-decoration: none;">Editar dados da loja</a>
-                        <a href="{% url 'remover_loja' loja.slug %}" class="panel-cancel danger" style="background: #b42318; color: #ffffff; text-decoration: none;">Excluir loja</a>
+                    <div class="settings-actions">
+                        <a href="{% url 'editar_loja' loja.slug %}" class="settings-button settings-button--primary">Editar dados da loja</a>
+                        <a href="{% url 'remover_loja' loja.slug %}" class="settings-button settings-button--danger">Excluir loja</a>
+                    </div>
+                </div>
+
+                {% if is_owner %}
+                <section class="settings-card settings-card--subscription">
+                    <div class="settings-card__main">
+                        <p class="eyebrow">Assinatura</p>
+                        <h3>{{ loja.assinatura_status_label }}</h3>
+                        {% if loja.assinatura_status == "trial" and loja.trial_dias_restantes > 0 %}
+                            <p>Teste grátis: {{ loja.trial_dias_restantes }} dia(s) restantes. Depois R$39,90/mês.</p>
+                        {% elif loja.assinatura_status == "ativa" %}
+                            <p>Premium ativo por R$39,90/mês, sem fidelidade.</p>
+                        {% elif loja.assinatura_status == "cancelada" %}
+                            <p>Assinatura cancelada. Reative quando quiser.</p>
+                        {% else %}
+                            <p>Teste expirado. Regularize para manter a loja profissional.</p>
+                        {% endif %}
+                    </div>
+                    <div class="settings-card__side">
+                        <span class="settings-status-badge {% if loja.assinatura_esta_ativa %}is-active{% else %}is-warning{% endif %}">
+                            {% if loja.assinatura_esta_ativa %}Ativa{% else %}Atenção{% endif %}
+                        </span>
+                        <a href="{% url 'assinatura' loja.slug %}" class="settings-button settings-button--ghost">Ver assinatura</a>
                     </div>
                 </section>
-            </section>
+                {% endif %}
 
-            <section class="dashboard-command-center" style="margin-top: 20px;">
-                <div class="dashboard-side-stack config-cards-grid">
-                    {% if is_owner %}
-                    <section class="plan-strip" style="grid-column: 1 / -1;">
-                        <div>
-                            <span>Assinatura</span>
-                            <strong>{{ loja.assinatura_status_label }}</strong>
-                            {% if loja.assinatura_status == "trial" and loja.trial_dias_restantes > 0 %}
-                                <small>Teste grátis: {{ loja.trial_dias_restantes }} dia(s) restantes. Depois R$39,90/mês.</small>
-                            {% elif loja.assinatura_status == "ativa" %}
-                                <small>Premium ativo por R$39,90/mês, sem fidelidade.</small>
-                            {% elif loja.assinatura_status == "cancelada" %}
-                                <small>Assinatura cancelada. Reative quando quiser.</small>
-                            {% else %}
-                                <small>Teste expirado. Regularize para manter a loja profissional.</small>
-                            {% endif %}
-                        </div>
-                        <a href="{% url 'assinatura' loja.slug %}" style="background: #ffffff; color: #211846; font-weight: 800; padding: 10px 14px; border-radius: 8px; text-decoration: none; align-self: center;">Ver assinatura</a>
-                    </section>
-                    {% endif %}
-
-                    <section class="store-identity-card store-identity-card--compact">
-                        <div>
+                <section class="settings-grid">
+                    <section class="settings-card settings-card--link">
+                        <div class="settings-card__main">
                             <p class="eyebrow">Link do catálogo</p>
-                            <h2>{{ request.get_host }}{% url 'catalogo_curto' loja.slug %}</h2>
+                            <h3>{{ request.get_host }}{% url 'catalogo_curto' loja.slug %}</h3>
                             <p>Use na bio, Stories, WhatsApp e cartão da loja.</p>
                         </div>
-                        <button class="copy-link-button" type="button" data-copy-url="{{ request.scheme }}://{{ request.get_host }}{% url 'catalogo_curto' loja.slug %}" style="background: #1f1844; color: #ffffff; border: 0; border-radius: 8px; font-weight: 800; padding: 10px 14px; cursor: pointer;">Copiar</button>
+                        <button class="copy-link-button settings-button settings-button--primary" type="button" data-copy-url="{{ request.scheme }}://{{ request.get_host }}{% url 'catalogo_curto' loja.slug %}">Copiar</button>
                     </section>
 
-                    <section class="store-identity-card qr-card">
-                        <div>
+                    <section class="settings-card settings-card--qr">
+                        <div class="settings-card__main">
                             <p class="eyebrow">QR Code</p>
-                            <h2>Código para vitrine e embalagem</h2>
-                            <p>Use este QR Code em cartões, sacolas, provador ou vitrine física para levar clientes ao catálogo.</p>
+                            <h3>Código para vitrine e embalagem</h3>
+                            <p>Leve clientes ao catálogo em cartões, sacolas, provador ou vitrine física.</p>
                         </div>
-                        <div class="qr-card__actions">
-                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data={{ request.scheme }}://{{ request.get_host }}{% url 'catalogo_curto' loja.slug %}" alt="QR Code do catálogo {{ loja.nome }}" style="height: 120px; width: 120px; background: #ffffff; padding: 6px; border: 1px solid var(--line); border-radius: 8px;">
-                            <a class="qr-download-button" href="{% url 'baixar_qr_code' loja.slug %}" download>
+                        <div class="settings-qr">
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data={{ request.scheme }}://{{ request.get_host }}{% url 'catalogo_curto' loja.slug %}" alt="QR Code do catálogo {{ loja.nome }}">
+                            <a class="qr-download-button settings-button settings-button--ghost" href="{% url 'baixar_qr_code' loja.slug %}" download>
                                 <span aria-hidden="true">↓</span>
                                 Baixar QR Code
                             </a>
                         </div>
                     </section>
 
-                    <section class="store-identity-card theme-card">
-                        <div>
+                    <section class="settings-card settings-card--theme">
+                        <div class="settings-card__main">
                             <p class="eyebrow">Tema da loja</p>
-                            <h2>{{ loja.get_tema_display }}</h2>
+                            <h3>{{ loja.get_tema_display }}</h3>
                             <p>Altere em “Editar dados da loja” para escolher entre elegante, minimalista, boutique e streetwear.</p>
                         </div>
-                        <div class="theme-swatches" aria-hidden="true" style="display: flex; gap: 6px;">
-                            <span class="theme-dot theme-dot--elegante" style="height: 24px; width: 24px; border-radius: 50%; display: inline-block; background: #5e35b1;"></span>
-                            <span class="theme-dot theme-dot--minimalista" style="height: 24px; width: 24px; border-radius: 50%; display: inline-block; background: #303030;"></span>
-                            <span class="theme-dot theme-dot--boutique" style="height: 24px; width: 24px; border-radius: 50%; display: inline-block; background: #d94695;"></span>
-                            <span class="theme-dot theme-dot--streetwear" style="height: 24px; width: 24px; border-radius: 50%; display: inline-block; background: #d7ff3f;"></span>
+                        <div class="theme-swatches settings-swatches" aria-hidden="true">
+                            <span class="theme-dot theme-dot--elegante"></span>
+                            <span class="theme-dot theme-dot--minimalista"></span>
+                            <span class="theme-dot theme-dot--boutique"></span>
+                            <span class="theme-dot theme-dot--streetwear"></span>
                         </div>
                     </section>
-                </div>
+                </section>
             </section>
         </div>

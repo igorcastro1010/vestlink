@@ -50,7 +50,7 @@ class DashboardTests(TestCase):
         self.assertContains(response, "Loja ativa")
         self.assertContains(response, "Iniciar tour")
         self.assertContains(response, "Mensagens prontas para divulgar")
-        self.assertContains(response, "Estoque visual por variacao")
+        self.assertContains(response, "Estoque visual por variação")
         self.assertContains(response, "O que melhorar agora")
         self.assertContains(response, "Configuração")
         self.assertContains(response, "Organizar catálogo")

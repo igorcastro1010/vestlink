@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Painel - {{ loja.nome }}</title>
     <link rel="stylesheet" href="/static/css/variables.css?v=76">
-    <link rel="stylesheet" href="/static/css/catalogo.css?v=89">
+    <link rel="stylesheet" href="/static/css/catalogo.css?v=101">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
     <script>
         document.documentElement.setAttribute("data-theme", "dark");
@@ -464,7 +464,23 @@
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             // Helper para cor da loja com fallback
-            const storeColor = "{{ loja.cor_principal|default:'#5e35b1' }}";
+            const chartColors = {
+                leadsLine: '#a78bfa',
+                leadsFill: 'rgba(167, 139, 250, 0.18)',
+                leadsPoint: '#ffffff',
+                productsBar: '#38bdf8',
+                productsBarHover: '#60a5fa',
+                hoursBar: '#34d399',
+                hoursBarHover: '#22c55e',
+                doughnut: [
+                    '#a78bfa',
+                    '#38bdf8',
+                    '#34d399',
+                    '#fbbf24',
+                    '#f472b6',
+                    '#fb7185'
+                ]
+            };
             
             // Helper para gerar cores translúcidas para os gráficos
             function hexToRgba(hex, alpha) {
@@ -477,10 +493,6 @@
                 const b = parseInt(hex.substring(4, 6), 16);
                 return `rgba(${r}, ${g}, ${b}, ${alpha})`;
             }
-
-            const primaryColor = storeColor;
-            const primaryColorLight = hexToRgba(primaryColor, 0.15);
-            const primaryColorBorder = hexToRgba(primaryColor, 0.85);
 
             // Array para armazenar as instâncias dos gráficos
             const charts = [];
@@ -519,12 +531,12 @@
                         datasets: [{
                             label: 'Leads',
                             data: leadsData,
-                            borderColor: primaryColorBorder,
-                            backgroundColor: primaryColorLight,
+                            borderColor: chartColors.leadsLine,
+                            backgroundColor: chartColors.leadsFill,
                             borderWidth: 3,
                             fill: true,
                             tension: 0.35,
-                            pointBackgroundColor: primaryColor,
+                            pointBackgroundColor: chartColors.leadsPoint,
                             pointBorderColor: '#ffffff',
                             pointBorderWidth: 2,
                             pointRadius: 4,
@@ -577,7 +589,8 @@
                         labels: prodLabels,
                         datasets: [{
                             data: prodData,
-                            backgroundColor: primaryColorBorder,
+                            backgroundColor: chartColors.productsBar,
+                            hoverBackgroundColor: chartColors.productsBarHover,
                             borderRadius: 6,
                             borderSkipped: false,
                             barThickness: 16
@@ -635,8 +648,8 @@
                         labels: horLabels,
                         datasets: [{
                             data: horData,
-                            backgroundColor: hexToRgba(primaryColor, 0.6),
-                            hoverBackgroundColor: primaryColor,
+                            backgroundColor: hexToRgba(chartColors.hoursBar, 0.72),
+                            hoverBackgroundColor: chartColors.hoursBarHover,
                             borderRadius: 6,
                             barThickness: 20
                         }]
@@ -679,15 +692,7 @@
                 const vendLabels = JSON.parse('{{ chart_vendedores_labels|escapejs }}');
                 const vendData = JSON.parse('{{ chart_vendedores_valores|escapejs }}');
 
-                const baseColors = [
-                    primaryColorBorder,
-                    'rgba(54, 162, 235, 0.85)',
-                    'rgba(255, 206, 86, 0.85)',
-                    'rgba(75, 192, 192, 0.85)',
-                    'rgba(153, 102, 255, 0.85)',
-                    'rgba(255, 99, 132, 0.85)'
-                ];
-                const bgColors = baseColors.slice(0, vendLabels.length);
+                const bgColors = chartColors.doughnut.slice(0, vendLabels.length);
 
                 const chartVendedores = new Chart(ctxVendedores, {
                     type: 'doughnut',

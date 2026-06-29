@@ -50,7 +50,7 @@
                         <div class="product-form-steps" aria-label="Etapas do cadastro">
                             <span>1 Dados</span>
                             <span>2 Fotos</span>
-                            <span>3 Variacoes</span>
+                            <span>3 Variações</span>
                             <span>4 Status</span>
                         </div>
                     </div>
@@ -69,7 +69,7 @@
                         <form class="panel-form" method="post" enctype="multipart/form-data" data-product-form>
                             {% csrf_token %}
                             <div class="form-block form-block--basic">
-                                <h3>Informacoes basicas</h3>
+                                <h3>Informações básicas</h3>
                                 {{ form.non_field_errors }}
                                 {{ form.categoria.as_field_group }}
                                 {{ form.nova_categoria.as_field_group }}
@@ -85,7 +85,7 @@
                                 {{ form.fotos_adicionais.as_field_group }}
                             </div>
                             <div class="form-block form-block--variants">
-                                <h3>Variacoes</h3>
+                                <h3>Variações</h3>
                                 <div class="variant-field-grid">
                                     <p>
                                         {{ form.tamanhos.label_tag }}
@@ -114,7 +114,7 @@
                                 </div>
                                 <div class="stock-builder" data-stock-builder>
                                     <div>
-                                        <strong>Estoque visual por variacao</strong>
+                                        <strong>Estoque visual por variação</strong>
                                         <small>Digite tamanhos e cores acima, depois gere a grade para preencher as quantidades.</small>
                                     </div>
                                     <button type="button" data-build-stock>Gerar grade</button>
@@ -187,7 +187,7 @@
                     <form class="panel-filters" method="get">
                         <input type="search" name="q" value="{{ busca_painel }}" placeholder="Buscar produto">
                         <select name="categoria">
-                            <option value="">Todas categorias</option>
+                            <option value="">Todas as categorias</option>
                             {% for categoria in loja.categorias.all %}
                                 <option value="{{ categoria.id }}" {% if categoria_painel == categoria.id|stringformat:"s" %}selected{% endif %}>{{ categoria.nome }}</option>
                             {% endfor %}
@@ -224,7 +224,7 @@
                                         {% elif produto.tamanhos_esgotados or produto.cores_esgotadas %}
                                             <span class="status-pill warning">Parcial</span>
                                         {% else %}
-                                            <span class="status-pill active">Disponivel</span>
+                                            <span class="status-pill active">Disponível</span>
                                         {% endif %}
                                         {% if produto.destaque %}<span class="status-pill">Novo</span>{% endif %}
                                         {% if produto.promocao %}<span class="status-pill">Promoção</span>{% endif %}
