@@ -21,7 +21,7 @@
             <img class="google-auth-button__mark" src="/static/images/google-g.svg" alt="" aria-hidden="true">
             <span class="google-auth-button__wordmark" aria-hidden="true">Google</span>
         </a>
-        <p class="auth-legal-note">Ao continuar com Google, você aceita os <a href="{% url 'termos_uso' %}?voltar=cadastro">Termos de Uso</a> e a <a href="{% url 'politica_privacidade' %}?voltar=cadastro">Política de Privacidade</a>.</p>
+        <p class="auth-legal-note">Ao continuar com Google, você aceita os <a href="{% url 'termos_uso' %}?voltar=cadastro" data-legal-open="terms">Termos de Uso</a> e a <a href="{% url 'politica_privacidade' %}?voltar=cadastro" data-legal-open="privacy">Política de Privacidade</a>.</p>
         <div class="auth-divider"><span>ou preencha seus dados</span></div>
         <form class="panel-form signup-wizard" method="post">
             {% csrf_token %}
@@ -57,17 +57,171 @@
                 {{ form.aceite_termos.errors }}
                 <label>
                     {{ form.aceite_termos }}
-                    <span>Li e aceito os <a href="{% url 'termos_uso' %}?voltar=cadastro">Termos de Uso</a> e a <a href="{% url 'politica_privacidade' %}?voltar=cadastro">Política de Privacidade</a>.</span>
+                    <span>Li e aceito os <a href="{% url 'termos_uso' %}?voltar=cadastro" data-legal-open="terms">Termos de Uso</a> e a <a href="{% url 'politica_privacidade' %}?voltar=cadastro" data-legal-open="privacy">Política de Privacidade</a>.</span>
                 </label>
             </section>
             <button type="submit">Criar conta</button>
         </form>
         <p>Já tem conta? <a href="{% url 'login' %}">Entrar</a></p>
     </main>
+    <div class="legal-modal" data-legal-modal hidden>
+        <div class="legal-modal__overlay" data-legal-close></div>
+        <section class="legal-modal__card" role="dialog" aria-modal="true" aria-labelledby="legal-modal-title" tabindex="-1">
+            <header class="legal-modal__header">
+                <div>
+                    <p class="eyebrow" data-legal-version></p>
+                    <h2 id="legal-modal-title" data-legal-title></h2>
+                </div>
+                <button type="button" class="legal-modal__x" data-legal-close aria-label="Fechar">x</button>
+            </header>
+            <div class="legal-modal__body">
+                <article data-legal-content="terms" hidden>
+                    <p>Estes termos regulam o uso do VestLink, uma plataforma para lojistas criarem vitrines digitais, organizarem produtos e receberem pedidos pelo WhatsApp.</p>
+                    <h3>1. Conta e acesso</h3>
+                    <p>Para usar o painel, o lojista deve informar dados verdadeiros, manter suas credenciais protegidas e usar a plataforma apenas para atividades lícitas. A conta é pessoal do lojista responsável pela loja cadastrada.</p>
+                    <h3>2. Vitrine, produtos e atendimento</h3>
+                    <p>O lojista é responsável pelas informações publicadas na vitrine, incluindo preços, fotos, estoque, condições de venda, entrega, troca, garantia e atendimento ao consumidor.</p>
+                    <h3>3. Assinatura e teste</h3>
+                    <p>O VestLink pode oferecer período de teste e planos pagos. Valores, duração do teste e condições de cancelamento são apresentados na plataforma antes da contratação.</p>
+                    <h3>4. Uso adequado</h3>
+                    <p>É proibido usar o VestLink para fraude, spam, violação de direitos de terceiros, venda de produtos ilegais ou tentativa de burlar segurança, autenticação, pagamentos ou limites técnicos.</p>
+                    <h3>5. Atualizações</h3>
+                    <p>Estes termos podem ser atualizados. Quando houver mudança relevante, a plataforma poderá solicitar novo aceite ou comunicar o lojista pelos canais disponíveis.</p>
+                </article>
+                <article data-legal-content="privacy" hidden>
+                    <p>Esta política explica como o VestLink trata dados pessoais para cadastro, autenticação, operação das vitrines, atendimento via WhatsApp, pagamentos e segurança da plataforma.</p>
+                    <h3>1. Dados tratados</h3>
+                    <p>Podemos tratar nome de usuário, e-mail, telefone, dados da loja, dados de vendedores, informações de leads, mensagens de pedido, IP, navegador e registros técnicos de uso.</p>
+                    <h3>2. Finalidades</h3>
+                    <p>Usamos esses dados para criar contas, confirmar e-mails, autenticar acessos, publicar vitrines, direcionar pedidos ao WhatsApp, registrar leads, processar assinaturas, prevenir abuso e melhorar a plataforma.</p>
+                    <h3>3. Serviços externos</h3>
+                    <p>O VestLink utiliza provedores como Supabase, Vercel, Google, Mercado Pago, Resend ou SMTP e WhatsApp para operar recursos essenciais da plataforma.</p>
+                    <h3>4. Compartilhamento</h3>
+                    <p>Dados podem ser compartilhados apenas com provedores necessários para operar o serviço, cumprir obrigações legais, investigar fraude ou atender solicitações legítimas.</p>
+                    <h3>5. Segurança e retenção</h3>
+                    <p>Adotamos controles técnicos proporcionais ao estágio do produto. Dados são mantidos enquanto necessários para operação, segurança, obrigações legais e histórico do lojista.</p>
+                </article>
+            </div>
+            <footer class="legal-modal__footer">
+                <button type="button" data-legal-close>Fechar</button>
+            </footer>
+        </section>
+    </div>
     <script>
         const passwordPrimary = document.querySelector("[data-password-primary]");
         const passwordConfirm = document.querySelector("[data-password-confirm]");
         const requirements = document.querySelector("[data-password-requirements]");
+        const legalModal = document.querySelector("[data-legal-modal]");
+        const legalModalCard = legalModal?.querySelector(".legal-modal__card");
+        const legalModalTitle = legalModal?.querySelector("[data-legal-title]");
+        const legalModalVersion = legalModal?.querySelector("[data-legal-version]");
+        let legalModalLastFocus = null;
+        const signupForm = document.querySelector(".signup-wizard");
+        const signupDraftKey = "vestlink:cadastro:draft";
+        const signupDraftFields = [
+            "username",
+            "email",
+            "loja_nome",
+            "loja_slug",
+            "loja_telefone",
+            "loja_instagram",
+        ];
+
+        const getSignupField = (name) => signupForm?.elements?.[name] || document.querySelector(`[name="${name}"]`);
+
+        const readSignupDraft = () => {
+            try {
+                return JSON.parse(sessionStorage.getItem(signupDraftKey) || "{}");
+            } catch (error) {
+                return {};
+            }
+        };
+
+        const saveSignupDraft = () => {
+            if (!signupForm) return;
+            const draft = {};
+            signupDraftFields.forEach((name) => {
+                const field = getSignupField(name);
+                if (!field) return;
+                draft[name] = field.type === "checkbox" ? field.checked : field.value;
+            });
+            sessionStorage.setItem(signupDraftKey, JSON.stringify(draft));
+        };
+
+        const restoreSignupDraft = () => {
+            if (!signupForm) return;
+            const draft = readSignupDraft();
+            signupDraftFields.forEach((name) => {
+                const field = getSignupField(name);
+                if (draft[name] === undefined) return;
+                if (field && !field.value) {
+                    field.value = draft[name];
+                }
+            });
+        };
+
+        const bindSignupDraftField = (field) => {
+            if (!field) return;
+            field.addEventListener("input", saveSignupDraft);
+            field.addEventListener("change", saveSignupDraft);
+        };
+
+        restoreSignupDraft();
+
+        if (signupForm) {
+            signupDraftFields.forEach((name) => {
+                bindSignupDraftField(getSignupField(name));
+            });
+            signupForm.addEventListener("input", saveSignupDraft, true);
+            signupForm.addEventListener("change", saveSignupDraft, true);
+            window.addEventListener("pagehide", saveSignupDraft);
+            window.setInterval(saveSignupDraft, 800);
+        }
+
+        const legalModalLabels = {
+            terms: {title: "Termos de Uso", version: "Documento de uso"},
+            privacy: {title: "Política de Privacidade", version: "Documento de privacidade"},
+        };
+
+        const openLegalModal = (type, trigger) => {
+            if (!legalModal) return;
+            legalModalLastFocus = trigger || document.activeElement;
+            legalModal.querySelectorAll("[data-legal-content]").forEach((content) => {
+                content.hidden = content.dataset.legalContent !== type;
+            });
+            if (legalModalTitle) legalModalTitle.textContent = legalModalLabels[type]?.title || "";
+            if (legalModalVersion) legalModalVersion.textContent = legalModalLabels[type]?.version || "";
+            legalModal.hidden = false;
+            document.body.classList.add("modal-open");
+            legalModalCard?.focus();
+        };
+
+        const closeLegalModal = () => {
+            if (!legalModal || legalModal.hidden) return;
+            legalModal.hidden = true;
+            document.body.classList.remove("modal-open");
+            legalModalLastFocus?.focus?.();
+        };
+
+        document.querySelectorAll("[data-legal-open]").forEach((link) => {
+            link.addEventListener("click", (event) => {
+                event.preventDefault();
+                openLegalModal(link.dataset.legalOpen, link);
+            });
+        });
+
+        document.querySelectorAll("[data-legal-close]").forEach((button) => {
+            button.addEventListener("click", closeLegalModal);
+        });
+
+        const handleLegalModalKeydown = (event) => {
+            if (event.key === "Escape") closeLegalModal();
+        };
+
+        legalModal?.addEventListener("keydown", handleLegalModalKeydown);
+        legalModalCard?.addEventListener("keydown", handleLegalModalKeydown);
+        document.addEventListener("keydown", handleLegalModalKeydown);
+        window.addEventListener("keydown", handleLegalModalKeydown);
 
         if (passwordPrimary && passwordConfirm && requirements) {
             const commonPasswords = new Set([

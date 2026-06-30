@@ -19285,3 +19285,143 @@ html[data-theme="dark"] .auth-message:hover {
         transform: none !important;
     }
 }
+
+/* 44. Signup legal modal */
+body.modal-open {
+    overflow: hidden;
+}
+
+.legal-modal[hidden] {
+    display: none !important;
+}
+
+.legal-modal {
+    align-items: center;
+    display: grid;
+    inset: 0;
+    justify-items: center;
+    padding: 18px;
+    position: fixed;
+    z-index: 1000;
+}
+
+.legal-modal__overlay {
+    background: rgba(5, 3, 10, 0.72);
+    backdrop-filter: blur(10px);
+    inset: 0;
+    position: absolute;
+}
+
+.legal-modal__card {
+    background: var(--vl-final-surface, linear-gradient(180deg, rgba(28, 22, 43, 0.96), rgba(14, 11, 22, 0.94)));
+    border: 1px solid var(--vl-final-border, rgba(221, 211, 255, 0.16));
+    border-radius: 20px;
+    box-shadow: var(--vl-final-shadow, 0 22px 64px rgba(4, 2, 10, 0.34));
+    color: var(--vl-final-text, #f5f1ff);
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    max-height: min(82vh, 720px);
+    max-width: 760px;
+    overflow: hidden;
+    position: relative;
+    width: min(100%, 760px);
+}
+
+.legal-modal__header,
+.legal-modal__footer {
+    align-items: center;
+    display: flex;
+    gap: 14px;
+    justify-content: space-between;
+    padding: 18px 20px;
+}
+
+.legal-modal__header {
+    border-bottom: 1px solid rgba(221, 211, 255, 0.12);
+}
+
+.legal-modal__header h2 {
+    color: var(--vl-final-text, #f5f1ff);
+    font-size: clamp(1.25rem, 3vw, 1.7rem);
+    line-height: 1.15;
+    margin: 0;
+}
+
+.legal-modal__x {
+    align-items: center;
+    background: rgba(255, 255, 255, 0.06) !important;
+    border: 1px solid rgba(221, 211, 255, 0.16) !important;
+    border-radius: 999px !important;
+    color: var(--vl-final-text, #f5f1ff) !important;
+    display: inline-flex;
+    flex: 0 0 auto;
+    font-size: 1rem;
+    height: 40px;
+    justify-content: center;
+    min-height: 40px;
+    padding: 0 !important;
+    width: 40px;
+}
+
+.legal-modal__body {
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 18px 20px 20px;
+}
+
+.legal-modal__body article {
+    display: grid;
+    gap: 12px;
+}
+
+.legal-modal__body h3 {
+    color: var(--vl-final-text, #f5f1ff);
+    font-size: 1rem;
+    line-height: 1.25;
+    margin: 6px 0 0;
+}
+
+.legal-modal__body p {
+    color: var(--vl-final-muted, rgba(226, 219, 241, 0.72));
+    line-height: 1.58;
+    margin: 0;
+}
+
+.legal-modal__footer {
+    border-top: 1px solid rgba(221, 211, 255, 0.12);
+    justify-content: flex-end;
+}
+
+.legal-modal__footer button {
+    background: var(--vl-btn-primary-bg) !important;
+    border: 1px solid var(--vl-btn-primary-border) !important;
+    border-radius: 999px !important;
+    box-shadow: var(--vl-btn-primary-shadow) !important;
+    color: var(--vl-btn-primary-text) !important;
+    min-width: 132px;
+}
+
+@media (max-width: 640px) {
+    .legal-modal {
+        align-items: end;
+        padding: 10px;
+    }
+
+    .legal-modal__card {
+        border-radius: 18px;
+        max-height: 88vh;
+    }
+
+    .legal-modal__header,
+    .legal-modal__footer {
+        padding: 14px 16px;
+    }
+
+    .legal-modal__body {
+        padding: 14px 16px 16px;
+    }
+
+    .legal-modal__footer button {
+        width: 100%;
+    }
+}

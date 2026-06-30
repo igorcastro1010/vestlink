@@ -32,5 +32,8 @@
         <p class="auth-note">Se não aparecer na caixa de entrada, confira Spam e Promoções.</p>
         <p class="auth-switch"><a href="{% url 'login' %}">Voltar para entrar</a></p>
     </main>
+    <script>
+        sessionStorage.removeItem("vestlink:cadastro:draft");
+    </script>
 </body>
 </html>
