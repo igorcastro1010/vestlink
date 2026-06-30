@@ -19295,14 +19295,18 @@ body.modal-open {
     display: none !important;
 }
 
+.legal-modal [hidden] {
+    display: none !important;
+}
+
 .legal-modal {
     align-items: center;
-    display: grid;
+    display: flex;
     inset: 0;
     justify-items: center;
     padding: 18px;
     position: fixed;
-    z-index: 1000;
+    z-index: 9999;
 }
 
 .legal-modal__overlay {
@@ -19312,16 +19316,17 @@ body.modal-open {
     position: absolute;
 }
 
-.legal-modal__card {
+.legal-modal__dialog {
     background: var(--vl-final-surface, linear-gradient(180deg, rgba(28, 22, 43, 0.96), rgba(14, 11, 22, 0.94)));
     border: 1px solid var(--vl-final-border, rgba(221, 211, 255, 0.16));
     border-radius: 20px;
     box-shadow: var(--vl-final-shadow, 0 22px 64px rgba(4, 2, 10, 0.34));
     color: var(--vl-final-text, #f5f1ff);
-    display: grid;
-    grid-template-rows: auto minmax(0, 1fr) auto;
+    display: flex;
+    flex-direction: column;
     max-height: min(82vh, 720px);
     max-width: 760px;
+    margin: auto;
     overflow: hidden;
     position: relative;
     width: min(100%, 760px);
@@ -19338,6 +19343,7 @@ body.modal-open {
 
 .legal-modal__header {
     border-bottom: 1px solid rgba(221, 211, 255, 0.12);
+    padding-right: 72px;
 }
 
 .legal-modal__header h2 {
@@ -19347,7 +19353,14 @@ body.modal-open {
     margin: 0;
 }
 
-.legal-modal__x {
+.legal-modal__body h2 {
+    color: var(--vl-final-text, #f5f1ff);
+    font-size: clamp(1.25rem, 3vw, 1.7rem);
+    line-height: 1.15;
+    margin: 0 0 12px;
+}
+
+.legal-modal__close {
     align-items: center;
     background: rgba(255, 255, 255, 0.06) !important;
     border: 1px solid rgba(221, 211, 255, 0.16) !important;
@@ -19360,10 +19373,15 @@ body.modal-open {
     justify-content: center;
     min-height: 40px;
     padding: 0 !important;
+    position: absolute;
+    right: 16px;
+    top: 16px;
+    z-index: 1;
     width: 40px;
 }
 
 .legal-modal__body {
+    min-height: 0;
     overflow-y: auto;
     overscroll-behavior: contain;
     padding: 18px 20px 20px;
@@ -19392,6 +19410,7 @@ body.modal-open {
     justify-content: flex-end;
 }
 
+.legal-modal__button,
 .legal-modal__footer button {
     background: var(--vl-btn-primary-bg) !important;
     border: 1px solid var(--vl-btn-primary-border) !important;
@@ -19407,7 +19426,7 @@ body.modal-open {
         padding: 10px;
     }
 
-    .legal-modal__card {
+    .legal-modal__dialog {
         border-radius: 18px;
         max-height: 88vh;
     }

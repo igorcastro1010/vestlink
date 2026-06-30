@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Criar conta - VestLink</title>
     <link rel="stylesheet" href="/static/css/variables.css?v=76">
-    <link rel="stylesheet" href="/static/css/catalogo.css?v=102">
+    <link rel="stylesheet" href="/static/css/catalogo.css?v=103">
     <script>
         document.documentElement.setAttribute("data-theme", "dark");
     </script>
@@ -64,15 +64,15 @@
         </form>
         <p>Já tem conta? <a href="{% url 'login' %}">Entrar</a></p>
     </main>
-    <div class="legal-modal" data-legal-modal hidden>
-        <div class="legal-modal__overlay" data-legal-close></div>
-        <section class="legal-modal__card" role="dialog" aria-modal="true" aria-labelledby="legal-modal-title" tabindex="-1">
+    <div class="legal-modal" id="termsModal" hidden>
+        <div class="legal-modal__overlay" data-close-modal></div>
+        <section class="legal-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="legal-modal-title" tabindex="-1">
             <header class="legal-modal__header">
                 <div>
                     <p class="eyebrow" data-legal-version></p>
                     <h2 id="legal-modal-title" data-legal-title></h2>
                 </div>
-                <button type="button" class="legal-modal__x" data-legal-close aria-label="Fechar">x</button>
+                <button type="button" class="legal-modal__close" data-close-modal aria-label="Fechar">×</button>
             </header>
             <div class="legal-modal__body">
                 <article data-legal-content="terms" hidden>
@@ -103,7 +103,31 @@
                 </article>
             </div>
             <footer class="legal-modal__footer">
-                <button type="button" data-legal-close>Fechar</button>
+                <button type="button" class="legal-modal__button" data-close-modal>Fechar</button>
+            </footer>
+        </section>
+    </div>
+    <div class="legal-modal" id="privacyModal" hidden>
+        <div class="legal-modal__overlay" data-close-modal></div>
+        <section class="legal-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="privacyModalTitle" tabindex="-1">
+            <button type="button" class="legal-modal__close" data-close-modal aria-label="Fechar">×</button>
+            <div class="legal-modal__body">
+                <p class="eyebrow">Documento de privacidade</p>
+                <h2 id="privacyModalTitle">Política de Privacidade</h2>
+                <p>Esta política explica como o VestLink trata dados pessoais para cadastro, autenticação, operação das vitrines, atendimento via WhatsApp, pagamentos e segurança da plataforma.</p>
+                <h3>1. Dados tratados</h3>
+                <p>Podemos tratar nome de usuário, e-mail, telefone, dados da loja, dados de vendedores, informações de leads, mensagens de pedido, IP, navegador e registros técnicos de uso.</p>
+                <h3>2. Finalidades</h3>
+                <p>Usamos esses dados para criar contas, confirmar e-mails, autenticar acessos, publicar vitrines, direcionar pedidos ao WhatsApp, registrar leads, processar assinaturas, prevenir abuso e melhorar a plataforma.</p>
+                <h3>3. Serviços externos</h3>
+                <p>O VestLink utiliza provedores como Supabase, Vercel, Google, Mercado Pago, Resend ou SMTP e WhatsApp para operar recursos essenciais da plataforma.</p>
+                <h3>4. Compartilhamento</h3>
+                <p>Dados podem ser compartilhados apenas com provedores necessários para operar o serviço, cumprir obrigações legais, investigar fraude ou atender solicitações legítimas.</p>
+                <h3>5. Segurança e retenção</h3>
+                <p>Adotamos controles técnicos proporcionais ao estágio do produto. Dados são mantidos enquanto necessários para operação, segurança, obrigações legais e histórico do lojista.</p>
+            </div>
+            <footer class="legal-modal__footer">
+                <button type="button" class="legal-modal__button" data-close-modal>Fechar</button>
             </footer>
         </section>
     </div>
@@ -111,10 +135,11 @@
         const passwordPrimary = document.querySelector("[data-password-primary]");
         const passwordConfirm = document.querySelector("[data-password-confirm]");
         const requirements = document.querySelector("[data-password-requirements]");
-        const legalModal = document.querySelector("[data-legal-modal]");
-        const legalModalCard = legalModal?.querySelector(".legal-modal__card");
-        const legalModalTitle = legalModal?.querySelector("[data-legal-title]");
-        const legalModalVersion = legalModal?.querySelector("[data-legal-version]");
+        const legalModals = document.querySelectorAll(".legal-modal");
+        const termsModal = document.getElementById("termsModal");
+        const privacyModal = document.getElementById("privacyModal");
+        const legalModalTitle = termsModal?.querySelector("[data-legal-title]");
+        const legalModalVersion = termsModal?.querySelector("[data-legal-version]");
         let legalModalLastFocus = null;
         const signupForm = document.querySelector(".signup-wizard");
         const signupDraftKey = "vestlink:cadastro:draft";
@@ -184,6 +209,7 @@
         };
 
         const openLegalModal = (type, trigger) => {
+            const legalModal = type === "privacy" ? privacyModal : termsModal;
             if (!legalModal) return;
             legalModalLastFocus = trigger || document.activeElement;
             legalModal.querySelectorAll("[data-legal-content]").forEach((content) => {
@@ -193,12 +219,13 @@
             if (legalModalVersion) legalModalVersion.textContent = legalModalLabels[type]?.version || "";
             legalModal.hidden = false;
             document.body.classList.add("modal-open");
-            legalModalCard?.focus();
+            legalModal.querySelector(".legal-modal__dialog")?.focus();
         };
 
         const closeLegalModal = () => {
-            if (!legalModal || legalModal.hidden) return;
-            legalModal.hidden = true;
+            legalModals.forEach((legalModal) => {
+                legalModal.hidden = true;
+            });
             document.body.classList.remove("modal-open");
             legalModalLastFocus?.focus?.();
         };
@@ -210,7 +237,7 @@
             });
         });
 
-        document.querySelectorAll("[data-legal-close]").forEach((button) => {
+        document.querySelectorAll("[data-close-modal]").forEach((button) => {
             button.addEventListener("click", closeLegalModal);
         });
 
@@ -218,8 +245,10 @@
             if (event.key === "Escape") closeLegalModal();
         };
 
-        legalModal?.addEventListener("keydown", handleLegalModalKeydown);
-        legalModalCard?.addEventListener("keydown", handleLegalModalKeydown);
+        legalModals.forEach((legalModal) => {
+            legalModal.addEventListener("keydown", handleLegalModalKeydown);
+            legalModal.querySelector(".legal-modal__dialog")?.addEventListener("keydown", handleLegalModalKeydown);
+        });
         document.addEventListener("keydown", handleLegalModalKeydown);
         window.addEventListener("keydown", handleLegalModalKeydown);
 
