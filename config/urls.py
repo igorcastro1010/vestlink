@@ -13,6 +13,7 @@ from django.views.static import serve as static_serve
 
 from loja.views import (
     LoginLojistaView,
+    abacate_pay_webhook,
     assinatura,
     baixar_qr_code,
     cadastro,
@@ -110,6 +111,7 @@ urlpatterns = [
     path("painel/<slug:slug>/produto/<int:produto_id>/remover/", remover_produto, name="remover_produto"),
     path("gerenciador-vestlink/", admin.site.urls),
     path("api/tasks/cron/", cron_verificar_assinaturas, name="cron_verificar_assinaturas"),
+    path("api/pagamentos/abacate-pay/webhook/", abacate_pay_webhook, name="abacate_pay_webhook"),
     path("api/pagamentos/mercado-pago/webhook/", mercado_pago_webhook, name="mercado_pago_webhook"),
     path("c/<slug:slug>/", catalogo_curto, name="catalogo_curto"),
     path("c/<slug:slug>/produto/<int:produto_id>/", produto_detalhe, name="produto_detalhe_curto"),

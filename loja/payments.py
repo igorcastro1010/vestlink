@@ -1,3 +1,6 @@
+import base64
+import hashlib
+import hmac
 import json
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
@@ -8,12 +11,14 @@ from django.urls import reverse
 from .models import Loja, Pagamento
 
 
-MERCADO_PAGO_PREFERENCES_URL = "https://api.mercadopago.com/checkout/preferences"
-MERCADO_PAGO_PAYMENT_URL = "https://api.mercadopago.com/v1/payments/{payment_id}"
+ABACATE_PAY_CHECKOUTS_URL = "https://api.abacatepay.com/v2/checkouts/create"
 
 
-class MercadoPagoError(Exception):
+class AbacatePayError(Exception):
     pass
+
+
+MercadoPagoError = AbacatePayError
 
 
 def _base_url(request):
@@ -25,10 +30,10 @@ def _base_url(request):
     return request.build_absolute_uri("/").rstrip("/")
 
 
-def _mercado_pago_headers():
-    token = getattr(settings, "MERCADO_PAGO_ACCESS_TOKEN", "").strip()
+def _abacate_pay_headers():
+    token = getattr(settings, "ABACATE_PAY_API_KEY", "").strip()
     if not token:
-        raise MercadoPagoError("Configure MERCADO_PAGO_ACCESS_TOKEN para usar o checkout real.")
+        raise AbacatePayError("Configure ABACATE_PAY_API_KEY para criar pagamentos pela Abacate Pay.")
     return {
         "Authorization": f"Bearer {token}",
         "Content-Type": "application/json",
@@ -37,30 +42,32 @@ def _mercado_pago_headers():
 
 def _post_json(url, payload):
     data = json.dumps(payload).encode("utf-8")
-    request = Request(url, data=data, headers=_mercado_pago_headers(), method="POST")
+    request = Request(url, data=data, headers=_abacate_pay_headers(), method="POST")
     try:
         with urlopen(request, timeout=20) as response:
-            return json.loads(response.read().decode("utf-8"))
+            resposta = json.loads(response.read().decode("utf-8"))
     except HTTPError as error:
         body = error.read().decode("utf-8", errors="replace")
-        raise MercadoPagoError(f"Mercado Pago recusou a preferência: {body}") from error
+        raise AbacatePayError(f"Abacate Pay recusou o pagamento: {body}") from error
     except URLError as error:
-        raise MercadoPagoError(f"Não foi possível conectar ao Mercado Pago: {error.reason}") from error
+        raise AbacatePayError(f"Nao foi possivel conectar a Abacate Pay: {error.reason}") from error
+
+    if not resposta.get("success", False):
+        raise AbacatePayError(f"Abacate Pay recusou o pagamento: {resposta.get('error') or resposta}")
+    return resposta.get("data") or {}
 
 
-def _get_json(url):
-    request = Request(url, headers=_mercado_pago_headers(), method="GET")
-    try:
-        with urlopen(request, timeout=20) as response:
-            return json.loads(response.read().decode("utf-8"))
-    except HTTPError as error:
-        body = error.read().decode("utf-8", errors="replace")
-        raise MercadoPagoError(f"Não foi possível consultar pagamento: {body}") from error
-    except URLError as error:
-        raise MercadoPagoError(f"Não foi possível conectar ao Mercado Pago: {error.reason}") from error
+def _webhook_url(base_url):
+    configured = getattr(settings, "ABACATE_PAY_WEBHOOK_URL", "").strip()
+    webhook_url = configured or f"{base_url}{reverse('abacate_pay_webhook')}"
+    webhook_secret = getattr(settings, "ABACATE_PAY_WEBHOOK_SECRET", "").strip()
+    if webhook_secret and "webhookSecret=" not in webhook_url:
+        separator = "&" if "?" in webhook_url else "?"
+        webhook_url = f"{webhook_url}{separator}webhookSecret={webhook_secret}"
+    return webhook_url
 
 
-def criar_preferencia_premium(request, loja, usuario, cupom=None):
+def criar_pagamento_premium_abacate_pay(request, loja, usuario, cupom=None):
     valor = Pagamento._meta.get_field("valor").default
     valor_final = cupom.aplicar(valor) if cupom else valor
     pagamento = Pagamento.objects.create(
@@ -73,38 +80,34 @@ def criar_preferencia_premium(request, loja, usuario, cupom=None):
         status=Pagamento.STATUS_CRIADO,
     )
     base_url = _base_url(request)
+    return_url = getattr(settings, "ABACATE_PAY_RETURN_URL", "").strip()
+    if not return_url:
+        return_url = f"{base_url}{reverse('assinatura', kwargs={'slug': loja.slug})}"
+
     payload = {
         "items": [
             {
-                "id": f"vestlink-premium-{loja.id}",
-                "title": f"VestLink Premium - {loja.nome}",
-                "description": "Assinatura mensal do catálogo digital VestLink",
+                "id": getattr(settings, "ABACATE_PAY_PREMIUM_PRODUCT_ID", "vestlink-premium"),
                 "quantity": 1,
-                "currency_id": "BRL",
-                "unit_price": float(pagamento.valor_final),
             }
         ],
-        "payer": {
-            "email": usuario.email or f"{usuario.username}@vestlink.local",
-        },
-        "back_urls": {
-            "success": f"{base_url}{reverse('pagamento_retorno', kwargs={'slug': loja.slug, 'resultado': 'success'})}",
-            "pending": f"{base_url}{reverse('pagamento_retorno', kwargs={'slug': loja.slug, 'resultado': 'pending'})}",
-            "failure": f"{base_url}{reverse('pagamento_retorno', kwargs={'slug': loja.slug, 'resultado': 'failure'})}",
-        },
-        "notification_url": f"{base_url}{reverse('mercado_pago_webhook')}",
-        "auto_return": "approved",
-        "external_reference": pagamento.external_reference,
+        "methods": ["PIX", "CARD"],
+        "externalId": pagamento.external_reference,
+        "returnUrl": return_url,
+        "completionUrl": f"{base_url}{reverse('pagamento_retorno', kwargs={'slug': loja.slug, 'resultado': 'success'})}",
+        "webhookUrl": _webhook_url(base_url),
         "metadata": {
             "loja_id": loja.id,
             "loja_slug": loja.slug,
             "plano": Loja.PLANO_PREMIUM,
+            "usuario_email": usuario.email or usuario.username,
+            "valor_final_centavos": int(pagamento.valor_final * 100),
         },
     }
-    resposta = _post_json(MERCADO_PAGO_PREFERENCES_URL, payload)
+    resposta = _post_json(ABACATE_PAY_CHECKOUTS_URL, payload)
     pagamento.preference_id = resposta.get("id", "")
-    pagamento.init_point = resposta.get("init_point", "")
-    pagamento.sandbox_init_point = resposta.get("sandbox_init_point", "")
+    pagamento.init_point = resposta.get("url", "")
+    pagamento.sandbox_init_point = ""
     pagamento.status = Pagamento.STATUS_PENDENTE
     pagamento.raw_response = resposta
     pagamento.save(
@@ -120,26 +123,68 @@ def criar_preferencia_premium(request, loja, usuario, cupom=None):
     return pagamento
 
 
-def atualizar_pagamento_mercado_pago(payment_id):
-    dados = _get_json(MERCADO_PAGO_PAYMENT_URL.format(payment_id=payment_id))
-    external_reference = dados.get("external_reference", "")
+criar_preferencia_premium = criar_pagamento_premium_abacate_pay
+
+
+def validar_assinatura_abacate_pay(raw_body, assinatura):
+    secret = getattr(settings, "ABACATE_PAY_WEBHOOK_SECRET", "").strip()
+    if not secret:
+        return True
+    if not assinatura:
+        return False
+    digest = hmac.new(secret.encode("utf-8"), raw_body, hashlib.sha256).digest()
+    expected_base64 = base64.b64encode(digest).decode("ascii")
+    expected_hex = digest.hex()
+    return hmac.compare_digest(assinatura, expected_base64) or hmac.compare_digest(assinatura, expected_hex)
+
+
+def atualizar_pagamento_abacate_pay(payload):
+    event = payload.get("event") or payload.get("type") or ""
+    data = payload.get("data") or payload
+    metadata = data.get("metadata") or {}
+    external_reference = (
+        data.get("externalId")
+        or data.get("external_reference")
+        or data.get("externalReference")
+        or metadata.get("external_reference")
+    )
     if not external_reference:
-        raise MercadoPagoError("Pagamento sem external_reference.")
+        raise AbacatePayError("Pagamento sem externalId.")
+
     pagamento = Pagamento.objects.get(external_reference=external_reference)
-    status_mp = dados.get("status", "")
-    pagamento.payment_id = str(dados.get("id") or payment_id)
-    pagamento.raw_response = dados
-    if status_mp == "approved":
-        pagamento.raw_response = dados
+    if pagamento.status == Pagamento.STATUS_APROVADO and event in {
+        "checkout.completed",
+        "subscription.completed",
+        "subscription.renewed",
+    }:
+        return pagamento
+
+    status_abacate = (data.get("status") or "").upper()
+    payment_id = str(data.get("id") or data.get("paymentId") or data.get("checkoutId") or "")
+    if payment_id:
+        pagamento.payment_id = payment_id
+    pagamento.raw_response = data
+
+    if event in {"checkout.completed", "subscription.completed", "subscription.renewed"} or status_abacate in {
+        "PAID",
+        "APPROVED",
+        "COMPLETED",
+    }:
         pagamento.save(update_fields=["payment_id", "raw_response", "atualizado_em"])
         pagamento.marcar_aprovado(payment_id=pagamento.payment_id)
-    elif status_mp in {"pending", "in_process"}:
+    elif status_abacate in {"PENDING", "PROCESSING"}:
         pagamento.status = Pagamento.STATUS_PENDENTE
         pagamento.save(update_fields=["status", "payment_id", "raw_response", "atualizado_em"])
-    elif status_mp in {"cancelled", "refunded", "charged_back"}:
+    elif event in {"checkout.refunded", "checkout.disputed", "checkout.lost"} or status_abacate in {
+        "CANCELLED",
+        "REFUNDED",
+    }:
         pagamento.status = Pagamento.STATUS_CANCELADO
         pagamento.save(update_fields=["status", "payment_id", "raw_response", "atualizado_em"])
     else:
         pagamento.status = Pagamento.STATUS_RECUSADO
         pagamento.save(update_fields=["status", "payment_id", "raw_response", "atualizado_em"])
     return pagamento
+
+
+atualizar_pagamento_mercado_pago = atualizar_pagamento_abacate_pay

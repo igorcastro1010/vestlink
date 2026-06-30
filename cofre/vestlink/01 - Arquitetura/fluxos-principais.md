@@ -1,7 +1,7 @@
 ---
 tipo: arquitetura
 status: ativo
-revisado_em: 2026-06-19
+revisado_em: 2026-06-29
 fontes:
   - ../../../loja/views.py
   - ../../../loja/services/
@@ -14,7 +14,7 @@ fontes:
 
 > [!summary] TL;DR
 > O Django mantém o usuário operacional localmente. Supabase confirma identidade
-> e e-mail; Mercado Pago confirma a assinatura; WhatsApp recebe a conversão.
+> e e-mail; Abacate Pay confirma a assinatura; WhatsApp recebe a conversão.
 
 ## Cadastro por e-mail
 
@@ -56,17 +56,18 @@ fontes:
 ## Assinatura
 
 1. Loja começa em trial de sete dias.
-2. Checkout cria `Pagamento` e preferência Mercado Pago.
-3. Webhook consulta o pagamento pelo ID.
-4. Aprovação ativa a assinatura da loja.
-5. Cron marca trials expirados como vencidos e anonimiza leads antigos.
+2. Pagamento cria `Pagamento` local e checkout hospedado na Abacate Pay.
+3. Lojista paga na URL retornada pela Abacate Pay.
+4. Webhook `checkout.completed` confirma o pagamento, com validação de secret/assinatura quando configurada.
+5. Aprovação ativa a assinatura da loja.
+6. Cron marca trials expirados como vencidos e anonimiza leads antigos.
 
 ## Relacionados
 
 - [[glossario]] padroniza nomes como Lead, Sacolinha, Vendedor, Trial e Pagamento.
 - [[endpoints-e-superficies]] mostra as rotas que executam estes fluxos.
 - [[modelo-de-dados]] descreve `Loja`, `Vendedor`, `Lead`, `AceiteLegal` e `Pagamento`.
-- [[integracoes]] detalha Supabase Auth, Google OAuth, Mercado Pago, Resend/SMTP e WhatsApp.
+- [[integracoes]] detalha Supabase Auth, Google OAuth, Abacate Pay, Resend/SMTP e WhatsApp.
 - [[ADR-003 - Identidade hibrida Django e Supabase]] explica a identidade local + externa.
 - [[gotchas-de-producao]] lista armadilhas de callback, e-mail, webhook e cron.
 - [[dividas-abertas]] acompanha pendências de LGPD, webhook e acoplamento.

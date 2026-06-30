@@ -23,7 +23,7 @@ from . import supabase_auth
 from .forms import CadastroForm, CategoriaForm, LojaForm, ProdutoForm, VendedorForm
 from .legal import LEAD_RETENTION_DAYS, PRIVACY_VERSION, TERMS_VERSION
 from .models import Categoria, Cupom, Lead, Loja, Pagamento, Produto, Vendedor
-from .payments import MercadoPagoError
+from .payments import AbacatePayError, validar_assinatura_abacate_pay
 from .services import billing, lead, store, catalog, products, auth
 
 
@@ -619,12 +619,8 @@ def assinatura(request, slug):
         "assinatura.html",
         {
             "loja": loja,
-            "checkout_configurado": bool(
-                getattr(settings, "MERCADO_PAGO_ACCESS_TOKEN", "")
-                or getattr(settings, "VESTLINK_CHECKOUT_URL", "")
-                or getattr(settings, "MODALINK_CHECKOUT_URL", "")
-            ),
-            "mercado_pago_configurado": bool(getattr(settings, "MERCADO_PAGO_ACCESS_TOKEN", "")),
+            "pagamento_configurado": bool(getattr(settings, "ABACATE_PAY_API_KEY", "")),
+            "abacate_pay_configurado": bool(getattr(settings, "ABACATE_PAY_API_KEY", "")),
             "ultimos_pagamentos": loja.pagamentos.all()[:5],
         },
     )
@@ -643,7 +639,7 @@ def checkout_premium(request, slug):
             redirect_url = billing.processar_checkout(request, loja, request.user, dados["cupom"])
             if redirect_url:
                 return redirect(redirect_url)
-        except MercadoPagoError as error:
+        except AbacatePayError as error:
             return render(
                 request,
                 "checkout_premium.html",
@@ -652,6 +648,9 @@ def checkout_premium(request, slug):
                     "erro_pagamento": str(error),
                     "cupom": dados["cupom"],
                     "cupom_codigo": dados["cupom_codigo"],
+                    "valor": dados["valor"],
+                    "valor_final": dados["valor_final"],
+                    "abacate_pay_configurado": dados["abacate_pay_configurado"],
                 },
             )
 
@@ -661,7 +660,7 @@ def checkout_premium(request, slug):
         "cupom_codigo": dados["cupom_codigo"],
         "valor": dados["valor"],
         "valor_final": dados["valor_final"],
-        "mercado_pago_configurado": dados["mercado_pago_configurado"],
+        "abacate_pay_configurado": dados["abacate_pay_configurado"],
     }
     return render(request, "checkout_premium.html", contexto)
 
@@ -690,23 +689,28 @@ def pagamento_retorno(request, slug, resultado):
 
 @csrf_exempt
 @require_POST
-def mercado_pago_webhook(request):
-    payment_id = request.GET.get("id") or request.GET.get("data.id")
-    if request.content_type == "application/json" and request.body:
-        try:
-            payload = json.loads(request.body.decode("utf-8"))
-        except ValueError:
-            payload = {}
-        data = payload.get("data") or {}
-        payment_id = payment_id or data.get("id") or payload.get("id")
-    if not payment_id:
-        return JsonResponse({"ok": False, "erro": "payment_id ausente"}, status=400)
+def abacate_pay_webhook(request):
+    webhook_secret = getattr(settings, "ABACATE_PAY_WEBHOOK_SECRET", "").strip()
+    if webhook_secret:
+        query_secret = request.GET.get("webhookSecret", "")
+        signature = request.headers.get("X-Webhook-Signature", "")
+        if query_secret != webhook_secret and not validar_assinatura_abacate_pay(request.body, signature):
+            return JsonResponse({"ok": False, "erro": "assinatura invalida"}, status=401)
+
     try:
-        pagamento = billing.processar_webhook_pagamento(payment_id)
+        payload = json.loads(request.body.decode("utf-8")) if request.body else {}
+    except ValueError:
+        payload = {}
+    if not payload:
+        return JsonResponse({"ok": False, "erro": "payload ausente"}, status=400)
+    try:
+        pagamento = billing.processar_webhook_pagamento(payload)
     except Exception as error:
         return JsonResponse({"ok": False, "erro": str(error)}, status=400)
     return JsonResponse({"ok": True, "pagamento": pagamento.id, "status": pagamento.status})
 
+
+mercado_pago_webhook = abacate_pay_webhook
 
 
 @login_required
