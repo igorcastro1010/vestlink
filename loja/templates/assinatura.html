@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Assinatura - {{ loja.nome }}</title>
     <link rel="stylesheet" href="/static/css/variables.css?v=76">
-    <link rel="stylesheet" href="/static/css/catalogo.css?v=76">
+    <link rel="stylesheet" href="/static/css/catalogo.css?v=103">
     <script>
         document.documentElement.setAttribute("data-theme", "dark");
     </script>
@@ -25,6 +25,7 @@
             <p class="lp-kicker">Assinatura</p>
             <h1>Controle do Premium da {{ loja.nome }}.</h1>
             <p>Acompanhe teste, status da assinatura e o caminho de pagamento da loja.</p>
+            <span class="subscription-hero__status plan-tag">{{ loja.assinatura_status_label }}</span>
         </section>
 
         <section class="subscription-grid">
@@ -58,22 +59,22 @@
                 </dl>
 
                 <div class="subscription-actions">
-                    <a href="{% url 'checkout_premium' loja.slug %}">Ir para checkout</a>
+                    <a class="subscription-action--primary" href="{% url 'checkout_premium' loja.slug %}">Ir para checkout</a>
                     <form method="post">
                         {% csrf_token %}
                         <input type="hidden" name="acao" value="ativar_manual">
-                        <button type="submit">Marcar como pago</button>
+                        <button class="subscription-action--secondary" type="submit">Marcar como pago</button>
                     </form>
                     <form method="post">
                         {% csrf_token %}
                         <input type="hidden" name="acao" value="renovar_teste">
-                        <button type="submit">Renovar teste</button>
+                        <button class="subscription-action--secondary" type="submit">Renovar teste</button>
                     </form>
                     {% if loja.assinatura_status != "cancelada" %}
                         <form method="post">
                             {% csrf_token %}
                             <input type="hidden" name="acao" value="cancelar">
-                            <button class="danger" type="submit">Cancelar</button>
+                            <button class="danger subscription-action--danger" type="submit">Cancelar</button>
                         </form>
                     {% endif %}
                 </div>
@@ -98,7 +99,7 @@
                     <p class="lp-kicker">Pagamentos</p>
                     <h2>Historico da assinatura</h2>
                 </div>
-                <span>{{ ultimos_pagamentos|length }} registro(s)</span>
+                <span class="payments-count">{{ ultimos_pagamentos|length }} registro(s)</span>
             </div>
             <div class="payments-list">
                 {% for pagamento in ultimos_pagamentos %}
@@ -110,7 +111,7 @@
                         <small>R$ {{ pagamento.valor }} - {{ pagamento.criado_em|date:"d/m/Y H:i" }}</small>
                     </article>
                 {% empty %}
-                    <article class="empty-state">
+                    <article class="empty-state payments-empty">
                         <div>
                             <strong>Nenhum pagamento criado ainda.</strong>
                             <span>Ao clicar no checkout, o VestLink cria uma preferência no Mercado Pago.</span>
