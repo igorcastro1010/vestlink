@@ -1,37 +1,33 @@
-# Protocolo de contexto do VestLink
+# VestLink - contexto para agentes
 
-Antes de explorar o código, consulte o cofre Obsidian em
-`cofre/vestlink/00 - Contexto/mapa-de-contexto.md`.
+O contexto completo do VestLink fica no repositório externo:
 
-Ordem de trabalho:
+https://github.com/igorcastro1010/vestlink-context
 
-1. Leia o TL;DR do mapa e abra apenas as notas ligadas à tarefa.
-2. Confie em notas com `status: ativo` e `revisado_em` recente.
-3. Consulte o código indicado em `fontes` somente quando a nota não responder,
-   houver risco de desatualização ou a tarefa exigir edição.
-4. Não faça varreduras amplas se um arquivo ou módulo específico bastar.
-5. Após descobrir algo estrutural e durável no código, atualize a nota
-   correspondente do cofre na mesma tarefa.
-6. Nunca registre segredos, tokens, senhas, dados pessoais ou conteúdo de `.env`.
+Antes de tarefas relevantes, leia no repo externo:
 
-Convenções completas: `cofre/vestlink/AGENTS.md`.
+1. `SKILL.md`
+2. `docs/contexto.md`
+3. `docs/comandos-seguros.md`
+4. `docs/estrutura-de-testes.md`
+5. `docs/padrao-visual-ui-ux.md`
 
-## Uso economico de skills
+Comandos locais mínimos:
 
-Antes de cada tarefa, consulte `cofre/vestlink` e carregue apenas as skills
-relevantes em `.agents/skills`. Nao carregue todas as skills por padrao.
-Priorize economia de tokens: escolha o menor conjunto que cubra a tarefa.
+- `python manage.py check`
+- `python manage.py test loja.tests.test_auth`
+- `python manage.py test loja.tests.test_catalogo`
+- `python manage.py test loja.tests.test_products`
+- `python manage.py test loja.tests.test_leads`
+- `python manage.py test loja.tests.test_dashboard`
+- `python manage.py test loja.tests.test_billing`
+- `python manage.py test loja.tests.test_infra`
 
-Mapeamento recomendado:
+Regras críticas:
 
-- UI geral: `saas-ui-polish`, `brand-design-system`, `theme-contrast-audit`
-- Catalogo: `catalog-design-conversion`, `mobile-ux-design`, `copywriting-ux`
-- Landing: `landing-page-design`, `copywriting-ux`
-- Dashboard: `dashboard-design`, `table-list-ux`
-- Forms: `forms-ux-polish`
-- Mobile: `mobile-ux-design`
-- Animacoes: `motion-microinteractions`
-- Testes visuais: `visual-regression-playwright`
-- Performance: `performance-audit`
-- Seguranca: `security-review`
-- Docs: `docs-cofre-sync`
+- Nunca recriar `loja/tests.py`; use o pacote `loja/tests/`.
+- Manter dark mode único.
+- Não rodar `python manage.py test loja` sem necessidade.
+- Não mexer em billing, auth ou estoque fora do escopo.
+- Não versionar `.env`, logs, dumps, chaves, tokens ou dados sensíveis.
+- Fazer commits isolados por intenção.
