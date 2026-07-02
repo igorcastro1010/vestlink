@@ -480,9 +480,37 @@ class FiltrosLeadsEControleAcessoTests(TestCase):
         response = self.client.get(reverse("painel_loja", kwargs={"slug": self.loja.slug}))
 
         colunas = self._kanban_colunas(response)
+        self.assertEqual(response.context["kanban_total_novos"], 1)
+        self.assertEqual(response.context["kanban_total_atendimento"], 1)
+        self.assertEqual(response.context["kanban_total_concluidos"], 1)
+        self.assertEqual(colunas[Lead.STATUS_NOVO]["total_status"], 1)
+        self.assertEqual(colunas[Lead.STATUS_ATENDIMENTO]["total_status"], 1)
+        self.assertEqual(colunas[Lead.STATUS_CONCLUIDO]["total_status"], 1)
         self.assertEqual(colunas[Lead.STATUS_NOVO]["contador"], 1)
         self.assertEqual(colunas[Lead.STATUS_ATENDIMENTO]["contador"], 1)
         self.assertEqual(colunas[Lead.STATUS_CONCLUIDO]["contador"], 1)
+
+    def test_kanban_total_novos_considera_queryset_filtrado_antes_da_paginacao(self):
+        for indice in range(12):
+            Lead.objects.create(
+                loja=self.loja,
+                produto=self.produto,
+                origem=Lead.ORIGEM_PRODUTO,
+                cliente_nome=f"Cliente novo {indice}",
+                status=Lead.STATUS_NOVO,
+            )
+        self.client.force_login(self.owner_user)
+
+        response = self.client.get(reverse("painel_loja", kwargs={"slug": self.loja.slug}))
+
+        colunas = self._kanban_colunas(response)
+        self.assertEqual(response.context["total_leads"], 15)
+        self.assertEqual(len(list(response.context["leads_recentes"])), 10)
+        self.assertEqual(response.context["kanban_total_novos"], 13)
+        self.assertEqual(colunas[Lead.STATUS_NOVO]["total_status"], 13)
+        self.assertLess(colunas[Lead.STATUS_NOVO]["contador"], colunas[Lead.STATUS_NOVO]["total_status"])
+        self.assertContains(response, "13")
+        self.assertContains(response, "10 nesta página")
 
     def test_vendedor_so_visualiza_proprios_leads(self):
         self.client.force_login(self.vendedor_user1)
@@ -507,6 +535,9 @@ class FiltrosLeadsEControleAcessoTests(TestCase):
         self.assertEqual(colunas[Lead.STATUS_NOVO]["leads"], [self.lead_vendedor1])
         self.assertEqual(colunas[Lead.STATUS_ATENDIMENTO]["leads"], [])
         self.assertEqual(colunas[Lead.STATUS_CONCLUIDO]["leads"], [])
+        self.assertEqual(colunas[Lead.STATUS_NOVO]["total_status"], 1)
+        self.assertEqual(colunas[Lead.STATUS_ATENDIMENTO]["total_status"], 0)
+        self.assertEqual(colunas[Lead.STATUS_CONCLUIDO]["total_status"], 0)
 
     def test_vendedor_consegue_concluir_lead_proprio(self):
         self.client.force_login(self.vendedor_user1)
@@ -615,6 +646,9 @@ class FiltrosLeadsEControleAcessoTests(TestCase):
         self.assertIn(self.lead_vendedor1, colunas[Lead.STATUS_NOVO]["leads"])
         self.assertIn(self.lead_vendedor2, colunas[Lead.STATUS_ATENDIMENTO]["leads"])
         self.assertIn(self.lead_direto, colunas[Lead.STATUS_CONCLUIDO]["leads"])
+        self.assertEqual(colunas[Lead.STATUS_NOVO]["total_status"], 1)
+        self.assertEqual(colunas[Lead.STATUS_ATENDIMENTO]["total_status"], 1)
+        self.assertEqual(colunas[Lead.STATUS_CONCLUIDO]["total_status"], 1)
 
     def test_dono_filtra_por_vendedor(self):
         self.client.force_login(self.owner_user)
@@ -627,6 +661,10 @@ class FiltrosLeadsEControleAcessoTests(TestCase):
         self.assertEqual(leads[0], self.lead_vendedor1)
         self.assertEqual(response.context["total_leads"], 1)
         self.assertEqual(response.context["total_leads_global"], 3)  # Global não muda
+        colunas = self._kanban_colunas(response)
+        self.assertEqual(colunas[Lead.STATUS_NOVO]["total_status"], 1)
+        self.assertEqual(colunas[Lead.STATUS_ATENDIMENTO]["total_status"], 0)
+        self.assertEqual(colunas[Lead.STATUS_CONCLUIDO]["total_status"], 0)
 
         # Filtrar por sem vendedor (Direto)
         response = self.client.get(reverse("painel_loja", kwargs={"slug": self.loja.slug}), {"vendedor_leads": "sem_vendedor"})
@@ -636,6 +674,10 @@ class FiltrosLeadsEControleAcessoTests(TestCase):
         self.assertEqual(leads[0], self.lead_direto)
         self.assertEqual(response.context["total_leads"], 1)
         self.assertEqual(response.context["total_leads_global"], 3)
+        colunas = self._kanban_colunas(response)
+        self.assertEqual(colunas[Lead.STATUS_NOVO]["total_status"], 0)
+        self.assertEqual(colunas[Lead.STATUS_ATENDIMENTO]["total_status"], 0)
+        self.assertEqual(colunas[Lead.STATUS_CONCLUIDO]["total_status"], 1)
 
     def test_dono_filtra_por_status(self):
         self.client.force_login(self.owner_user)
@@ -649,6 +691,9 @@ class FiltrosLeadsEControleAcessoTests(TestCase):
         self.assertEqual(colunas[Lead.STATUS_NOVO]["contador"], 0)
         self.assertEqual(colunas[Lead.STATUS_ATENDIMENTO]["contador"], 0)
         self.assertEqual(colunas[Lead.STATUS_CONCLUIDO]["leads"], [self.lead_direto])
+        self.assertEqual(colunas[Lead.STATUS_NOVO]["total_status"], 0)
+        self.assertEqual(colunas[Lead.STATUS_ATENDIMENTO]["total_status"], 0)
+        self.assertEqual(colunas[Lead.STATUS_CONCLUIDO]["total_status"], 1)
 
     def test_dono_filtra_por_status_novo_pendente(self):
         self.client.force_login(self.owner_user)
@@ -670,17 +715,29 @@ class FiltrosLeadsEControleAcessoTests(TestCase):
 
     def test_dono_filtra_por_termo_busca(self):
         self.client.force_login(self.owner_user)
+        Lead.objects.create(
+            loja=self.loja,
+            vendedor=self.vendedor1,
+            produto=self.produto,
+            origem=Lead.ORIGEM_PRODUTO,
+            cliente_nome="Alice retorno",
+            cliente_telefone="85988880004",
+            status=Lead.STATUS_CONCLUIDO,
+            mensagem="Pedido Alice concluido",
+        )
         
         # Buscar por nome "Alice"
         response = self.client.get(reverse("painel_loja", kwargs={"slug": self.loja.slug}), {"q_leads": "Alice"})
         self.assertEqual(response.status_code, 200)
         leads = list(response.context["leads_recentes"])
-        self.assertEqual(len(leads), 1)
-        self.assertEqual(leads[0], self.lead_vendedor1)
+        self.assertEqual(len(leads), 2)
+        self.assertIn(self.lead_vendedor1, leads)
         colunas = self._kanban_colunas(response)
         self.assertEqual(colunas[Lead.STATUS_NOVO]["leads"], [self.lead_vendedor1])
         self.assertEqual(colunas[Lead.STATUS_ATENDIMENTO]["leads"], [])
-        self.assertEqual(colunas[Lead.STATUS_CONCLUIDO]["leads"], [])
+        self.assertEqual(colunas[Lead.STATUS_NOVO]["total_status"], 1)
+        self.assertEqual(colunas[Lead.STATUS_ATENDIMENTO]["total_status"], 0)
+        self.assertEqual(colunas[Lead.STATUS_CONCLUIDO]["total_status"], 1)
 
         # Buscar por telefone do Bob
         response = self.client.get(reverse("painel_loja", kwargs={"slug": self.loja.slug}), {"q_leads": "0002"})
@@ -733,6 +790,9 @@ class FiltrosLeadsEControleAcessoTests(TestCase):
         self.assertEqual(response.context["leads_page_obj"].number, 1)
         colunas = self._kanban_colunas(response)
         self.assertEqual(sum(coluna["contador"] for coluna in colunas.values()), 10)
+        self.assertEqual(colunas[Lead.STATUS_NOVO]["total_status"], 13)
+        self.assertEqual(colunas[Lead.STATUS_ATENDIMENTO]["total_status"], 1)
+        self.assertEqual(colunas[Lead.STATUS_CONCLUIDO]["total_status"], 1)
         self.assertContains(response, "Exibindo 1-10 de 15 pedido(s)")
 
     def test_paginacao_preserva_filtros_ativos(self):
@@ -755,6 +815,10 @@ class FiltrosLeadsEControleAcessoTests(TestCase):
         self.assertEqual(response.context["total_leads"], 13)
         self.assertEqual(len(list(response.context["leads_recentes"])), 10)
         self.assertEqual(response.context["leads_querystring_sem_pagina"], "status_leads=concluido")
+        colunas = self._kanban_colunas(response)
+        self.assertEqual(colunas[Lead.STATUS_NOVO]["total_status"], 0)
+        self.assertEqual(colunas[Lead.STATUS_ATENDIMENTO]["total_status"], 0)
+        self.assertEqual(colunas[Lead.STATUS_CONCLUIDO]["total_status"], 13)
         self.assertContains(response, "page_leads=2")
 
     def test_paginacao_respeita_permissao_do_vendedor(self):
@@ -776,3 +840,7 @@ class FiltrosLeadsEControleAcessoTests(TestCase):
         self.assertEqual(leads, [self.lead_vendedor1])
         self.assertEqual(response.context["total_leads"], 1)
         self.assertEqual(response.context["total_leads_global"], 1)
+        colunas = self._kanban_colunas(response)
+        self.assertEqual(colunas[Lead.STATUS_NOVO]["total_status"], 1)
+        self.assertEqual(colunas[Lead.STATUS_ATENDIMENTO]["total_status"], 0)
+        self.assertEqual(colunas[Lead.STATUS_CONCLUIDO]["total_status"], 0)

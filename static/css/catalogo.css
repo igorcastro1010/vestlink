@@ -17010,6 +17010,14 @@ form .option-label:has(input:required)::after {
     margin: 0;
 }
 
+.merchant-dashboard #tab-leads .lead-kanban__counts {
+    align-items: flex-end;
+    display: grid;
+    flex: 0 0 auto;
+    gap: 4px;
+    justify-items: end;
+}
+
 .merchant-dashboard #tab-leads .lead-kanban__count {
     align-items: center;
     background: rgba(199, 181, 255, 0.14);
@@ -17023,6 +17031,14 @@ form .option-label:has(input:required)::after {
     min-height: 30px;
     min-width: 34px;
     padding: 6px 10px;
+}
+
+.merchant-dashboard #tab-leads .lead-kanban__counts small {
+    color: var(--leads-subtle);
+    font-size: 0.68rem;
+    font-weight: 850;
+    line-height: 1.15;
+    text-align: right;
 }
 
 .merchant-dashboard #tab-leads .lead-kanban__cards {

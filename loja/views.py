@@ -406,7 +406,16 @@ def _querystring_leads(request, **overrides):
     return query.urlencode()
 
 
-def _agrupar_leads_kanban(leads):
+def _totais_leads_kanban(leads):
+    return {
+        Lead.STATUS_NOVO: leads.filter(status=Lead.STATUS_NOVO).count(),
+        Lead.STATUS_ATENDIMENTO: leads.filter(status=Lead.STATUS_ATENDIMENTO).count(),
+        Lead.STATUS_CONCLUIDO: leads.filter(status=Lead.STATUS_CONCLUIDO).count(),
+    }
+
+
+def _agrupar_leads_kanban(leads, totais_por_status=None):
+    totais_por_status = totais_por_status or {}
     grupos = {
         Lead.STATUS_NOVO: [],
         Lead.STATUS_ATENDIMENTO: [],
@@ -423,6 +432,7 @@ def _agrupar_leads_kanban(leads):
             "vazio": "Nenhum pedido novo.",
             "leads": grupos[Lead.STATUS_NOVO],
             "contador": len(grupos[Lead.STATUS_NOVO]),
+            "total_status": totais_por_status.get(Lead.STATUS_NOVO, len(grupos[Lead.STATUS_NOVO])),
         },
         {
             "status": Lead.STATUS_ATENDIMENTO,
@@ -430,6 +440,7 @@ def _agrupar_leads_kanban(leads):
             "vazio": "Nenhum pedido em atendimento.",
             "leads": grupos[Lead.STATUS_ATENDIMENTO],
             "contador": len(grupos[Lead.STATUS_ATENDIMENTO]),
+            "total_status": totais_por_status.get(Lead.STATUS_ATENDIMENTO, len(grupos[Lead.STATUS_ATENDIMENTO])),
         },
         {
             "status": Lead.STATUS_CONCLUIDO,
@@ -437,6 +448,7 @@ def _agrupar_leads_kanban(leads):
             "vazio": "Nenhum pedido concluído.",
             "leads": grupos[Lead.STATUS_CONCLUIDO],
             "contador": len(grupos[Lead.STATUS_CONCLUIDO]),
+            "total_status": totais_por_status.get(Lead.STATUS_CONCLUIDO, len(grupos[Lead.STATUS_CONCLUIDO])),
         },
     ]
 
@@ -531,6 +543,7 @@ def painel_loja(request, slug):
         categoria_id=categoria_id,
         leads_filtrados=leads_filtrados,
     )
+    totais_kanban = _totais_leads_kanban(leads_filtrados)
     leads_paginator = Paginator(leads_filtrados, LEADS_POR_PAGINA)
     leads_page_obj = leads_paginator.get_page(request.GET.get("page_leads"))
     status_filtros_rapidos = [
@@ -556,7 +569,10 @@ def painel_loja(request, slug):
         },
     ]
     contexto["leads_recentes"] = leads_page_obj.object_list
-    contexto["leads_kanban_colunas"] = _agrupar_leads_kanban(leads_page_obj.object_list)
+    contexto["leads_kanban_colunas"] = _agrupar_leads_kanban(leads_page_obj.object_list, totais_kanban)
+    contexto["kanban_total_novos"] = totais_kanban[Lead.STATUS_NOVO]
+    contexto["kanban_total_atendimento"] = totais_kanban[Lead.STATUS_ATENDIMENTO]
+    contexto["kanban_total_concluidos"] = totais_kanban[Lead.STATUS_CONCLUIDO]
     contexto["leads_page_obj"] = leads_page_obj
     contexto["leads_paginator"] = leads_paginator
     contexto["leads_exibidos_inicio"] = leads_page_obj.start_index() if leads_paginator.count else 0

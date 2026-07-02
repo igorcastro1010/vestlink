@@ -87,7 +87,12 @@
                 <section class="lead-kanban__column lead-kanban__column--{{ coluna.status }}" data-kanban-status="{{ coluna.status }}">
                     <header class="lead-kanban__header">
                         <h3>{{ coluna.titulo }}</h3>
-                        <span class="lead-kanban__count">{{ coluna.contador }}</span>
+                        <div class="lead-kanban__counts" aria-label="{{ coluna.total_status }} pedido(s) no total; {{ coluna.contador }} nesta página">
+                            <span class="lead-kanban__count">{{ coluna.total_status }}</span>
+                            {% if coluna.total_status != coluna.contador %}
+                                <small>{{ coluna.contador }} nesta página</small>
+                            {% endif %}
+                        </div>
                     </header>
 
                     <div class="lead-list lead-list--refined lead-kanban__cards">
