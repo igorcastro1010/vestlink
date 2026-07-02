@@ -159,3 +159,143 @@ class ProductTests(TestCase):
         produto.delete()
         new_version = cache.get(f"loja_cache_version_{self.loja.id}")
         self.assertEqual(new_version, 3)
+
+
+class ProductPanelFiltersTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username="lojista_filtros", password="senha-forte-123")
+        self.loja = Loja.objects.create(
+            usuario=self.user,
+            nome="Loja Filtros",
+            slug="loja-filtros",
+            telefone="85999999999",
+        )
+        self.categoria_blusas = Categoria.objects.create(loja=self.loja, nome="Blusas")
+        self.categoria_vestidos = Categoria.objects.create(loja=self.loja, nome="Vestidos")
+
+        self.produto_ativo = Produto.objects.create(
+            loja=self.loja,
+            categoria=self.categoria_blusas,
+            nome="Blusa Azul",
+            preco="79.90",
+            imagem="produtos/blusa-azul.png",
+            publicado=True,
+            esgotado=False,
+        )
+        self.produto_inativo = Produto.objects.create(
+            loja=self.loja,
+            categoria=self.categoria_blusas,
+            nome="Blusa Rascunho",
+            preco="89.90",
+            imagem="produtos/blusa-rascunho.png",
+            publicado=False,
+            esgotado=False,
+        )
+        self.produto_esgotado = Produto.objects.create(
+            loja=self.loja,
+            categoria=self.categoria_vestidos,
+            nome="Vestido Esgotado",
+            preco="149.90",
+            imagem="produtos/vestido-esgotado.png",
+            esgotado=True,
+        )
+        self.produto_esgotado_variacoes = Produto.objects.create(
+            loja=self.loja,
+            categoria=self.categoria_vestidos,
+            nome="Vestido Sem Grade",
+            preco="159.90",
+            imagem="produtos/vestido-sem-grade.png",
+            esgotado=False,
+        )
+        ProdutoVariacao.objects.create(
+            produto=self.produto_esgotado_variacoes,
+            cor="Preto",
+            tamanho="P",
+            estoque=0,
+            disponivel=True,
+        )
+        self.produto_estoque_baixo = Produto.objects.create(
+            loja=self.loja,
+            categoria=self.categoria_vestidos,
+            nome="Vestido Estoque Baixo",
+            preco="169.90",
+            imagem="produtos/vestido-estoque-baixo.png",
+        )
+        ProdutoVariacao.objects.create(
+            produto=self.produto_estoque_baixo,
+            cor="Verde",
+            tamanho="M",
+            estoque=2,
+            disponivel=True,
+        )
+
+        self.outra_loja = Loja.objects.create(
+            usuario=User.objects.create_user(username="outro_lojista", password="senha-forte-123"),
+            nome="Outra Loja",
+            slug="outra-loja-filtros",
+            telefone="85988888888",
+        )
+        self.produto_outra_loja = Produto.objects.create(
+            loja=self.outra_loja,
+            nome="Vestido Intruso",
+            preco="199.90",
+            imagem="produtos/intruso.png",
+        )
+
+    def _get_produtos(self, params=None):
+        self.client.force_login(self.user)
+        response = self.client.get(reverse("painel_loja", kwargs={"slug": self.loja.slug}), params or {})
+        self.assertEqual(response.status_code, 200)
+        return response, list(response.context["produtos"])
+
+    def test_filtro_produtos_busca_por_nome(self):
+        response, produtos = self._get_produtos({"q": "Estoque Baixo"})
+
+        self.assertEqual(produtos, [self.produto_estoque_baixo])
+        self.assertEqual(response.context["total_produtos_filtrados"], 1)
+        self.assertContains(response, "Exibindo 1 de 5 produtos.")
+        self.assertContains(response, 'value="Estoque Baixo"')
+
+    def test_filtro_produtos_por_categoria(self):
+        response, produtos = self._get_produtos({"categoria": str(self.categoria_blusas.id)})
+
+        self.assertEqual(set(produtos), {self.produto_ativo, self.produto_inativo})
+        self.assertEqual(response.context["total_produtos_filtrados"], 2)
+        self.assertContains(response, "Exibindo 2 de 5 produtos.")
+
+    def test_filtro_produtos_ativos(self):
+        _, produtos = self._get_produtos({"status": "ativos"})
+
+        self.assertIn(self.produto_ativo, produtos)
+        self.assertIn(self.produto_estoque_baixo, produtos)
+        self.assertNotIn(self.produto_inativo, produtos)
+        self.assertNotIn(self.produto_esgotado, produtos)
+        self.assertNotIn(self.produto_esgotado_variacoes, produtos)
+
+    def test_filtro_produtos_inativos(self):
+        _, produtos = self._get_produtos({"status": "inativos"})
+
+        self.assertEqual(produtos, [self.produto_inativo])
+
+    def test_filtro_produtos_esgotados(self):
+        _, produtos = self._get_produtos({"status": "esgotados"})
+
+        self.assertIn(self.produto_esgotado, produtos)
+        self.assertIn(self.produto_esgotado_variacoes, produtos)
+        self.assertNotIn(self.produto_ativo, produtos)
+        self.assertNotIn(self.produto_estoque_baixo, produtos)
+
+    def test_filtro_produtos_estoque_baixo(self):
+        _, produtos = self._get_produtos({"status": "estoque_baixo"})
+
+        self.assertEqual(produtos, [self.produto_estoque_baixo])
+
+    def test_filtros_produtos_nao_mostram_outra_loja(self):
+        response, produtos = self._get_produtos({"q": "Vestido"})
+
+        self.assertIn(self.produto_esgotado, produtos)
+        self.assertIn(self.produto_esgotado_variacoes, produtos)
+        self.assertIn(self.produto_estoque_baixo, produtos)
+        self.assertNotIn(self.produto_outra_loja, produtos)
+        self.assertEqual(response.context["total_produtos"], 5)
+        self.assertEqual(response.context["total_produtos_filtrados"], 3)

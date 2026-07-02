@@ -16533,6 +16533,13 @@ body.storefront .product__body {
     box-shadow: 0 0 0 4px rgba(199, 181, 255, 0.12) !important;
 }
 
+.merchant-dashboard #tab-produtos .product-results-meta {
+    color: var(--products-muted) !important;
+    font-size: 0.86rem;
+    font-weight: 800;
+    margin: -4px 0 14px !important;
+}
+
 .merchant-dashboard #tab-produtos .panel-form input[type="file"] {
     background: rgba(12, 10, 18, 0.72) !important;
     color: var(--products-muted) !important;

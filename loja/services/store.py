@@ -47,7 +47,19 @@ def obter_contexto_dashboard(request, loja, usuario_logado, vendedor_logado, bus
     Calcula KPIs, alertas, métricas de onboarding e dados de gráficos para o dashboard da loja.
     Retorna o dicionário de contexto pronto para renderização.
     """
-    produtos_base = loja.produtos.select_related("categoria").prefetch_related("imagens", "variacoes").all()
+    produtos_base = loja.produtos.select_related("categoria").prefetch_related("imagens", "variacoes").annotate(
+        total_variacoes=Count("variacoes", distinct=True),
+        variacoes_com_estoque=Count(
+            "variacoes",
+            filter=Q(variacoes__estoque__gt=0, variacoes__disponivel=True),
+            distinct=True,
+        ),
+        variacoes_estoque_baixo=Count(
+            "variacoes",
+            filter=Q(variacoes__estoque__gte=1, variacoes__estoque__lte=3, variacoes__disponivel=True),
+            distinct=True,
+        ),
+    )
 
     leads_base = loja.leads.select_related("produto", "vendedor").all()
     if vendedor_logado:
@@ -57,19 +69,21 @@ def obter_contexto_dashboard(request, loja, usuario_logado, vendedor_logado, bus
     produtos = produtos_base
 
     if busca:
-        produtos = produtos.filter(Q(nome__icontains=busca) | Q(descricao__icontains=busca))
+        produtos = produtos.filter(nome__icontains=busca)
     if categoria_id:
         produtos = produtos.filter(categoria_id=categoria_id)
-    if status == "esgotado":
-        produtos = produtos.filter(esgotado=True)
-    elif status == "novo":
-        produtos = produtos.filter(destaque=True)
-    elif status == "promocao":
-        produtos = produtos.filter(promocao=True)
-    elif status == "rascunho":
+    if status in {"esgotados", "esgotado"}:
+        produtos = produtos.filter(Q(esgotado=True) | Q(total_variacoes__gt=0, variacoes_com_estoque=0))
+    elif status in {"ativos", "disponivel"}:
+        produtos = produtos.filter(publicado=True, esgotado=False).filter(
+            Q(total_variacoes=0) | Q(variacoes_com_estoque__gt=0)
+        )
+    elif status in {"inativos", "rascunho"}:
         produtos = produtos.filter(publicado=False)
-    elif status == "disponivel":
-        produtos = produtos.filter(esgotado=False)
+    elif status == "estoque_baixo":
+        produtos = produtos.filter(variacoes_estoque_baixo__gt=0)
+
+    total_produtos_filtrados = produtos.count()
 
     produtos_sem_foto_extra = produtos_base.filter(imagens__isnull=True).count()
     avisos = []
@@ -206,6 +220,7 @@ def obter_contexto_dashboard(request, loja, usuario_logado, vendedor_logado, bus
         "is_owner": usuario_logado == loja.usuario,
         "produtos": produtos,
         "total_produtos": total_produtos,
+        "total_produtos_filtrados": total_produtos_filtrados,
         "total_esgotados": produtos_base.filter(esgotado=True).count(),
         "total_categorias": loja.categorias.count(),
         "total_fotos": sum(1 + produto.imagens.count() for produto in produtos_base),

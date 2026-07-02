@@ -184,11 +184,11 @@
                             <p class="eyebrow">Catálogo</p>
                             <h2>Produtos cadastrados</h2>
                         </div>
-                        <span>{{ produtos|length }} exibido(s)</span>
+                        <span>{{ total_produtos_filtrados }} de {{ total_produtos }} produto(s)</span>
                     </div>
 
                     <form class="panel-filters" method="get">
-                        <input type="search" name="q" value="{{ busca_painel }}" placeholder="Buscar produto">
+                        <input type="search" name="q" value="{{ busca_painel }}" placeholder="Buscar por nome do produto">
                         <select name="categoria">
                             <option value="">Todas as categorias</option>
                             {% for categoria in loja.categorias.all %}
@@ -197,14 +197,14 @@
                         </select>
                         <select name="status">
                             <option value="">Todos status</option>
-                            <option value="disponivel" {% if status_painel == "disponivel" %}selected{% endif %}>Disponíveis</option>
-                            <option value="esgotado" {% if status_painel == "esgotado" %}selected{% endif %}>Esgotados</option>
-                            <option value="novo" {% if status_painel == "novo" %}selected{% endif %}>Novos</option>
-                            <option value="promocao" {% if status_painel == "promocao" %}selected{% endif %}>Promoções</option>
-                            <option value="rascunho" {% if status_painel == "rascunho" %}selected{% endif %}>Rascunhos</option>
+                            <option value="ativos" {% if status_painel == "ativos" %}selected{% endif %}>Ativos</option>
+                            <option value="inativos" {% if status_painel == "inativos" %}selected{% endif %}>Inativos</option>
+                            <option value="esgotados" {% if status_painel == "esgotados" %}selected{% endif %}>Esgotados</option>
+                            <option value="estoque_baixo" {% if status_painel == "estoque_baixo" %}selected{% endif %}>Estoque baixo</option>
                         </select>
                         <button type="submit">Filtrar</button>
                     </form>
+                    <p class="product-results-meta">Exibindo {{ total_produtos_filtrados }} de {{ total_produtos }} produtos.</p>
 
                     <div class="dashboard-products">
                         {% for produto in produtos %}

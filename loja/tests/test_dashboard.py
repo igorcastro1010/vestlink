@@ -44,7 +44,7 @@ class DashboardTests(TestCase):
         self.assertContains(response, "/c/teste-moda/")
         self.assertContains(response, "QR Code")
         self.assertContains(response, reverse("baixar_qr_code", kwargs={"slug": self.loja.slug}))
-        self.assertContains(response, "Interesses recebidos")
+        self.assertContains(response, "Leads e Pedidos")
         self.assertContains(response, "Produtos mais clicados")
         self.assertContains(response, "Leads por dia")
         self.assertContains(response, "Resumo comercial")
