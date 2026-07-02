@@ -1,7 +1,9 @@
 import json
+from datetime import timedelta
 from django.contrib.auth.models import User
 from django.test import TestCase
 from django.urls import reverse
+from django.utils import timezone
 
 from loja.models import Categoria, Lead, Loja, Produto, Vendedor, ProdutoVariacao
 
@@ -187,6 +189,149 @@ class DashboardTests(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response["Location"], reverse("painel"))
         self.assertFalse(Loja.objects.filter(id=self.loja.id).exists())
+
+
+class DashboardNewLeadsAlertTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username="lojista_alertas", password="senha-forte-123")
+        self.loja = Loja.objects.create(
+            usuario=self.user,
+            nome="Teste Alertas",
+            slug="teste-alertas",
+            telefone="85999999999",
+        )
+        self.produto = Produto.objects.create(
+            loja=self.loja,
+            nome="Vestido Novo",
+            preco="129.90",
+            imagem="produtos/vestido.png",
+        )
+
+    def _lead(self, nome, status=Lead.STATUS_NOVO, loja=None, vendedor=None, minutos=0):
+        lead = Lead.objects.create(
+            loja=loja or self.loja,
+            vendedor=vendedor,
+            produto=self.produto if loja is None or loja == self.loja else None,
+            origem=Lead.ORIGEM_PRODUTO,
+            cliente_nome=nome,
+            cliente_telefone="85988888888",
+            status=status,
+        )
+        Lead.objects.filter(id=lead.id).update(criado_em=timezone.now() + timedelta(minutes=minutos))
+        lead.refresh_from_db()
+        return lead
+
+    def test_painel_geral_mostra_lead_novo_pendente(self):
+        lead = self._lead("Cliente Novo", status=Lead.STATUS_NOVO)
+        lead_atendimento = self._lead("Cliente Em Atendimento", status=Lead.STATUS_ATENDIMENTO)
+        self.client.force_login(self.user)
+
+        response = self.client.get(reverse("painel_loja", kwargs={"slug": self.loja.slug}))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(lead, response.context["leads_novos_painel"])
+        self.assertIn(lead_atendimento, response.context["leads_novos_painel"])
+        self.assertContains(response, "Pedidos novos")
+        self.assertContains(response, "Cliente Novo")
+        self.assertContains(response, "Cliente Em Atendimento")
+        self.assertContains(response, "Vestido Novo")
+        self.assertContains(response, "85988888888")
+
+    def test_painel_geral_nao_mostra_lead_concluido(self):
+        lead = self._lead("Cliente Concluido", status=Lead.STATUS_CONCLUIDO)
+        self.client.force_login(self.user)
+
+        response = self.client.get(reverse("painel_loja", kwargs={"slug": self.loja.slug}))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn(lead, response.context["leads_novos_painel"])
+        self.assertContains(response, "Nenhum pedido novo pendente agora.")
+
+    def test_painel_geral_limita_lista_a_5_leads(self):
+        for indice in range(6):
+            self._lead(f"Cliente {indice}", minutos=indice)
+        self.client.force_login(self.user)
+
+        response = self.client.get(reverse("painel_loja", kwargs={"slug": self.loja.slug}))
+
+        self.assertEqual(response.status_code, 200)
+        leads_novos = list(response.context["leads_novos_painel"])
+        nomes = [lead.cliente_nome for lead in leads_novos]
+        self.assertEqual(len(leads_novos), 5)
+        self.assertNotIn("Cliente 0", nomes)
+        self.assertContains(response, "Cliente 5")
+
+    def test_painel_geral_ordena_leads_mais_recentes_primeiro(self):
+        antigo = self._lead("Cliente Antigo", minutos=0)
+        recente = self._lead("Cliente Recente", minutos=10)
+        self.client.force_login(self.user)
+
+        response = self.client.get(reverse("painel_loja", kwargs={"slug": self.loja.slug}))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(list(response.context["leads_novos_painel"]), [recente, antigo])
+        content = response.content.decode()
+        self.assertLess(content.index("Cliente Recente"), content.index("Cliente Antigo"))
+
+    def test_painel_geral_mostra_estado_positivo_sem_leads_novos(self):
+        self.client.force_login(self.user)
+
+        response = self.client.get(reverse("painel_loja", kwargs={"slug": self.loja.slug}))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(list(response.context["leads_novos_painel"]), [])
+        self.assertContains(response, "Nenhum pedido novo pendente agora.")
+
+    def test_vendedor_ve_apenas_leads_vinculados_a_ele(self):
+        vendedor_user = User.objects.create_user(username="vendedor_alerta", password="senha-vendedor-123")
+        vendedor = Vendedor.objects.create(
+            loja=self.loja,
+            usuario=vendedor_user,
+            nome="Vendedor Alerta",
+            codigo="vendedor-alerta",
+            ativo=True,
+        )
+        lead_do_vendedor = self._lead("Cliente do Vendedor", vendedor=vendedor)
+        self._lead("Cliente Direto")
+        self.client.force_login(vendedor_user)
+
+        response = self.client.get(reverse("painel_loja", kwargs={"slug": self.loja.slug}))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(list(response.context["leads_novos_painel"]), [lead_do_vendedor])
+        self.assertContains(response, "Cliente do Vendedor")
+        self.assertNotContains(response, "Cliente Direto")
+
+    def test_dono_ve_todos_os_leads_novos_da_loja(self):
+        vendedor_user = User.objects.create_user(username="vendedor_dono_alerta", password="senha-vendedor-123")
+        vendedor = Vendedor.objects.create(
+            loja=self.loja,
+            usuario=vendedor_user,
+            nome="Vendedor Dono Alerta",
+            codigo="vendedor-dono-alerta",
+            ativo=True,
+        )
+        lead_vendedor = self._lead("Cliente Vendedor", vendedor=vendedor, minutos=2)
+        lead_direto = self._lead("Cliente Direto", minutos=1)
+        outra_user = User.objects.create_user(username="outro_alerta", password="senha-forte-123")
+        outra_loja = Loja.objects.create(
+            usuario=outra_user,
+            nome="Outra Loja",
+            slug="outra-loja-alerta",
+            telefone="85977777777",
+        )
+        lead_outra_loja = self._lead("Cliente Outra Loja", loja=outra_loja, minutos=3)
+        self.client.force_login(self.user)
+
+        response = self.client.get(reverse("painel_loja", kwargs={"slug": self.loja.slug}))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(lead_vendedor, response.context["leads_novos_painel"])
+        self.assertIn(lead_direto, response.context["leads_novos_painel"])
+        self.assertNotIn(lead_outra_loja, response.context["leads_novos_painel"])
+        self.assertContains(response, "Cliente Vendedor")
+        self.assertContains(response, "Cliente Direto")
+        self.assertNotContains(response, "Cliente Outra Loja")
 
 
 class DashboardChartsTests(TestCase):

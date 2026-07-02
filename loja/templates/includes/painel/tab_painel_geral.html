@@ -45,6 +45,49 @@
         </section>
     {% endif %}
 
+    <section class="panel-section new-leads-panel" aria-label="Pedidos novos">
+        <div class="section-heading">
+            <div>
+                <p class="eyebrow">Atendimento</p>
+                <h2>Pedidos novos</h2>
+                <p>Pedidos pendentes que ainda precisam de resposta.</p>
+            </div>
+            <a href="#leads" class="secondary" style="flex-shrink: 0; text-decoration: none; display: inline-block;">
+                Ver pedidos
+            </a>
+        </div>
+
+        <div class="new-leads-list">
+            {% for lead in leads_novos_painel %}
+                <article class="new-lead-card">
+                    <div class="new-lead-card__main">
+                        <strong>{% if lead.cliente_nome %}{{ lead.cliente_nome }}{% else %}Cliente não informado{% endif %}</strong>
+                        <span>
+                            {% if lead.produto %}
+                                {{ lead.produto.nome }}
+                            {% else %}
+                                Pedido pela sacolinha
+                            {% endif %}
+                        </span>
+                        <small>
+                            {% if lead.cliente_telefone %}WhatsApp: {{ lead.cliente_telefone }}{% else %}WhatsApp não informado{% endif %}
+                            {% if lead.vendedor %} · Vendedor: {{ lead.vendedor.nome }}{% endif %}
+                        </small>
+                    </div>
+                    <div class="new-lead-card__meta">
+                        <span class="lead-status-badge lead-status-badge--pending">{{ lead.get_status_display }}</span>
+                        <time datetime="{{ lead.criado_em|date:'c' }}">{{ lead.criado_em|date:"d/m/Y H:i" }}</time>
+                    </div>
+                </article>
+            {% empty %}
+                <div class="empty-dashboard new-leads-empty">
+                    <strong>Nenhum pedido novo pendente agora.</strong>
+                    <p>Quando chegar um novo interesse, ele aparece aqui para atendimento rápido.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+
     <section class="panel-section stock-alert-panel" aria-label="Atenção ao estoque">
         <div class="section-heading">
             <div>

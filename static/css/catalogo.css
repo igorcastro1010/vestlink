@@ -19668,3 +19668,78 @@ body.plans-page:has(.subscription-hero) .payments-empty {
         gap: 10px;
     }
 }
+
+/* 47. New leads alert in dashboard overview */
+.merchant-dashboard .new-leads-panel {
+    display: grid;
+    gap: 14px;
+}
+
+.merchant-dashboard .new-leads-list {
+    display: grid;
+    gap: 10px;
+}
+
+.merchant-dashboard .new-lead-card {
+    align-items: center;
+    background: rgba(255, 255, 255, 0.025);
+    border: 1px solid rgba(221, 211, 255, 0.12);
+    border-radius: 14px;
+    display: grid;
+    gap: 12px;
+    grid-template-columns: minmax(0, 1fr) auto;
+    padding: 12px 14px;
+}
+
+.merchant-dashboard .new-lead-card__main {
+    display: grid;
+    gap: 4px;
+    min-width: 0;
+}
+
+.merchant-dashboard .new-lead-card__main strong,
+.merchant-dashboard .new-lead-card__main span,
+.merchant-dashboard .new-lead-card__main small {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.merchant-dashboard .new-lead-card__main strong {
+    color: var(--uix-text-strong, #f4efff);
+    font-size: 0.98rem;
+}
+
+.merchant-dashboard .new-lead-card__main span {
+    color: var(--uix-text, #e8ddff);
+    font-weight: 700;
+}
+
+.merchant-dashboard .new-lead-card__main small,
+.merchant-dashboard .new-lead-card__meta time {
+    color: var(--uix-text-muted, rgba(226, 219, 241, 0.72));
+}
+
+.merchant-dashboard .new-lead-card__meta {
+    align-items: flex-end;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    text-align: right;
+}
+
+.merchant-dashboard .new-leads-empty {
+    min-height: 130px;
+}
+
+@media (max-width: 760px) {
+    .merchant-dashboard .new-lead-card {
+        align-items: start;
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .merchant-dashboard .new-lead-card__meta {
+        align-items: flex-start;
+        text-align: left;
+    }
+}

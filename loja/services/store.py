@@ -36,6 +36,12 @@ def gerar_qrcode(loja, request):
     return image_buffer.getvalue()
 
 
+def obter_leads_novos_painel(leads_base):
+    return leads_base.filter(
+        status__in=[Lead.STATUS_NOVO, Lead.STATUS_ATENDIMENTO],
+    ).order_by("-criado_em")[:5]
+
+
 def obter_contexto_dashboard(request, loja, usuario_logado, vendedor_logado, busca, status, categoria_id, leads_filtrados):
     """
     Calcula KPIs, alertas, métricas de onboarding e dados de gráficos para o dashboard da loja.
@@ -90,6 +96,7 @@ def obter_contexto_dashboard(request, loja, usuario_logado, vendedor_logado, bus
         
     total_leads_global = leads_base.count()
     pedidos_novos_global = leads_base.filter(status=Lead.STATUS_NOVO).count()
+    leads_novos_painel = list(obter_leads_novos_painel(leads_base))
 
     total_leads = leads_filtrados.count()
     pedidos_novos = leads_filtrados.filter(status=Lead.STATUS_NOVO).count()
@@ -205,6 +212,7 @@ def obter_contexto_dashboard(request, loja, usuario_logado, vendedor_logado, bus
         "total_cliques": total_cliques,
         "total_leads_global": total_leads_global,
         "pedidos_novos_global": pedidos_novos_global,
+        "leads_novos_painel": leads_novos_painel,
         "total_leads": total_leads,
         "leads_produto": leads_filtrados.filter(origem=Lead.ORIGEM_PRODUTO).count(),
         "leads_sacolinha": leads_filtrados.filter(origem=Lead.ORIGEM_SACOLINHA).count(),
