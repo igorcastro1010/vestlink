@@ -406,6 +406,41 @@ def _querystring_leads(request, **overrides):
     return query.urlencode()
 
 
+def _agrupar_leads_kanban(leads):
+    grupos = {
+        Lead.STATUS_NOVO: [],
+        Lead.STATUS_ATENDIMENTO: [],
+        Lead.STATUS_CONCLUIDO: [],
+    }
+    for lead_obj in leads:
+        if lead_obj.status in grupos:
+            grupos[lead_obj.status].append(lead_obj)
+
+    return [
+        {
+            "status": Lead.STATUS_NOVO,
+            "titulo": "Novos",
+            "vazio": "Nenhum pedido novo.",
+            "leads": grupos[Lead.STATUS_NOVO],
+            "contador": len(grupos[Lead.STATUS_NOVO]),
+        },
+        {
+            "status": Lead.STATUS_ATENDIMENTO,
+            "titulo": "Em atendimento",
+            "vazio": "Nenhum pedido em atendimento.",
+            "leads": grupos[Lead.STATUS_ATENDIMENTO],
+            "contador": len(grupos[Lead.STATUS_ATENDIMENTO]),
+        },
+        {
+            "status": Lead.STATUS_CONCLUIDO,
+            "titulo": "Concluídos",
+            "vazio": "Nenhum pedido concluído.",
+            "leads": grupos[Lead.STATUS_CONCLUIDO],
+            "contador": len(grupos[Lead.STATUS_CONCLUIDO]),
+        },
+    ]
+
+
 @login_required
 def painel_loja(request, slug):
     loja = _loja_do_usuario(request, slug)
@@ -521,6 +556,7 @@ def painel_loja(request, slug):
         },
     ]
     contexto["leads_recentes"] = leads_page_obj.object_list
+    contexto["leads_kanban_colunas"] = _agrupar_leads_kanban(leads_page_obj.object_list)
     contexto["leads_page_obj"] = leads_page_obj
     contexto["leads_paginator"] = leads_paginator
     contexto["leads_exibidos_inicio"] = leads_page_obj.start_index() if leads_paginator.count else 0

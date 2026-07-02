@@ -1,0 +1,104 @@
+<article class="lead-card" data-lead-id="{{ lead.id }}" data-lead-status="{{ lead.status }}">
+    <div class="lead-card__head">
+        <div>
+            <strong>
+                {% if lead.produto %}
+                    {{ lead.produto.nome }}
+                {% else %}
+                    Pedido pela sacolinha
+                {% endif %}
+            </strong>
+            <span>{{ lead.get_origem_display }} - {{ lead.criado_em|date:"d/m/Y H:i" }}</span>
+        </div>
+        {% if lead.status == "concluido" %}
+            <span class="lead-status-badge lead-status-badge--done">{{ lead.get_status_display }}</span>
+        {% elif lead.status == "atendimento" %}
+            <span class="lead-status-badge lead-status-badge--attention">{{ lead.get_status_display }}</span>
+        {% else %}
+            <span class="lead-status-badge lead-status-badge--pending">{{ lead.get_status_display }}</span>
+        {% endif %}
+    </div>
+
+    <div class="lead-card__grid">
+        <section class="lead-info-box">
+            <span class="lead-info-box__label">Resumo do pedido</span>
+            <strong>
+                {% if lead.produto %}
+                    {{ lead.produto.nome }}
+                {% else %}
+                    Pedido pela sacolinha
+                {% endif %}
+            </strong>
+            <p>
+                {% if lead.tamanho %}Tamanho: {{ lead.tamanho }}{% endif %}
+                {% if lead.cor %}{% if lead.tamanho %} - {% endif %}Cor: {{ lead.cor }}{% endif %}
+                {% if not lead.tamanho and not lead.cor %}{{ lead.mensagem|truncatechars:120 }}{% endif %}
+            </p>
+        </section>
+
+        <section class="lead-info-box">
+            <span class="lead-info-box__label">Cliente e contato</span>
+            <strong>{% if lead.cliente_nome %}{{ lead.cliente_nome }}{% else %}Cliente não informado{% endif %}</strong>
+            <p>
+                {% if lead.cliente_telefone %}WhatsApp: {{ lead.cliente_telefone }}{% endif %}
+                {% if lead.vendedor %}<br>Vendedor: {{ lead.vendedor.nome }}{% endif %}
+            </p>
+        </section>
+
+        <section class="lead-info-box lead-info-box--wide">
+            <span class="lead-info-box__label">Entrega / recebimento</span>
+            {% if lead.tipo_entrega %}
+                {% if lead.tipo_entrega == 'entrega' %}
+                    <span class="delivery-badge delivery-badge-ship">Entrega</span>
+                {% else %}
+                    <span class="delivery-badge delivery-badge-pickup">Retirada</span>
+                {% endif %}
+                {% if lead.endereco_completo %}
+                    <p class="lead-address">
+                        <strong>Endereço:</strong> {{ lead.endereco_completo }}
+                        <button type="button" class="btn-copy-address" data-address="{{ lead.endereco_completo }}" title="Copiar endereço">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="pointer-events: none;"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" style="pointer-events: none;"></path></svg>
+                        </button>
+                    </p>
+                {% endif %}
+            {% else %}
+                <p>Recebimento não informado.</p>
+            {% endif %}
+        </section>
+
+        <section class="lead-info-box lead-info-box--wide lead-audit">
+            <span class="lead-info-box__label">Status e auditoria</span>
+            {% if lead.observacao %}<p><strong>Obs. interna:</strong> {{ lead.observacao|truncatechars:100 }}</p>{% endif %}
+            {% if lead.status_atualizado_por and lead.status_atualizado_em %}
+                <p>
+                    Atualizado por:
+                    {% if lead.status_atualizado_por == loja.usuario %}
+                        {{ lead.status_atualizado_por.get_full_name|default:lead.status_atualizado_por.username }} (dono/lojista)
+                    {% else %}
+                        {% if lead.status_atualizado_por.vendedor_perfil %}
+                            {{ lead.status_atualizado_por.vendedor_perfil.nome }}
+                        {% else %}
+                            {{ lead.status_atualizado_por.get_full_name|default:lead.status_atualizado_por.username }}
+                        {% endif %}
+                    {% endif %}
+                    <br>Em: {{ lead.status_atualizado_em|date:"d/m/Y H:i" }}
+                </p>
+            {% else %}
+                <p>Sem atualização registrada.</p>
+            {% endif %}
+        </section>
+    </div>
+
+    <form class="lead-status-form lead-status-form--compact" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="acao" value="atualizar_lead_status">
+        <input type="hidden" name="lead_id" value="{{ lead.id }}">
+        <select name="status" aria-label="Status do pedido">
+            {% for valor, rotulo in status_lead_choices %}
+                <option value="{{ valor }}" {% if lead.status == valor %}selected{% endif %}>{{ rotulo }}</option>
+            {% endfor %}
+        </select>
+        <input type="text" name="observacao" value="{{ lead.observacao }}" placeholder="Observação interna">
+        <button type="submit">Atualizar status</button>
+    </form>
+</article>

@@ -16979,6 +16979,71 @@ form .option-label:has(input:required)::after {
     gap: 12px;
 }
 
+.merchant-dashboard #tab-leads .lead-kanban {
+    display: grid;
+    gap: 14px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin-top: 14px;
+}
+
+.merchant-dashboard #tab-leads .lead-kanban__column {
+    background: rgba(12, 10, 18, 0.42);
+    border: 1px solid var(--leads-line);
+    border-radius: 18px;
+    display: grid;
+    gap: 12px;
+    min-width: 0;
+    padding: 12px;
+}
+
+.merchant-dashboard #tab-leads .lead-kanban__header {
+    align-items: center;
+    display: flex;
+    gap: 10px;
+    justify-content: space-between;
+}
+
+.merchant-dashboard #tab-leads .lead-kanban__header h3 {
+    color: var(--leads-text);
+    font-size: 0.98rem;
+    line-height: 1.2;
+    margin: 0;
+}
+
+.merchant-dashboard #tab-leads .lead-kanban__count {
+    align-items: center;
+    background: rgba(199, 181, 255, 0.14);
+    border: 1px solid rgba(199, 181, 255, 0.28);
+    border-radius: 999px;
+    color: var(--leads-accent) !important;
+    display: inline-flex;
+    font-size: 0.8rem;
+    font-weight: 900;
+    justify-content: center;
+    min-height: 30px;
+    min-width: 34px;
+    padding: 6px 10px;
+}
+
+.merchant-dashboard #tab-leads .lead-kanban__cards {
+    align-content: start;
+}
+
+.merchant-dashboard #tab-leads .lead-kanban__empty {
+    border-radius: 14px !important;
+    min-height: 84px;
+    padding: 14px !important;
+}
+
+.merchant-dashboard #tab-leads .lead-kanban .lead-card__grid,
+.merchant-dashboard #tab-leads .lead-kanban .lead-status-form--compact {
+    grid-template-columns: minmax(0, 1fr) !important;
+}
+
+.merchant-dashboard #tab-leads .lead-kanban .lead-status-form--compact button {
+    width: 100%;
+}
+
 .merchant-dashboard #tab-leads .lead-card {
     background: rgba(25, 19, 35, 0.9) !important;
     border: 1px solid var(--leads-line) !important;
@@ -17060,6 +17125,12 @@ form .option-label:has(input:required)::after {
     color: var(--leads-warning);
 }
 
+.merchant-dashboard #tab-leads .lead-status-badge--attention {
+    background: rgba(199, 181, 255, 0.14);
+    border: 1px solid rgba(199, 181, 255, 0.28);
+    color: var(--leads-accent);
+}
+
 .merchant-dashboard #tab-leads .lead-address {
     align-items: center;
     display: flex;
@@ -17094,6 +17165,10 @@ form .option-label:has(input:required)::after {
 @media (max-width: 1100px) {
     .merchant-dashboard #tab-leads .lead-summary--compact {
         grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    }
+
+    .merchant-dashboard #tab-leads .lead-kanban {
+        grid-template-columns: minmax(0, 1fr);
     }
 
     .merchant-dashboard #tab-leads .leads-filters {
@@ -17926,6 +18001,7 @@ html[data-theme="dark"] .delivery-badge {
 }
 
 html[data-theme="dark"] .storefront .badges span,
+html[data-theme="dark"] .merchant-dashboard .lead-status-badge--attention,
 html[data-theme="dark"] .status-pill:not(.active):not(.warning):not(.sold) {
     background: var(--vl-badge-new-bg) !important;
     border-color: var(--vl-badge-new-border) !important;

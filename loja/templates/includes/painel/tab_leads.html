@@ -1,215 +1,124 @@
 <div class="tab-pane" id="tab-leads" data-tab-content="leads">
-            <section class="leads-dashboard panel-section leads-panel" id="leads">
-                <div class="section-heading leads-panel__heading">
-                    <div>
-                        <p class="eyebrow">Leads</p>
-                        <h2>Interesses recebidos</h2>
-                    </div>
-                    <div class="lead-toolbar">
-                        <a href="{% url 'exportar_leads_csv' loja.slug %}?q_leads={{ busca_leads }}&vendedor_leads={{ vendedor_leads_ativo }}&status_leads={{ status_leads_ativo }}" class="lead-toolbar__button lead-toolbar__button--primary">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                            Exportar CSV
-                        </a>
-                        <a href="{% url 'exportar_leads_impressao' loja.slug %}?q_leads={{ busca_leads }}&vendedor_leads={{ vendedor_leads_ativo }}&status_leads={{ status_leads_ativo }}" target="_blank" class="lead-toolbar__button">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
-                            Imprimir / PDF
-                        </a>
-                        <span class="lead-toolbar__count">{{ total_leads }} lead(s)</span>
-                    </div>
-                </div>
-
-                <div class="lead-quick-filters" aria-label="Filtros rápidos por status">
-                    {% for filtro in status_filtros_rapidos %}
-                        <a href="?{{ filtro.querystring }}#leads" class="{% if status_leads_ativo == filtro.valor %}active{% endif %}">
-                            {{ filtro.rotulo }}
-                        </a>
-                    {% endfor %}
-                </div>
-
-                <div class="lead-results-meta">
-                    <span>
-                        Exibindo {{ leads_exibidos_inicio }}-{{ leads_exibidos_fim }} de {{ total_leads }} pedido(s)
-                    </span>
-                    {% if status_leads_ativo %}
-                        <small>Filtro ativo: {{ status_leads_ativo }}</small>
-                    {% endif %}
-                </div>
-
-                <form class="panel-filters leads-filters" method="get" action="?#leads">
-                    <input type="search" name="q_leads" value="{{ busca_leads }}" placeholder="Buscar por cliente, WhatsApp ou produto">
-                    {% if is_owner %}
-                        <select name="vendedor_leads">
-                            <option value="">Todos vendedores</option>
-                            <option value="sem_vendedor" {% if vendedor_leads_ativo == "sem_vendedor" %}selected{% endif %}>Sem vendedor (Direto)</option>
-                            {% for vend in vendedores %}
-                                <option value="{{ vend.id }}" {% if vendedor_leads_ativo == vend.id|stringformat:"s" %}selected{% endif %}>{{ vend.nome }}</option>
-                            {% endfor %}
-                        </select>
-                    {% endif %}
-                    <select name="status_leads">
-                        <option value="">Todos status</option>
-                        {% for valor, rotulo in status_lead_choices %}
-                            <option value="{{ valor }}" {% if status_leads_ativo == valor %}selected{% endif %}>{{ rotulo }}</option>
-                        {% endfor %}
-                    </select>
-                    <button type="submit">Filtrar</button>
-                </form>
-
-                <div class="lead-summary lead-summary--compact">
-                    <article>
-                        <span>Produto</span>
-                        <strong>{{ leads_produto }}</strong>
-                    </article>
-                    <article>
-                        <span>Sacolinha</span>
-                        <strong>{{ leads_sacolinha }}</strong>
-                    </article>
-                    <article>
-                        <span>Total</span>
-                        <strong>{{ total_leads }}</strong>
-                    </article>
-                    <article>
-                        <span>Novos</span>
-                        <strong>{{ pedidos_novos }}</strong>
-                    </article>
-                    <article>
-                        <span>Atendimento</span>
-                        <strong>{{ pedidos_atendimento }}</strong>
-                    </article>
-                    <article>
-                        <span>Concluídos</span>
-                        <strong>{{ pedidos_concluidos }}</strong>
-                    </article>
-                </div>
-
-                <div class="lead-list lead-list--refined">
-                    {% for lead in leads_recentes %}
-                        <article class="lead-card">
-                            <div class="lead-card__head">
-                                <div>
-                                    <strong>
-                                        {% if lead.produto %}
-                                            {{ lead.produto.nome }}
-                                        {% else %}
-                                            Pedido pela sacolinha
-                                        {% endif %}
-                                    </strong>
-                                    <span>{{ lead.get_origem_display }} - {{ lead.criado_em|date:"d/m/Y H:i" }}</span>
-                                </div>
-                                {% if lead.status == "concluido" %}
-                                    <span class="lead-status-badge lead-status-badge--done">Concluído</span>
-                                {% else %}
-                                    <span class="lead-status-badge lead-status-badge--pending">Pendente</span>
-                                {% endif %}
-                            </div>
-
-                            <div class="lead-card__grid">
-                                <section class="lead-info-box">
-                                    <span class="lead-info-box__label">Resumo do pedido</span>
-                                    <strong>
-                                        {% if lead.produto %}
-                                            {{ lead.produto.nome }}
-                                        {% else %}
-                                            Pedido pela sacolinha
-                                        {% endif %}
-                                    </strong>
-                                    <p>
-                                        {% if lead.tamanho %}Tamanho: {{ lead.tamanho }}{% endif %}
-                                        {% if lead.cor %}{% if lead.tamanho %} - {% endif %}Cor: {{ lead.cor }}{% endif %}
-                                        {% if not lead.tamanho and not lead.cor %}{{ lead.mensagem|truncatechars:120 }}{% endif %}
-                                    </p>
-                                </section>
-
-                                <section class="lead-info-box">
-                                    <span class="lead-info-box__label">Cliente e contato</span>
-                                    <strong>{% if lead.cliente_nome %}{{ lead.cliente_nome }}{% else %}Cliente não informado{% endif %}</strong>
-                                    <p>
-                                        {% if lead.cliente_telefone %}WhatsApp: {{ lead.cliente_telefone }}{% endif %}
-                                        {% if lead.vendedor %}<br>Vendedor: {{ lead.vendedor.nome }}{% endif %}
-                                    </p>
-                                </section>
-
-                                <section class="lead-info-box lead-info-box--wide">
-                                    <span class="lead-info-box__label">Entrega / recebimento</span>
-                                    {% if lead.tipo_entrega %}
-                                        {% if lead.tipo_entrega == 'entrega' %}
-                                            <span class="delivery-badge delivery-badge-ship">Entrega</span>
-                                        {% else %}
-                                            <span class="delivery-badge delivery-badge-pickup">Retirada</span>
-                                        {% endif %}
-                                        {% if lead.endereco_completo %}
-                                            <p class="lead-address">
-                                                <strong>Endereço:</strong> {{ lead.endereco_completo }}
-                                                <button type="button" class="btn-copy-address" data-address="{{ lead.endereco_completo }}" title="Copiar endereço">
-                                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="pointer-events: none;"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" style="pointer-events: none;"></path></svg>
-                                                </button>
-                                            </p>
-                                        {% endif %}
-                                    {% else %}
-                                        <p>Recebimento não informado.</p>
-                                    {% endif %}
-                                </section>
-
-                                <section class="lead-info-box lead-info-box--wide lead-audit">
-                                    <span class="lead-info-box__label">Status e auditoria</span>
-                                    {% if lead.observacao %}<p><strong>Obs. interna:</strong> {{ lead.observacao|truncatechars:100 }}</p>{% endif %}
-                                    {% if lead.status_atualizado_por and lead.status_atualizado_em %}
-                                        <p>
-                                            Atualizado por:
-                                            {% if lead.status_atualizado_por == loja.usuario %}
-                                                {{ lead.status_atualizado_por.get_full_name|default:lead.status_atualizado_por.username }} (dono/lojista)
-                                            {% else %}
-                                                {% if lead.status_atualizado_por.vendedor_perfil %}
-                                                    {{ lead.status_atualizado_por.vendedor_perfil.nome }}
-                                                {% else %}
-                                                    {{ lead.status_atualizado_por.get_full_name|default:lead.status_atualizado_por.username }}
-                                                {% endif %}
-                                            {% endif %}
-                                            <br>Em: {{ lead.status_atualizado_em|date:"d/m/Y H:i" }}
-                                        </p>
-                                    {% else %}
-                                        <p>Sem atualização registrada.</p>
-                                    {% endif %}
-                                </section>
-                            </div>
-
-                            <form class="lead-status-form lead-status-form--compact" method="post">
-                                {% csrf_token %}
-                                <input type="hidden" name="acao" value="atualizar_lead_status">
-                                <input type="hidden" name="lead_id" value="{{ lead.id }}">
-                                <select name="status" aria-label="Status do pedido">
-                                    {% for valor, rotulo in status_lead_choices %}
-                                        <option value="{{ valor }}" {% if lead.status == valor %}selected{% endif %}>{{ rotulo }}</option>
-                                    {% endfor %}
-                                </select>
-                                <input type="text" name="observacao" value="{{ lead.observacao }}" placeholder="Observação interna">
-                                <button type="submit">Atualizar status</button>
-                            </form>
-                        </article>
-                    {% empty %}
-                        <div class="empty-dashboard">
-                            <strong>Nenhum lead ainda.</strong>
-                            <p>Quando clientes clicarem no WhatsApp ou enviarem a sacolinha, eles aparecem aqui.</p>
-                        </div>
-                    {% endfor %}
-                </div>
-
-                {% if leads_paginator.num_pages > 1 %}
-                    <nav class="lead-pagination" aria-label="Paginação de leads">
-                        {% if leads_page_obj.has_previous %}
-                            <a href="?{{ leads_querystring_sem_pagina }}{% if leads_querystring_sem_pagina %}&{% endif %}page_leads={{ leads_page_obj.previous_page_number }}#leads">Anterior</a>
-                        {% else %}
-                            <span class="disabled">Anterior</span>
-                        {% endif %}
-
-                        <strong>Página {{ leads_page_obj.number }} de {{ leads_paginator.num_pages }}</strong>
-
-                        {% if leads_page_obj.has_next %}
-                            <a href="?{{ leads_querystring_sem_pagina }}{% if leads_querystring_sem_pagina %}&{% endif %}page_leads={{ leads_page_obj.next_page_number }}#leads">Próxima</a>
-                        {% else %}
-                            <span class="disabled">Próxima</span>
-                        {% endif %}
-                    </nav>
-                {% endif %}
-            </section>
+    <section class="leads-dashboard panel-section leads-panel" id="leads">
+        <div class="section-heading leads-panel__heading">
+            <div>
+                <p class="eyebrow">Leads</p>
+                <h2>Leads e Pedidos</h2>
+            </div>
+            <div class="lead-toolbar">
+                <a href="{% url 'exportar_leads_csv' loja.slug %}?q_leads={{ busca_leads }}&vendedor_leads={{ vendedor_leads_ativo }}&status_leads={{ status_leads_ativo }}" class="lead-toolbar__button lead-toolbar__button--primary">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                    Exportar CSV
+                </a>
+                <a href="{% url 'exportar_leads_impressao' loja.slug %}?q_leads={{ busca_leads }}&vendedor_leads={{ vendedor_leads_ativo }}&status_leads={{ status_leads_ativo }}" target="_blank" class="lead-toolbar__button">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+                    Imprimir / PDF
+                </a>
+                <span class="lead-toolbar__count">{{ total_leads }} lead(s)</span>
+            </div>
         </div>
+
+        <div class="lead-quick-filters" aria-label="Filtros rápidos por status">
+            {% for filtro in status_filtros_rapidos %}
+                <a href="?{{ filtro.querystring }}#leads" class="{% if status_leads_ativo == filtro.valor %}active{% endif %}">
+                    {{ filtro.rotulo }}
+                </a>
+            {% endfor %}
+        </div>
+
+        <div class="lead-results-meta">
+            <span>
+                Exibindo {{ leads_exibidos_inicio }}-{{ leads_exibidos_fim }} de {{ total_leads }} pedido(s)
+            </span>
+            {% if status_leads_ativo %}
+                <small>Filtro ativo: {{ status_leads_ativo }}</small>
+            {% endif %}
+        </div>
+
+        <form class="panel-filters leads-filters" method="get" action="?#leads">
+            <input type="search" name="q_leads" value="{{ busca_leads }}" placeholder="Buscar por cliente, WhatsApp ou produto">
+            {% if is_owner %}
+                <select name="vendedor_leads">
+                    <option value="">Todos vendedores</option>
+                    <option value="sem_vendedor" {% if vendedor_leads_ativo == "sem_vendedor" %}selected{% endif %}>Sem vendedor (Direto)</option>
+                    {% for vend in vendedores %}
+                        <option value="{{ vend.id }}" {% if vendedor_leads_ativo == vend.id|stringformat:"s" %}selected{% endif %}>{{ vend.nome }}</option>
+                    {% endfor %}
+                </select>
+            {% endif %}
+            <select name="status_leads">
+                <option value="">Todos status</option>
+                {% for valor, rotulo in status_lead_choices %}
+                    <option value="{{ valor }}" {% if status_leads_ativo == valor %}selected{% endif %}>{{ rotulo }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit">Filtrar</button>
+        </form>
+
+        <div class="lead-summary lead-summary--compact">
+            <article>
+                <span>Produto</span>
+                <strong>{{ leads_produto }}</strong>
+            </article>
+            <article>
+                <span>Sacolinha</span>
+                <strong>{{ leads_sacolinha }}</strong>
+            </article>
+            <article>
+                <span>Total</span>
+                <strong>{{ total_leads }}</strong>
+            </article>
+            <article>
+                <span>Novos</span>
+                <strong>{{ pedidos_novos }}</strong>
+            </article>
+            <article>
+                <span>Atendimento</span>
+                <strong>{{ pedidos_atendimento }}</strong>
+            </article>
+            <article>
+                <span>Concluídos</span>
+                <strong>{{ pedidos_concluidos }}</strong>
+            </article>
+        </div>
+
+        <div class="lead-kanban" aria-label="Kanban de leads e pedidos">
+            {% for coluna in leads_kanban_colunas %}
+                <section class="lead-kanban__column lead-kanban__column--{{ coluna.status }}" data-kanban-status="{{ coluna.status }}">
+                    <header class="lead-kanban__header">
+                        <h3>{{ coluna.titulo }}</h3>
+                        <span class="lead-kanban__count">{{ coluna.contador }}</span>
+                    </header>
+
+                    <div class="lead-list lead-list--refined lead-kanban__cards">
+                        {% for lead in coluna.leads %}
+                            {% include "includes/painel/lead_card.html" %}
+                        {% empty %}
+                            <div class="empty-dashboard lead-kanban__empty">
+                                <strong>{{ coluna.vazio }}</strong>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </section>
+            {% endfor %}
+        </div>
+
+        {% if leads_paginator.num_pages > 1 %}
+            <nav class="lead-pagination" aria-label="Paginação de leads">
+                {% if leads_page_obj.has_previous %}
+                    <a href="?{{ leads_querystring_sem_pagina }}{% if leads_querystring_sem_pagina %}&{% endif %}page_leads={{ leads_page_obj.previous_page_number }}#leads">Anterior</a>
+                {% else %}
+                    <span class="disabled">Anterior</span>
+                {% endif %}
+
+                <strong>Página {{ leads_page_obj.number }} de {{ leads_paginator.num_pages }}</strong>
+
+                {% if leads_page_obj.has_next %}
+                    <a href="?{{ leads_querystring_sem_pagina }}{% if leads_querystring_sem_pagina %}&{% endif %}page_leads={{ leads_page_obj.next_page_number }}#leads">Próxima</a>
+                {% else %}
+                    <span class="disabled">Próxima</span>
+                {% endif %}
+            </nav>
+        {% endif %}
+    </section>
+</div>
