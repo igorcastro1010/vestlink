@@ -19968,6 +19968,7 @@ body.plans-page:has(.subscription-hero) .payments-empty {
         max-width: none !important;
         position: fixed !important;
         right: max(14px, env(safe-area-inset-right)) !important;
+        top: auto !important;
         width: auto !important;
         z-index: 1200 !important;
     }
@@ -20000,6 +20001,7 @@ body.plans-page:has(.subscription-hero) .payments-empty {
         overflow-y: auto !important;
         position: absolute !important;
         right: 0 !important;
+        top: auto !important;
         width: min(336px, calc(100vw - 28px)) !important;
     }
 
@@ -20069,6 +20071,56 @@ body.plans-page:has(.subscription-hero) .payments-empty {
         white-space: normal !important;
     }
 
+    body.storefront .grid .product .variant-stock-list {
+        align-items: center !important;
+        border-radius: 14px !important;
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        gap: 6px !important;
+        margin-block: 2px !important;
+        max-height: 52px !important;
+        max-width: 100%;
+        min-height: 44px;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        padding: 7px !important;
+        scroll-snap-type: x proximity;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    body.storefront .grid .product .variant-stock-list::-webkit-scrollbar {
+        display: none;
+    }
+
+    body.storefront .grid .product .variant-stock-list .option-label,
+    body.storefront .grid .product .variant-stock-list span:not(.option-label) {
+        flex: 0 0 auto !important;
+        scroll-snap-align: start;
+        white-space: nowrap !important;
+    }
+
+    body.storefront .grid .product .variant-stock-list .option-label {
+        color: rgba(245, 241, 255, 0.86) !important;
+        font-size: 0.68rem !important;
+        max-width: 76px;
+    }
+
+    body.storefront .grid .product .variant-stock-list span:not(.option-label) {
+        background: rgba(255, 255, 255, 0.1) !important;
+        border-color: rgba(221, 211, 255, 0.16) !important;
+        color: rgba(247, 243, 255, 0.92) !important;
+        font-size: 0.68rem !important;
+        line-height: 1 !important;
+        padding: 6px 8px !important;
+    }
+
+    body.storefront .grid .product .variant-stock-list .sold {
+        background: rgba(255, 255, 255, 0.07) !important;
+        color: rgba(226, 219, 241, 0.62) !important;
+        opacity: 1 !important;
+    }
+
     body.storefront .option-group {
         gap: 7px !important;
         justify-content: flex-start !important;
@@ -20098,6 +20150,41 @@ body.plans-page:has(.subscription-hero) .payments-empty {
     body.storefront .product-detail-info .whatsapp {
         margin-bottom: 64px;
     }
+
+    body.storefront .store-sidebar {
+        margin-bottom: 14px !important;
+        max-width: calc(100vw - 24px) !important;
+        position: sticky !important;
+        top: calc(env(safe-area-inset-top, 0px) + 8px) !important;
+        width: calc(100vw - 24px) !important;
+        z-index: 80 !important;
+    }
+
+    body.storefront .store-sidebar h2 {
+        flex: 0 0 auto;
+        margin: 0 !important;
+        white-space: nowrap;
+    }
+
+    body.storefront .store-sidebar .categories {
+        flex: 1 1 auto;
+        flex-wrap: nowrap !important;
+        max-width: 100%;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        padding-bottom: 2px;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    body.storefront .store-sidebar .categories::-webkit-scrollbar {
+        display: none;
+    }
+
+    body.storefront .store-sidebar .categories a {
+        flex: 0 0 auto !important;
+        white-space: nowrap !important;
+    }
 }
 
 @media (max-width: 420px) {
@@ -20116,4 +20203,65 @@ body.plans-page:has(.subscription-hero) .payments-empty {
     body.storefront .cart-box {
         bottom: 60px !important;
     }
+}
+
+/* 49. Stores header mobile subtitle */
+@media (max-width: 760px) {
+    body.stores-page .panel-header-brand {
+        align-items: flex-start !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 10px !important;
+    }
+
+    body.stores-page .panel-header-brand > div,
+    body.stores-page .panel-header-brand .panel-header-subtitle {
+        max-width: 100% !important;
+        min-width: 0 !important;
+        width: 100% !important;
+    }
+
+    body.stores-page .panel-header-brand .panel-header-subtitle {
+        align-items: flex-start !important;
+        align-self: stretch !important;
+        border-radius: 14px !important;
+        display: block !important;
+        line-height: 1.35 !important;
+        overflow: visible !important;
+        overflow-wrap: normal !important;
+        padding: 10px 12px !important;
+        text-align: left !important;
+        text-overflow: clip !important;
+        white-space: normal !important;
+        word-break: normal !important;
+    }
+}
+
+/* 50. Green selected product options */
+body.storefront .choice-option.active:not(:disabled):not(.choice-option--sold),
+body.storefront .choice-option[aria-pressed="true"]:not(:disabled):not(.choice-option--sold) {
+    background: linear-gradient(135deg, #18b981, #0f8f6d) !important;
+    border-color: rgba(94, 224, 168, 0.88) !important;
+    box-shadow: 0 10px 24px rgba(16, 185, 129, 0.28), 0 0 0 1px rgba(210, 255, 237, 0.14) inset !important;
+    color: #f8fffb !important;
+    opacity: 1 !important;
+    text-decoration: none !important;
+    transform: translateY(-1px) !important;
+}
+
+body.storefront .choice-option.active:not(:disabled):not(.choice-option--sold):hover,
+body.storefront .choice-option[aria-pressed="true"]:not(:disabled):not(.choice-option--sold):hover,
+body.storefront .choice-option.active:not(:disabled):not(.choice-option--sold):focus-visible,
+body.storefront .choice-option[aria-pressed="true"]:not(:disabled):not(.choice-option--sold):focus-visible {
+    background: linear-gradient(135deg, #22c98d, #10936f) !important;
+    border-color: rgba(133, 255, 201, 0.95) !important;
+    color: #ffffff !important;
+    filter: brightness(1.03);
+}
+
+[data-theme="dark"] body.storefront .choice-option.active:not(:disabled):not(.choice-option--sold),
+[data-theme="dark"] body.storefront .choice-option[aria-pressed="true"]:not(:disabled):not(.choice-option--sold) {
+    background: linear-gradient(135deg, #16c784, #0d7f63) !important;
+    border-color: rgba(94, 224, 168, 0.9) !important;
+    color: #f8fffb !important;
 }

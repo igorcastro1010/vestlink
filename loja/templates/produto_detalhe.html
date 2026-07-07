@@ -13,7 +13,7 @@
         <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ produto.imagem.url }}">
     {% endif %}
     <link rel="stylesheet" href="/static/css/variables.css?v=76">
-    <link rel="stylesheet" href="/static/css/catalogo.css?v=102">
+    <link rel="stylesheet" href="/static/css/catalogo.css?v=105">
     <script>
         document.documentElement.setAttribute("data-theme", "dark");
     </script>
@@ -174,8 +174,12 @@
 
         sizeButtons.forEach((button) => {
             button.addEventListener("click", () => {
-                sizeButtons.forEach((item) => item.classList.remove("active"));
+                sizeButtons.forEach((item) => {
+                    item.classList.remove("active");
+                    item.setAttribute("aria-pressed", "false");
+                });
                 button.classList.add("active");
+                button.setAttribute("aria-pressed", "true");
                 selection.size = button.dataset.size;
                 refreshWhatsapp();
             });
@@ -183,8 +187,12 @@
 
         colorButtons.forEach((button) => {
             button.addEventListener("click", () => {
-                colorButtons.forEach((item) => item.classList.remove("active"));
+                colorButtons.forEach((item) => {
+                    item.classList.remove("active");
+                    item.setAttribute("aria-pressed", "false");
+                });
                 button.classList.add("active");
+                button.setAttribute("aria-pressed", "true");
                 selection.color = button.dataset.color;
                 refreshWhatsapp();
             });
