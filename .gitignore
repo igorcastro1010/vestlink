@@ -12,6 +12,8 @@ __pycache__/
 .coverage
 .agent
 .agent/
+.codex-plugins/
+.agents/plugins/marketplace.json
 cofre/
 
 vestlink/
