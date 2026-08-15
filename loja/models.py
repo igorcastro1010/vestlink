@@ -473,7 +473,7 @@ class Pagamento(models.Model):
 
     @property
     def checkout_url(self):
-        if settings.MERCADO_PAGO_USE_SANDBOX and self.sandbox_init_point:
+        if getattr(settings, "MERCADO_PAGO_USE_SANDBOX", False) and self.sandbox_init_point:
             return self.sandbox_init_point
         return self.init_point or self.sandbox_init_point
 

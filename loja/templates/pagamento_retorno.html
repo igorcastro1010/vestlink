@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Pagamento - {{ loja.nome }}</title>
+    <title>Pagamento manual - {{ loja.nome }}</title>
     <link rel="stylesheet" href="/static/css/variables.css?v=76">
     <link rel="stylesheet" href="/static/css/catalogo.css?v=76">
 </head>
@@ -19,19 +19,9 @@
     <main>
         <section class="checkout-shell checkout-shell--single">
             <div class="checkout-copy">
-                {% if resultado == "success" %}
-                    <p class="lp-kicker">Pagamento aprovado</p>
-                    <h1>Premium ativado para {{ loja.nome }}.</h1>
-                    <p>O pagamento voltou como aprovado e a assinatura da loja foi atualizada.</p>
-                {% elif resultado == "pending" %}
-                    <p class="lp-kicker">Pagamento pendente</p>
-                    <h1>Estamos aguardando a confirmacao.</h1>
-                    <p>Assim que a Abacate Pay confirmar, o webhook atualiza a assinatura automaticamente.</p>
-                {% else %}
-                    <p class="lp-kicker">Pagamento não concluído</p>
-                    <h1>O pagamento não foi aprovado.</h1>
-                    <p>Você pode voltar para a assinatura e tentar novamente.</p>
-                {% endif %}
+                <p class="lp-kicker">Pagamento manual</p>
+                <h1>A assinatura não foi alterada automaticamente.</h1>
+                <p>O Premium só é ativado após confirmação manual do comprovante. Volte para a assinatura para ver as instruções de Pix e WhatsApp.</p>
 
                 {% if pagamento %}
                     <div class="checkout-summary">
@@ -41,7 +31,7 @@
                     </div>
                 {% endif %}
                 <div class="lp-actions">
-                    <a class="lp-button" href="{% url 'painel_loja' loja.slug %}">Ir para o painel</a>
+                    <a class="lp-button" href="{% url 'checkout_premium' loja.slug %}">Ver instruções de pagamento</a>
                     <a class="lp-button lp-button--ghost" href="{% url 'assinatura' loja.slug %}">Ver assinatura</a>
                 </div>
             </div>

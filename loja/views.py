@@ -23,7 +23,6 @@ from . import supabase_auth
 from .forms import CadastroForm, CategoriaForm, LojaForm, ProdutoForm, VendedorForm
 from .legal import LEAD_RETENTION_DAYS, PRIVACY_VERSION, TERMS_VERSION
 from .models import Categoria, Cupom, Lead, Loja, Pagamento, Produto, Vendedor
-from .payments import AbacatePayError, validar_assinatura_abacate_pay
 from .services import billing, lead, store, catalog, products, auth
 
 
@@ -80,7 +79,10 @@ def home(request):
 
 
 def planos(request):
-    return render(request, "planos.html")
+    loja_pagamento = None
+    if request.user.is_authenticated:
+        loja_pagamento = Loja.objects.filter(usuario=request.user).order_by("criada_em").first()
+    return render(request, "planos.html", {"loja_pagamento": loja_pagamento})
 
 
 def termos_uso(request):
@@ -658,12 +660,16 @@ def assinatura(request, slug):
             loja.assinatura_status = Loja.ASSINATURA_CANCELADA
             loja.assinatura_cancelada_em = timezone.now()
             loja.save(update_fields=["assinatura_status", "assinatura_cancelada_em"])
-        else:
-            loja.plano = Loja.PLANO_PREMIUM
-            loja.assinatura_status = Loja.ASSINATURA_ATIVA
-            loja.assinatura_ativa_em = timezone.now()
-            loja.assinatura_cancelada_em = None
-            loja.save(update_fields=["plano", "assinatura_status", "assinatura_ativa_em", "assinatura_cancelada_em"])
+        elif acao == "ativar_manual":
+            if not (request.user.is_staff or request.user.is_superuser):
+                raise PermissionDenied("Apenas administradores podem confirmar pagamento manualmente.")
+            pagamento = Pagamento.objects.create(
+                loja=loja,
+                usuario=request.user,
+                status=Pagamento.STATUS_CRIADO,
+                raw_response={"origem": "manual"},
+            )
+            pagamento.marcar_aprovado(payment_id=f"manual-{pagamento.id}")
         return redirect("assinatura", slug=loja.slug)
 
     return render(
@@ -671,8 +677,13 @@ def assinatura(request, slug):
         "assinatura.html",
         {
             "loja": loja,
-            "pagamento_configurado": bool(getattr(settings, "ABACATE_PAY_API_KEY", "")),
-            "abacate_pay_configurado": bool(getattr(settings, "ABACATE_PAY_API_KEY", "")),
+            "pix_key": getattr(settings, "PREMIUM_PIX_KEY", "").strip(),
+            "whatsapp_comprovante_url": billing.montar_url_comprovante_whatsapp(
+                loja,
+                request.user,
+                getattr(settings, "PREMIUM_PIX_KEY", "").strip(),
+            ),
+            "pode_confirmar_pagamento": request.user.is_staff or request.user.is_superuser,
             "ultimos_pagamentos": loja.pagamentos.all()[:5],
         },
     )
@@ -686,33 +697,14 @@ def checkout_premium(request, slug):
     cupom_codigo = (request.POST.get("cupom") or request.GET.get("cupom") or "").strip().upper()
     dados = billing.obter_dados_checkout(cupom_codigo)
 
-    if request.method == "POST":
-        try:
-            redirect_url = billing.processar_checkout(request, loja, request.user, dados["cupom"])
-            if redirect_url:
-                return redirect(redirect_url)
-        except AbacatePayError as error:
-            return render(
-                request,
-                "checkout_premium.html",
-                {
-                    "loja": loja,
-                    "erro_pagamento": str(error),
-                    "cupom": dados["cupom"],
-                    "cupom_codigo": dados["cupom_codigo"],
-                    "valor": dados["valor"],
-                    "valor_final": dados["valor_final"],
-                    "abacate_pay_configurado": dados["abacate_pay_configurado"],
-                },
-            )
-
     contexto = {
         "loja": loja,
         "cupom": dados["cupom"],
         "cupom_codigo": dados["cupom_codigo"],
         "valor": dados["valor"],
         "valor_final": dados["valor_final"],
-        "abacate_pay_configurado": dados["abacate_pay_configurado"],
+        "pix_key": dados["pix_key"],
+        "whatsapp_comprovante_url": billing.montar_url_comprovante_whatsapp(loja, request.user, dados["pix_key"]),
     }
     return render(request, "checkout_premium.html", contexto)
 
@@ -742,24 +734,7 @@ def pagamento_retorno(request, slug, resultado):
 @csrf_exempt
 @require_POST
 def abacate_pay_webhook(request):
-    webhook_secret = getattr(settings, "ABACATE_PAY_WEBHOOK_SECRET", "").strip()
-    if webhook_secret:
-        query_secret = request.GET.get("webhookSecret", "")
-        signature = request.headers.get("X-Webhook-Signature", "")
-        if query_secret != webhook_secret and not validar_assinatura_abacate_pay(request.body, signature):
-            return JsonResponse({"ok": False, "erro": "assinatura invalida"}, status=401)
-
-    try:
-        payload = json.loads(request.body.decode("utf-8")) if request.body else {}
-    except ValueError:
-        payload = {}
-    if not payload:
-        return JsonResponse({"ok": False, "erro": "payload ausente"}, status=400)
-    try:
-        pagamento = billing.processar_webhook_pagamento(payload)
-    except Exception as error:
-        return JsonResponse({"ok": False, "erro": str(error)}, status=400)
-    return JsonResponse({"ok": True, "pagamento": pagamento.id, "status": pagamento.status})
+    return JsonResponse({"ok": False, "erro": "webhook de pagamento desativado"}, status=410)
 
 
 mercado_pago_webhook = abacate_pay_webhook

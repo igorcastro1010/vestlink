@@ -1,9 +1,9 @@
 from datetime import timedelta
 import json
-from unittest.mock import patch
 
 from django.contrib.auth.models import User
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.core.management import call_command
 from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
@@ -107,44 +107,88 @@ class BillingPlanoAssinaturaTests(TestCase):
         self.assertEqual(response["Location"], reverse("assinatura", kwargs={"slug": self.loja.slug}))
         self.assertFalse(Produto.objects.filter(loja=self.loja, nome="Produto bloqueado").exists())
 
-    def test_assinatura_ativa_plano_premium(self):
-        self.client.force_login(self.user)
-
-        response = self.client.post(reverse("assinatura", kwargs={"slug": self.loja.slug}))
-
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(response["Location"], reverse("assinatura", kwargs={"slug": self.loja.slug}))
-        self.loja.refresh_from_db()
-        self.assertEqual(self.loja.plano, Loja.PLANO_PREMIUM)
-        self.assertEqual(self.loja.assinatura_status, Loja.ASSINATURA_ATIVA)
-        self.assertIsNotNone(self.loja.assinatura_ativa_em)
-
-    @override_settings(ABACATE_PAY_API_KEY="")
-    def test_assinatura_renderiza_pagamento_abacate_pay_sem_mercado_pago(self):
+    @override_settings(PREMIUM_PIX_KEY="pix@vestlink.test", PREMIUM_WHATSAPP_NUMBER="5585999999999")
+    def test_assinatura_renderiza_pagamento_manual_sem_gateways(self):
         self.client.force_login(self.user)
 
         response = self.client.get(reverse("assinatura", kwargs={"slug": self.loja.slug}))
 
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Controle do Premium")
-        self.assertContains(response, "Pagamento")
-        self.assertContains(response, "Pagar assinatura")
-        self.assertContains(response, "Pagamento online")
-        self.assertContains(response, "Historico de pagamentos")
+        self.assertContains(response, "Premium da Teste Moda")
+        self.assertContains(response, "Pagamento manual")
+        self.assertContains(response, "Após pagar via Pix, envie o comprovante pelo WhatsApp.")
+        self.assertContains(response, "Sua assinatura será ativada após confirmação manual.")
+        self.assertContains(response, "Copiar chave Pix")
+        self.assertContains(response, "Enviar comprovante")
+        self.assertContains(response, "Ver instruções de pagamento")
+        self.assertNotContains(response, "Marcar como pago")
+        self.assertNotContains(response, "Abacate Pay")
         self.assertNotContains(response, "Mercado Pago")
-        self.assertNotContains(response, "Ir para checkout")
-        self.assertNotContains(response, "Modo teste/manual")
+        self.assertNotContains(response, "Checkout")
+        self.assertNotContains(response, "Webhook")
+        self.assertNotContains(response, "Pagamento online")
+        self.assertNotContains(response, "Pagar assinatura")
 
-    @override_settings(ABACATE_PAY_API_KEY="")
-    def test_pagamento_sem_chave_renderiza_erro_controlado(self):
+    @override_settings(PREMIUM_PIX_KEY="pix@vestlink.test", PREMIUM_WHATSAPP_NUMBER="5585999999999")
+    def test_instrucoes_pagamento_manual_mostram_pix_e_whatsapp(self):
         self.client.force_login(self.user)
 
-        response = self.client.post(reverse("checkout_premium", kwargs={"slug": self.loja.slug}))
+        response = self.client.get(reverse("checkout_premium", kwargs={"slug": self.loja.slug}))
 
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Configure ABACATE_PAY_API_KEY")
-        self.assertContains(response, "Pagar assinatura")
+        self.assertContains(response, "Pagamento manual")
+        self.assertContains(response, "Copiar chave Pix")
+        self.assertContains(response, "Enviar comprovante")
+        self.assertContains(response, "pix@vestlink.test")
+        self.assertNotContains(response, "Abacate Pay")
         self.assertNotContains(response, "Mercado Pago")
+        self.assertNotContains(response, "Webhook")
+        self.assertNotContains(response, "Pagamento online")
+        self.assertNotContains(response, "Pagar assinatura")
+
+    @override_settings(PREMIUM_PIX_KEY="", PREMIUM_WHATSAPP_NUMBER="")
+    def test_pagamento_manual_sem_variaveis_nao_quebra_tela(self):
+        self.client.force_login(self.user)
+
+        response = self.client.get(reverse("checkout_premium", kwargs={"slug": self.loja.slug}))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Pagamento manual")
+        self.assertContains(response, "Chave Pix em configuração")
+        self.assertContains(response, "As instruções de pagamento estão sendo configuradas")
+        self.assertContains(response, "Copiar chave Pix")
+        self.assertContains(response, "Enviar comprovante")
+        self.assertNotContains(response, "ABACATE_PAY")
+        self.assertNotContains(response, "MERCADO_PAGO")
+
+    def test_planos_explica_pagamento_manual(self):
+        self.client.force_login(self.user)
+
+        response = self.client.get(reverse("planos"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Plano Premium")
+        self.assertContains(response, "R$ 39,90")
+        self.assertContains(response, "pagamento é manual via Pix")
+        self.assertContains(response, "Ver instruções de pagamento")
+        self.assertNotContains(response, "Abacate Pay")
+        self.assertNotContains(response, "Mercado Pago")
+        self.assertNotContains(response, "Webhook")
+
+    def test_painel_mostra_pagamento_consistente_sem_termo_tecnico(self):
+        self.client.force_login(self.user)
+        self.loja.assinatura_status = Loja.ASSINATURA_CANCELADA
+        self.loja.save(update_fields=["assinatura_status"])
+
+        response = self.client.get(reverse("painel_loja", kwargs={"slug": self.loja.slug}))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Assinatura cancelada")
+        self.assertContains(response, "Pagamento pendente de confirmação manual")
+        self.assertContains(response, "Pagamento")
+        self.assertNotContains(response, "Abacate Pay")
+        self.assertNotContains(response, "Mercado Pago")
+        self.assertNotContains(response, "Webhook")
 
     def test_validar_cupom_retorna_desconto_correto(self):
         self.client.force_login(self.user)
@@ -169,38 +213,10 @@ class BillingPlanoAssinaturaTests(TestCase):
         data = response.json()
         self.assertFalse(data["valido"])
 
-    @override_settings(
-        ABACATE_PAY_API_KEY="TEST-123",
-        ABACATE_PAY_WEBHOOK_SECRET="segredo",
-        ABACATE_PAY_PREMIUM_PRODUCT_ID="prod_premium",
-    )
-    def test_pagamento_abacate_pay_cria_cobranca_e_redireciona(self):
+    def test_retorno_pagamento_nao_aprova_assinatura(self):
         self.client.force_login(self.user)
-        Cupom.objects.update_or_create(codigo="VESTLINK10", defaults={"percentual_desconto": 10, "ativo": True})
-
-        with patch("loja.payments._post_json") as post_json:
-            post_json.return_value = {
-                "id": "bill_123",
-                "url": "https://app.abacatepay.com/pay/bill_123",
-                "status": "PENDING",
-            }
-            response = self.client.post(reverse("checkout_premium", kwargs={"slug": self.loja.slug}), {"cupom": "VESTLINK10"})
-
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(response["Location"], "https://app.abacatepay.com/pay/bill_123")
-        pagamento = Pagamento.objects.get(loja=self.loja)
-        self.assertEqual(pagamento.preference_id, "bill_123")
-        self.assertEqual(pagamento.status, Pagamento.STATUS_PENDENTE)
-        self.assertEqual(pagamento.valor_final, pagamento.cupom.aplicar(pagamento.valor))
-        payload = post_json.call_args.args[1]
-        self.assertEqual(payload["externalId"], pagamento.external_reference)
-        self.assertEqual(payload["items"][0]["id"], "prod_premium")
-        self.assertEqual(payload["items"][0]["quantity"], 1)
-        self.assertEqual(payload["methods"], ["PIX", "CARD"])
-        self.assertIn("webhookUrl", payload)
-
-    def test_retorno_pagamento_aprovado_ativa_assinatura(self):
-        self.client.force_login(self.user)
+        self.loja.assinatura_status = Loja.ASSINATURA_CANCELADA
+        self.loja.save(update_fields=["assinatura_status"])
         pagamento = Pagamento.objects.create(loja=self.loja, usuario=self.user, status=Pagamento.STATUS_PENDENTE)
 
         response = self.client.get(
@@ -209,63 +225,88 @@ class BillingPlanoAssinaturaTests(TestCase):
         )
 
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Pagamento aprovado")
+        self.assertContains(response, "não foi alterada automaticamente")
         pagamento.refresh_from_db()
         self.loja.refresh_from_db()
-        self.assertEqual(pagamento.status, Pagamento.STATUS_APROVADO)
-        self.assertEqual(self.loja.assinatura_status, Loja.ASSINATURA_ATIVA)
-        self.assertEqual(self.loja.pagamento_referencia, pagamento.external_reference)
+        self.assertEqual(pagamento.status, Pagamento.STATUS_PENDENTE)
+        self.assertEqual(self.loja.assinatura_status, Loja.ASSINATURA_CANCELADA)
 
-    @override_settings(ABACATE_PAY_WEBHOOK_SECRET="")
-    def test_webhook_abacate_pay_confirmado_ativa_assinatura(self):
+    def test_webhook_externo_nao_ativa_assinatura(self):
         pagamento = Pagamento.objects.create(loja=self.loja, usuario=self.user, status=Pagamento.STATUS_PENDENTE)
-        payload = {
-            "event": "checkout.completed",
-            "data": {
-                "id": "bill_456",
-                "externalId": pagamento.external_reference,
-                "status": "PAID",
-            },
-        }
+        self.loja.assinatura_status = Loja.ASSINATURA_CANCELADA
+        self.loja.save(update_fields=["assinatura_status"])
 
         response = self.client.post(
             reverse("abacate_pay_webhook"),
-            data=json.dumps(payload),
+            data=json.dumps({"event": "checkout.completed", "data": {"externalId": pagamento.external_reference}}),
             content_type="application/json",
         )
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 410)
         pagamento.refresh_from_db()
         self.loja.refresh_from_db()
-        self.assertEqual(response.json()["status"], Pagamento.STATUS_APROVADO)
-        self.assertEqual(pagamento.payment_id, "bill_456")
+        self.assertEqual(pagamento.status, Pagamento.STATUS_PENDENTE)
+        self.assertEqual(self.loja.assinatura_status, Loja.ASSINATURA_CANCELADA)
+
+    def test_lojista_nao_consegue_marcar_como_pago(self):
+        self.client.force_login(self.user)
+
+        response = self.client.post(reverse("assinatura", kwargs={"slug": self.loja.slug}), {"acao": "ativar_manual"})
+
+        self.assertEqual(response.status_code, 403)
+        self.loja.refresh_from_db()
+        self.assertNotEqual(self.loja.assinatura_status, Loja.ASSINATURA_ATIVA)
+
+    def test_admin_marca_como_pago_manual_e_renova_assinatura(self):
+        self.user.is_staff = True
+        self.user.save(update_fields=["is_staff"])
+        self.client.force_login(self.user)
+
+        response = self.client.post(reverse("assinatura", kwargs={"slug": self.loja.slug}), {"acao": "ativar_manual"})
+
+        self.assertEqual(response.status_code, 302)
+        self.loja.refresh_from_db()
+        self.assertEqual(self.loja.plano, Loja.PLANO_PREMIUM)
         self.assertEqual(self.loja.assinatura_status, Loja.ASSINATURA_ATIVA)
+        self.assertIsNotNone(self.loja.assinatura_ativa_em)
+        self.assertEqual(Pagamento.objects.filter(loja=self.loja, status=Pagamento.STATUS_APROVADO).count(), 1)
 
-    @override_settings(ABACATE_PAY_WEBHOOK_SECRET="")
-    def test_webhook_abacate_pay_duplicado_nao_duplica_pagamento(self):
-        pagamento = Pagamento.objects.create(loja=self.loja, usuario=self.user, status=Pagamento.STATUS_PENDENTE)
-        payload = {
-            "event": "checkout.completed",
-            "data": {
-                "id": "bill_456",
-                "externalId": pagamento.external_reference,
-                "status": "PAID",
-            },
-        }
+        historico = self.client.get(reverse("assinatura", kwargs={"slug": self.loja.slug}))
+        self.assertContains(historico, "Aprovado")
+        self.assertContains(historico, Pagamento.objects.filter(loja=self.loja).first().external_reference)
 
-        for _ in range(2):
-            response = self.client.post(
-                reverse("abacate_pay_webhook"),
-                data=json.dumps(payload),
-                content_type="application/json",
-            )
-            self.assertEqual(response.status_code, 200)
+        primeira_ativacao = self.loja.assinatura_ativa_em
+        response = self.client.post(reverse("assinatura", kwargs={"slug": self.loja.slug}), {"acao": "ativar_manual"})
 
-        self.assertEqual(Pagamento.objects.filter(loja=self.loja).count(), 1)
-        pagamento.refresh_from_db()
-        self.assertEqual(pagamento.status, Pagamento.STATUS_APROVADO)
+        self.assertEqual(response.status_code, 302)
+        self.loja.refresh_from_db()
+        self.assertEqual(self.loja.assinatura_status, Loja.ASSINATURA_ATIVA)
+        self.assertGreaterEqual(self.loja.assinatura_ativa_em, primeira_ativacao)
+        self.assertEqual(Pagamento.objects.filter(loja=self.loja, status=Pagamento.STATUS_APROVADO).count(), 2)
 
-    def test_webhook_abacate_pay_recusa_get(self):
+    def test_renovar_teste_manual_continua_funcionando(self):
+        self.client.force_login(self.user)
+        self.loja.assinatura_status = Loja.ASSINATURA_CANCELADA
+        self.loja.save(update_fields=["assinatura_status"])
+
+        response = self.client.post(reverse("assinatura", kwargs={"slug": self.loja.slug}), {"acao": "renovar_teste"})
+
+        self.assertEqual(response.status_code, 302)
+        self.loja.refresh_from_db()
+        self.assertEqual(self.loja.assinatura_status, Loja.ASSINATURA_TRIAL)
+        self.assertIsNotNone(self.loja.trial_termina_em)
+
+    def test_cancelar_assinatura_continua_funcionando(self):
+        self.client.force_login(self.user)
+
+        response = self.client.post(reverse("assinatura", kwargs={"slug": self.loja.slug}), {"acao": "cancelar"})
+
+        self.assertEqual(response.status_code, 302)
+        self.loja.refresh_from_db()
+        self.assertEqual(self.loja.assinatura_status, Loja.ASSINATURA_CANCELADA)
+        self.assertIsNotNone(self.loja.assinatura_cancelada_em)
+
+    def test_webhook_manual_recusa_get(self):
         response = self.client.get(reverse("abacate_pay_webhook"), {"id": "pay_456"})
 
         self.assertEqual(response.status_code, 405)
@@ -314,7 +355,6 @@ class BillingCronTests(TestCase):
             self.assertIsNotNone(lead.anonimizado_em)
 
     def test_management_command_runs_successfully(self):
-        from django.core.management import call_command
         from io import StringIO
 
         out = StringIO()
