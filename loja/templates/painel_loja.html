@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Painel - {{ loja.nome }}</title>
     <link rel="stylesheet" href="/static/css/variables.css?v=76">
-    <link rel="stylesheet" href="/static/css/catalogo.css?v=102">
+    <link rel="stylesheet" href="/static/css/catalogo.css?v=103">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
     <script>
         document.documentElement.setAttribute("data-theme", "dark");
@@ -46,10 +46,14 @@
             <div>
                 <span class="store-status-dot {% if loja.assinatura_esta_ativa %}active{% else %}warning{% endif %}"></span>
                 <strong>
-                    {% if loja.assinatura_esta_ativa %}
-                        Loja ativa
+                    {% if loja.assinatura_status == "ativa" %}
+                        Assinatura ativa
+                    {% elif loja.assinatura_status == "trial" and loja.trial_dias_restantes > 0 %}
+                        Teste grátis
+                    {% elif loja.assinatura_status == "cancelada" %}
+                        Assinatura cancelada
                     {% else %}
-                        Loja precisa regularizar
+                        Assinatura vencida
                     {% endif %}
                 </strong>
                 {% if is_owner %}
@@ -57,14 +61,16 @@
                         <small>Teste acaba em {{ loja.trial_dias_restantes }} dia(s)</small>
                     {% elif loja.assinatura_status == "ativa" %}
                         <small>Premium ativo</small>
+                    {% elif loja.assinatura_status == "cancelada" %}
+                        <small>Pagamento pendente de confirmação manual</small>
                     {% else %}
-                        <small>{{ loja.assinatura_status_label }}</small>
+                        <small>Pagamento pendente</small>
                     {% endif %}
                 {% endif %}
             </div>
             <div>
                 {% if is_owner %}
-                    <a href="{% url 'assinatura' loja.slug %}">Ver assinatura</a>
+                    <a href="{% url 'checkout_premium' loja.slug %}">Pagamento</a>
                 {% endif %}
                 <button type="button" data-tour-start>Iniciar tour</button>
             </div>

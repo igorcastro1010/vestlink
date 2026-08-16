@@ -17029,32 +17029,37 @@ form .option-label:has(input:required)::after {
 }
 
 .merchant-dashboard #tab-leads .lead-kanban {
+    align-items: start;
     display: grid;
-    gap: 14px;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    margin-top: 14px;
+    gap: 12px;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+    margin-top: 12px;
 }
 
 .merchant-dashboard #tab-leads .lead-kanban__column {
+    align-self: start;
     background: rgba(12, 10, 18, 0.42);
     border: 1px solid var(--leads-line);
-    border-radius: 18px;
-    display: grid;
-    gap: 12px;
+    border-radius: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    height: auto;
+    min-height: 0;
     min-width: 0;
-    padding: 12px;
+    padding: 10px;
 }
 
 .merchant-dashboard #tab-leads .lead-kanban__header {
     align-items: center;
     display: flex;
-    gap: 10px;
+    gap: 8px;
     justify-content: space-between;
 }
 
 .merchant-dashboard #tab-leads .lead-kanban__header h3 {
     color: var(--leads-text);
-    font-size: 0.98rem;
+    font-size: 0.92rem;
     line-height: 1.2;
     margin: 0;
 }
@@ -17074,12 +17079,12 @@ form .option-label:has(input:required)::after {
     border-radius: 999px;
     color: var(--leads-accent) !important;
     display: inline-flex;
-    font-size: 0.8rem;
+    font-size: 0.76rem;
     font-weight: 900;
     justify-content: center;
-    min-height: 30px;
-    min-width: 34px;
-    padding: 6px 10px;
+    min-height: 28px;
+    min-width: 32px;
+    padding: 5px 9px;
 }
 
 .merchant-dashboard #tab-leads .lead-kanban__counts small {
@@ -17092,66 +17097,74 @@ form .option-label:has(input:required)::after {
 
 .merchant-dashboard #tab-leads .lead-kanban__cards {
     align-content: start;
+    gap: 10px;
 }
 
 .merchant-dashboard #tab-leads .lead-kanban__empty {
-    border-radius: 14px !important;
-    min-height: 84px;
-    padding: 14px !important;
+    border-radius: 12px !important;
+    min-height: 0;
+    padding: 12px !important;
 }
 
-.merchant-dashboard #tab-leads .lead-kanban .lead-card__grid,
 .merchant-dashboard #tab-leads .lead-kanban .lead-status-form--compact {
-    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr) !important;
 }
 
 .merchant-dashboard #tab-leads .lead-kanban .lead-status-form--compact button {
+    grid-column: 1 / -1;
     width: 100%;
 }
 
 .merchant-dashboard #tab-leads .lead-card {
     background: rgba(25, 19, 35, 0.9) !important;
     border: 1px solid var(--leads-line) !important;
-    border-radius: 18px !important;
+    border-radius: 14px !important;
     display: grid;
-    gap: 12px;
+    gap: 10px;
     grid-template-columns: minmax(0, 1fr) !important;
-    padding: 14px !important;
+    padding: 10px !important;
 }
 
 .merchant-dashboard #tab-leads .lead-card__head {
     align-items: flex-start;
     border-bottom: 1px solid var(--leads-line);
     display: flex;
-    gap: 12px;
+    gap: 8px;
     justify-content: space-between;
-    padding-bottom: 10px;
+    padding-bottom: 8px;
 }
 
 .merchant-dashboard #tab-leads .lead-card__head strong,
 .merchant-dashboard #tab-leads .lead-info-box strong {
     color: var(--leads-text) !important;
+    font-size: 0.88rem;
+    line-height: 1.25;
+    overflow-wrap: anywhere;
 }
 
 .merchant-dashboard #tab-leads .lead-card__head span,
 .merchant-dashboard #tab-leads .lead-info-box p {
     color: var(--leads-muted) !important;
+    font-size: 0.76rem;
+    line-height: 1.35;
+    margin: 0;
+    overflow-wrap: anywhere;
 }
 
 .merchant-dashboard #tab-leads .lead-card__grid {
     display: grid;
-    gap: 8px;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 7px;
+    grid-template-columns: minmax(0, 1fr);
 }
 
 .merchant-dashboard #tab-leads .lead-info-box {
     background: rgba(12, 10, 18, 0.48);
     border: 1px solid var(--leads-line);
-    border-radius: 12px;
+    border-radius: 10px;
     display: grid;
-    gap: 4px;
+    gap: 3px;
     min-height: 0;
-    padding: 10px;
+    padding: 8px;
 }
 
 .merchant-dashboard #tab-leads .lead-info-box--wide {
@@ -17160,9 +17173,9 @@ form .option-label:has(input:required)::after {
 
 .merchant-dashboard #tab-leads .lead-info-box__label {
     color: var(--leads-subtle) !important;
-    font-size: 0.68rem;
+    font-size: 0.62rem;
     font-weight: 900;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.05em;
     text-transform: uppercase;
 }
 
@@ -17173,9 +17186,9 @@ form .option-label:has(input:required)::after {
 .merchant-dashboard #tab-leads .lead-status-badge {
     border-radius: 999px;
     flex: 0 0 auto;
-    font-size: 0.78rem;
+    font-size: 0.72rem;
     font-weight: 900;
-    padding: 7px 11px;
+    padding: 6px 9px;
 }
 
 .merchant-dashboard #tab-leads .lead-status-badge--done {
@@ -17222,9 +17235,21 @@ form .option-label:has(input:required)::after {
     background: rgba(12, 10, 18, 0.5) !important;
     border: 1px solid var(--leads-line) !important;
     display: grid !important;
-    gap: 10px !important;
+    gap: 8px !important;
     grid-template-columns: minmax(150px, 0.28fr) minmax(220px, 1fr) auto;
     padding: 8px !important;
+}
+
+.merchant-dashboard #tab-leads .lead-kanban .lead-status-form--compact input,
+.merchant-dashboard #tab-leads .lead-kanban .lead-status-form--compact select,
+.merchant-dashboard #tab-leads .lead-kanban .lead-status-form--compact button {
+    min-height: 36px !important;
+}
+
+@media (min-width: 1180px) {
+    .merchant-dashboard #tab-leads .lead-kanban {
+        grid-template-columns: repeat(3, minmax(280px, 1fr));
+    }
 }
 
 @media (max-width: 1100px) {
@@ -17232,15 +17257,7 @@ form .option-label:has(input:required)::after {
         grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
     }
 
-    .merchant-dashboard #tab-leads .lead-kanban {
-        grid-template-columns: minmax(0, 1fr);
-    }
-
     .merchant-dashboard #tab-leads .leads-filters {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .merchant-dashboard #tab-leads .lead-card__grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
@@ -21328,5 +21345,205 @@ html[data-theme="dark"] body.storefront .cart-items button {
     body.storefront .cart-clear {
         width: 100% !important;
         min-height: 46px !important;
+    }
+}
+
+/* 49. Merchant mobile audit fixes: scoped containment and touch targets */
+@media (max-width: 760px) {
+    body.merchant-dashboard,
+    body.stores-page {
+        overflow-x: hidden !important;
+    }
+
+    .merchant-dashboard .panel-header--dashboard,
+    .stores-page .panel-header--stores {
+        padding: 14px 12px !important;
+    }
+
+    .merchant-dashboard .panel-store-link,
+    .stores-page .panel-header-subtitle,
+    .stores-page .store-card__content span,
+    .stores-page .store-card__content small,
+    .merchant-dashboard #tab-configuracoes .settings-card--link h3,
+    .merchant-dashboard #tab-vendedores .seller-card code {
+        overflow-wrap: anywhere !important;
+        white-space: normal !important;
+        word-break: break-word;
+    }
+
+    .merchant-dashboard .panel-tabs-container {
+        margin-bottom: 14px !important;
+        overflow: hidden !important;
+    }
+
+    .merchant-dashboard .panel-tabs {
+        align-items: stretch !important;
+        scroll-behavior: smooth;
+    }
+
+    .merchant-dashboard .tab-btn {
+        min-height: 46px !important;
+        min-width: 46px !important;
+        position: relative;
+    }
+
+    .merchant-dashboard .tab-btn .tab-icon {
+        height: 18px !important;
+        width: 18px !important;
+    }
+
+    .merchant-dashboard .tab-btn .tab-badge {
+        align-items: center;
+        display: inline-flex;
+        justify-content: center;
+        line-height: 1;
+        min-height: 22px !important;
+    }
+
+    .merchant-dashboard .section-heading a.secondary,
+    .merchant-dashboard .section-heading button.secondary,
+    .merchant-dashboard .limit-warning a,
+    .merchant-dashboard .product-blocked-warning a {
+        align-items: center !important;
+        border-radius: 999px !important;
+        display: inline-flex !important;
+        justify-content: center !important;
+        min-height: 42px !important;
+        padding: 10px 14px !important;
+        text-align: center !important;
+        white-space: normal !important;
+        width: 100% !important;
+    }
+
+    .merchant-dashboard .metric-grid,
+    .merchant-dashboard #tab-dashboard .metric-grid,
+    .merchant-dashboard #tab-dashboard .conversion-grid,
+    .merchant-dashboard #tab-leads .lead-summary--compact,
+    .merchant-dashboard #tab-vendedores .seller-overview {
+        grid-template-columns: minmax(0, 1fr) !important;
+    }
+
+    .merchant-dashboard #tab-dashboard .chart-container {
+        min-height: 220px !important;
+        overflow: hidden;
+        padding: 10px !important;
+    }
+
+    .merchant-dashboard #tab-produtos .product-form-intro,
+    .merchant-dashboard #tab-produtos .product-form-card .product-form-layout,
+    .merchant-dashboard #tab-produtos .variant-field-grid,
+    .merchant-dashboard #tab-produtos .compact-form,
+    .merchant-dashboard #tab-produtos .stock-builder {
+        grid-template-columns: minmax(0, 1fr) !important;
+    }
+
+    .merchant-dashboard #tab-produtos .product-form-steps {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+
+    .merchant-dashboard #tab-produtos .status-toggle {
+        align-items: center !important;
+        gap: 12px !important;
+        grid-template-columns: minmax(0, 1fr) auto !important;
+        min-height: 64px !important;
+    }
+
+    .merchant-dashboard #tab-produtos .status-toggle input[type="checkbox"] {
+        flex: 0 0 auto;
+        height: 22px !important;
+        min-height: 22px !important;
+        min-width: 22px !important;
+        width: 22px !important;
+    }
+
+    .merchant-dashboard #tab-produtos .dashboard-products img {
+        max-height: 180px;
+    }
+
+    .merchant-dashboard #tab-leads .lead-quick-filters {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 8px !important;
+        margin-inline: 0 !important;
+        max-width: 100% !important;
+        overflow: visible !important;
+        padding: 0 0 8px !important;
+        scroll-padding-inline: 0;
+    }
+
+    .merchant-dashboard #tab-leads .lead-quick-filters a {
+        align-items: center !important;
+        display: inline-flex !important;
+        flex: 1 1 calc(50% - 8px) !important;
+        justify-content: center !important;
+        min-height: 42px !important;
+        white-space: normal !important;
+    }
+
+    .merchant-dashboard #tab-leads .lead-kanban {
+        grid-template-columns: minmax(0, 1fr) !important;
+    }
+
+    .merchant-dashboard #tab-leads .lead-kanban__column {
+        padding: 10px !important;
+    }
+
+    .merchant-dashboard #tab-leads .lead-card__head {
+        gap: 8px !important;
+    }
+
+    .merchant-dashboard #tab-leads .lead-status-form--compact {
+        grid-template-columns: minmax(0, 1fr) !important;
+    }
+
+    .merchant-dashboard #tab-vendedores .seller-card code {
+        text-overflow: clip !important;
+    }
+
+    .merchant-dashboard #tab-vendedores .seller-actions {
+        align-items: stretch !important;
+        flex-direction: column !important;
+    }
+
+    .merchant-dashboard #tab-configuracoes .settings-hero,
+    .merchant-dashboard #tab-configuracoes .settings-card,
+    .merchant-dashboard #tab-configuracoes .settings-card--qr {
+        align-items: stretch !important;
+        flex-direction: column !important;
+    }
+
+    .merchant-dashboard #tab-configuracoes .settings-button,
+    .merchant-dashboard #tab-configuracoes .settings-card__side,
+    .merchant-dashboard #tab-configuracoes .settings-qr,
+    .merchant-dashboard #tab-configuracoes .settings-qr .qr-download-button {
+        width: 100% !important;
+    }
+
+    .merchant-dashboard #tab-configuracoes .settings-qr img {
+        height: auto !important;
+        max-width: min(156px, 100%) !important;
+        width: min(156px, 100%) !important;
+    }
+}
+
+@media (max-width: 380px) {
+    .merchant-dashboard .dashboard-shell--redesign,
+    .stores-page .stores-shell {
+        padding-left: 8px !important;
+        padding-right: 8px !important;
+    }
+
+    .merchant-dashboard .dashboard-command-center .dashboard-hero,
+    .merchant-dashboard .panel-section,
+    .merchant-dashboard .leads-dashboard,
+    .merchant-dashboard #tab-configuracoes .settings-hero,
+    .merchant-dashboard #tab-configuracoes .settings-card,
+    .stores-page .panel-section,
+    .stores-page .store-card {
+        padding: 12px !important;
+    }
+
+    .merchant-dashboard .tab-btn {
+        padding-inline: 9px !important;
     }
 }
