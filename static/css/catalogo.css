@@ -21060,3 +21060,273 @@ html[data-theme="dark"] body.auth-page .auth-note {
         padding: 22px 14px !important;
     }
 }
+
+/* Mobile polish for public catalog, product detail and cart. */
+html[data-theme="dark"] body.storefront .choice-option.active,
+html[data-theme="dark"] body.storefront .choice-option[aria-pressed="true"] {
+    border-color: rgba(52, 211, 153, 0.9) !important;
+    background: linear-gradient(135deg, #10b981, #059669) !important;
+    color: #ffffff !important;
+    box-shadow: 0 12px 26px rgba(16, 185, 129, 0.28) !important;
+}
+
+html[data-theme="dark"] body.storefront .choice-option--sold,
+html[data-theme="dark"] body.storefront .choice-option:disabled {
+    border-color: rgba(255, 255, 255, 0.1) !important;
+    background: rgba(255, 255, 255, 0.045) !important;
+    color: rgba(247, 243, 255, 0.38) !important;
+    opacity: 1 !important;
+    text-decoration: line-through !important;
+    box-shadow: none !important;
+}
+
+html[data-theme="dark"] body.storefront .cart-items article {
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    background: rgba(255, 255, 255, 0.07) !important;
+    color: #f8f5ff !important;
+}
+
+html[data-theme="dark"] body.storefront .cart-items article span,
+html[data-theme="dark"] body.storefront .cart-items article small {
+    color: inherit !important;
+    overflow-wrap: anywhere !important;
+}
+
+html[data-theme="dark"] body.storefront .cart-items article small {
+    color: rgba(247, 243, 255, 0.72) !important;
+}
+
+html[data-theme="dark"] body.storefront .cart-items button {
+    min-height: 40px !important;
+    padding: 8px 12px !important;
+    border-radius: 999px !important;
+    color: #ffffff !important;
+}
+
+@media (max-width: 520px) {
+    body.storefront {
+        padding-bottom: 88px !important;
+    }
+
+    body.storefront .store-layout,
+    body.storefront .store-content,
+    body.storefront .product-detail-shell {
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow-x: clip !important;
+    }
+
+    body.storefront .store-sidebar {
+        overflow: hidden !important;
+    }
+
+    body.storefront .categories,
+    body.storefront .store-filters {
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        gap: 10px !important;
+        max-width: 100% !important;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior-inline: contain;
+        scroll-padding-inline: 16px;
+        padding-bottom: 4px !important;
+    }
+
+    body.storefront .categories a,
+    body.storefront .store-filters a {
+        flex: 0 0 auto !important;
+        min-height: 42px !important;
+        white-space: nowrap !important;
+    }
+
+    body.storefront .store-topbar,
+    body.storefront .store-topbar > div {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) !important;
+        width: 100% !important;
+        gap: 10px !important;
+    }
+
+    body.storefront .store-topbar .search,
+    body.storefront .store-topbar form,
+    body.storefront .store-topbar select {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    body.storefront .search {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) auto !important;
+        gap: 8px !important;
+    }
+
+    body.storefront .search input,
+    body.storefront .search button {
+        min-width: 0 !important;
+        min-height: 46px !important;
+    }
+
+    body.storefront .grid {
+        grid-template-columns: minmax(0, 1fr) !important;
+        gap: 18px !important;
+    }
+
+    body.storefront .product {
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow: hidden !important;
+    }
+
+    body.storefront .product__body {
+        gap: 12px !important;
+    }
+
+    body.storefront .option-group {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 10px !important;
+    }
+
+    body.storefront .option-label {
+        flex: 0 0 100% !important;
+    }
+
+    body.storefront .choice-option {
+        min-width: 48px !important;
+        min-height: 46px !important;
+        padding: 10px 14px !important;
+        line-height: 1.15 !important;
+    }
+
+    body.storefront .variant-stock-list {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) !important;
+        gap: 8px !important;
+        max-width: 100% !important;
+    }
+
+    body.storefront .variant-stock-list > span:not(.option-label) {
+        display: block !important;
+        width: 100% !important;
+        padding: 9px 10px !important;
+        border-radius: 12px !important;
+        overflow-wrap: anywhere !important;
+    }
+
+    body.storefront .product-customer-name,
+    body.storefront .product-customer-name input,
+    body.storefront .storefront .whatsapp,
+    body.storefront .whatsapp,
+    body.storefront .add-cart-button {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    body.storefront .whatsapp,
+    body.storefront .add-cart-button,
+    body.storefront .cart-send {
+        min-height: 48px !important;
+        white-space: normal !important;
+    }
+
+    body.storefront .cart-panel {
+        position: fixed !important;
+        top: 14px !important;
+        right: 14px !important;
+        bottom: auto !important;
+        left: auto !important;
+        z-index: 80 !important;
+        width: min(360px, calc(100vw - 28px)) !important;
+        max-width: calc(100vw - 28px) !important;
+        pointer-events: none;
+    }
+
+    body.storefront .cart-toggle {
+        position: fixed !important;
+        top: 14px !important;
+        right: 14px !important;
+        bottom: auto !important;
+        left: auto !important;
+        width: 52px !important;
+        height: 52px !important;
+        min-width: 52px !important;
+        min-height: 52px !important;
+        pointer-events: auto;
+    }
+
+    body.storefront .cart-toggle__label {
+        display: none !important;
+    }
+
+    body.storefront .cart-toggle [data-cart-count] {
+        top: -8px !important;
+        right: -8px !important;
+        min-width: 24px !important;
+        min-height: 24px !important;
+        font-size: 0.8rem !important;
+    }
+
+    body.storefront .cart-box {
+        position: fixed !important;
+        top: 76px !important;
+        right: 14px !important;
+        left: auto !important;
+        bottom: auto !important;
+        width: min(360px, calc(100vw - 28px)) !important;
+        max-width: calc(100vw - 28px) !important;
+        max-height: calc(100dvh - 96px) !important;
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        padding: 18px !important;
+        border-radius: 20px !important;
+        pointer-events: auto;
+        overscroll-behavior: contain;
+    }
+
+    body.storefront .cart-items {
+        display: grid !important;
+        gap: 10px !important;
+        max-height: 30dvh !important;
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        padding-right: 2px !important;
+    }
+
+    body.storefront .cart-items article {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) auto !important;
+        gap: 6px 10px !important;
+        align-items: center !important;
+        padding: 12px !important;
+    }
+
+    body.storefront .cart-items article small {
+        grid-column: 1 / -1;
+    }
+
+    body.storefront .cart-checkout {
+        display: grid !important;
+        gap: 10px !important;
+    }
+
+    body.storefront .cart-checkout label,
+    body.storefront .cart-checkout input,
+    body.storefront .cart-checkout textarea {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+    }
+
+    body.storefront .cart-checkout input,
+    body.storefront .cart-checkout textarea {
+        min-height: 46px !important;
+    }
+
+    body.storefront .cart-send,
+    body.storefront .cart-clear {
+        width: 100% !important;
+        min-height: 46px !important;
+    }
+}
