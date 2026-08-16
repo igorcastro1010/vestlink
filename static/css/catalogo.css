@@ -2329,6 +2329,48 @@ body {
     line-height: 1.55;
 }
 
+.checkout-shell--manual {
+    align-items: stretch;
+    gap: clamp(16px, 3vw, 28px);
+    grid-template-columns: minmax(0, 1fr) minmax(320px, 420px);
+    margin-inline: auto;
+    max-width: 1060px;
+}
+
+.checkout-shell--manual .checkout-copy,
+.checkout-shell--manual .checkout-card {
+    border-radius: 8px;
+}
+
+.checkout-shell--manual .checkout-copy h1 {
+    font-size: clamp(2rem, 4vw, 3rem);
+    line-height: 1.08;
+}
+
+.checkout-shell--manual .checkout-summary span {
+    min-width: 0;
+}
+
+.checkout-shell--manual .checkout-summary strong {
+    overflow-wrap: anywhere;
+}
+
+.checkout-shell--manual .subscription-actions {
+    display: grid;
+    gap: 10px;
+    grid-template-columns: minmax(0, 1fr);
+}
+
+.checkout-shell--manual .subscription-actions a,
+.checkout-shell--manual .subscription-actions button {
+    align-items: center;
+    display: inline-flex;
+    justify-content: center;
+    min-height: 48px;
+    text-align: center;
+    width: 100%;
+}
+
 .subscription-checklist ul {
     display: grid;
     gap: 10px;
@@ -19600,29 +19642,30 @@ body.plans-page:has(.subscription-hero) main {
 body.plans-page:has(.subscription-hero) .subscription-hero {
     align-items: start;
     display: grid;
-    gap: 12px;
+    gap: 10px;
     margin-inline: auto;
-    max-width: 860px;
-    padding-block: clamp(28px, 6vw, 54px) clamp(18px, 4vw, 32px);
-    text-align: left;
+    max-width: 760px;
+    padding-block: clamp(24px, 5vw, 42px) clamp(16px, 3vw, 26px);
+    text-align: center;
 }
 
 body.plans-page:has(.subscription-hero) .subscription-hero h1 {
-    font-size: clamp(2rem, 5vw, 4.1rem) !important;
+    font-size: clamp(2rem, 4vw, 3.15rem) !important;
     letter-spacing: 0;
-    line-height: 0.98;
-    max-width: 780px;
+    line-height: 1.05;
+    margin-inline: auto;
+    max-width: 680px;
 }
 
 body.plans-page:has(.subscription-hero) .subscription-hero p:not(.lp-kicker) {
     font-size: clamp(1rem, 1.5vw, 1.16rem);
     line-height: 1.6;
-    margin: 0;
+    margin: 0 auto;
     max-width: 620px;
 }
 
 body.plans-page:has(.subscription-hero) .subscription-hero__status {
-    justify-self: start;
+    justify-self: center;
     margin-top: 4px;
 }
 
@@ -19637,7 +19680,7 @@ body.plans-page:has(.subscription-hero) .subscription-grid {
 body.plans-page:has(.subscription-hero) .subscription-status-card,
 body.plans-page:has(.subscription-hero) .subscription-checklist,
 body.plans-page:has(.subscription-hero) .payments-history {
-    border-radius: 22px !important;
+    border-radius: 8px !important;
     padding: clamp(20px, 3vw, 30px) !important;
 }
 
@@ -19653,6 +19696,11 @@ body.plans-page:has(.subscription-hero) .subscription-status-card > strong {
     letter-spacing: 0;
 }
 
+body.plans-page:has(.subscription-hero) .manual-payment-panel {
+    align-content: start;
+    gap: 16px;
+}
+
 body.plans-page:has(.subscription-hero) .subscription-status-card > strong span {
     font-size: 1rem;
     opacity: 0.72;
@@ -19664,8 +19712,18 @@ body.plans-page:has(.subscription-hero) .subscription-facts {
 }
 
 body.plans-page:has(.subscription-hero) .subscription-facts div {
-    border-radius: 16px !important;
+    border-radius: 8px !important;
+    min-width: 0;
     padding: 14px !important;
+}
+
+body.plans-page:has(.subscription-hero) .subscription-facts--stacked {
+    grid-template-columns: minmax(0, 1fr);
+}
+
+body.plans-page:has(.subscription-hero) .subscription-facts dd {
+    overflow-wrap: anywhere;
+    word-break: normal;
 }
 
 body.plans-page:has(.subscription-hero) .subscription-actions {
@@ -19683,6 +19741,9 @@ body.plans-page:has(.subscription-hero) .subscription-actions a,
 body.plans-page:has(.subscription-hero) .subscription-actions button {
     justify-content: center;
     min-height: 48px !important;
+    min-width: 0;
+    padding-inline: 14px !important;
+    text-align: center;
     width: 100%;
 }
 
@@ -19738,7 +19799,7 @@ body.plans-page:has(.subscription-hero) .payments-list {
 }
 
 body.plans-page:has(.subscription-hero) .payments-list article {
-    border-radius: 16px !important;
+    border-radius: 8px !important;
     padding: 14px 16px !important;
 }
 
@@ -19762,9 +19823,26 @@ body.plans-page:has(.subscription-hero) .payments-empty {
         grid-column: auto;
     }
 
+    body.plans-page:has(.subscription-hero) .subscription-hero {
+        text-align: left;
+    }
+
+    body.plans-page:has(.subscription-hero) .subscription-hero h1,
+    body.plans-page:has(.subscription-hero) .subscription-hero p:not(.lp-kicker) {
+        margin-inline: 0;
+    }
+
+    body.plans-page:has(.subscription-hero) .subscription-hero__status {
+        justify-self: start;
+    }
+
     body.plans-page:has(.subscription-hero) .section-heading {
         align-items: start;
         gap: 10px;
+    }
+
+    .checkout-shell--manual {
+        grid-template-columns: minmax(0, 1fr);
     }
 }
 
@@ -20264,4 +20342,475 @@ body.storefront .choice-option[aria-pressed="true"]:not(:disabled):not(.choice-o
     background: linear-gradient(135deg, #16c784, #0d7f63) !important;
     border-color: rgba(94, 224, 168, 0.9) !important;
     color: #f8fffb !important;
+}
+
+/* 51. Billing manual premium layout */
+html[data-theme="dark"] body.billing-page,
+body.billing-page {
+    width: 100%;
+    min-width: 0;
+    overflow-x: hidden;
+    background:
+        radial-gradient(circle at 18% -8%, rgba(154, 92, 255, 0.22), transparent 34rem),
+        radial-gradient(circle at 84% 12%, rgba(43, 212, 255, 0.12), transparent 30rem),
+        linear-gradient(180deg, #120f1d 0%, #181324 44%, #0f0d17 100%) !important;
+    color: #f8f5ff;
+}
+
+.billing-page *,
+.billing-page *::before,
+.billing-page *::after {
+    box-sizing: border-box;
+    min-width: 0;
+}
+
+.billing-page .billing-topbar {
+    width: calc(100% - 48px) !important;
+    max-width: 1180px !important;
+    margin: 24px auto 0 !important;
+    padding: 16px 18px !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    border-radius: 18px !important;
+    background: rgba(18, 15, 29, 0.78) !important;
+    box-shadow: 0 18px 48px rgba(0, 0, 0, 0.24) !important;
+    backdrop-filter: blur(18px);
+}
+
+.billing-page .billing-main {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.billing-container {
+    width: 100%;
+    max-width: 1180px;
+    margin: 0 auto !important;
+    padding: 48px 24px 80px;
+}
+
+.billing-page .plans-hero,
+.billing-page .subscription-hero,
+.billing-page .billing-hero {
+    width: 100% !important;
+    max-width: 900px !important;
+    margin: 0 auto 30px !important;
+    padding: 34px 36px !important;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    border-radius: 26px !important;
+    background: linear-gradient(145deg, rgba(37, 30, 58, 0.94), rgba(22, 18, 34, 0.92)) !important;
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.28), 0 0 44px rgba(139, 92, 246, 0.12) !important;
+}
+
+.billing-page .plans-hero h1,
+.billing-page .subscription-hero h1,
+.billing-page .checkout-copy h1 {
+    max-width: 760px;
+    margin: 10px auto 12px !important;
+    color: #ffffff !important;
+    font-size: clamp(2rem, 4vw, 3.4rem) !important;
+    line-height: 1.04 !important;
+    letter-spacing: 0 !important;
+}
+
+.billing-page .plans-hero p:not(.lp-kicker),
+.billing-page .subscription-hero p:not(.lp-kicker),
+.billing-page .checkout-copy > p {
+    max-width: 700px;
+    margin: 0 auto !important;
+    color: rgba(247, 243, 255, 0.78) !important;
+    font-size: 1rem !important;
+    line-height: 1.7 !important;
+}
+
+.billing-page .subscription-hero__status,
+.billing-page .plan-tag {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    width: fit-content;
+    max-width: 100%;
+    margin-top: 18px;
+    white-space: normal;
+}
+
+.billing-grid,
+.billing-page .subscription-grid,
+.billing-page .checkout-shell--manual {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 auto !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1.04fr) minmax(360px, 0.96fr) !important;
+    align-items: stretch !important;
+    gap: 24px !important;
+}
+
+.billing-page .checkout-shell--single {
+    width: 100% !important;
+    max-width: 860px !important;
+    margin: 0 auto !important;
+    display: block !important;
+}
+
+.billing-card,
+.billing-page .subscription-status-card,
+.billing-page .subscription-checklist,
+.billing-page .checkout-copy,
+.billing-page .checkout-card,
+.billing-page .plan-card,
+.billing-page .plans-note,
+.billing-page .payments-history {
+    width: 100% !important;
+    max-width: none !important;
+    min-height: auto;
+    padding: 28px !important;
+    border: 1px solid rgba(255, 255, 255, 0.13) !important;
+    border-radius: 24px !important;
+    background: linear-gradient(145deg, rgba(31, 25, 48, 0.96), rgba(17, 15, 27, 0.94)) !important;
+    color: #f8f5ff !important;
+    box-shadow: 0 22px 64px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
+}
+
+.billing-page .subscription-status-card,
+.billing-page .manual-payment-panel,
+.billing-page .checkout-copy,
+.billing-page .checkout-card {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 18px !important;
+}
+
+.billing-page .billing-card--pix {
+    background:
+        linear-gradient(145deg, rgba(42, 33, 64, 0.98), rgba(18, 15, 28, 0.96)),
+        radial-gradient(circle at 80% 12%, rgba(65, 214, 172, 0.16), transparent 18rem) !important;
+}
+
+.billing-page .subscription-status-card h2,
+.billing-page .subscription-checklist h2,
+.billing-page .checkout-card h2,
+.billing-page .plan-card h2,
+.billing-page .plans-note h2,
+.billing-page .payments-history h2 {
+    margin: 0 !important;
+    color: #ffffff !important;
+    font-size: clamp(1.45rem, 2.4vw, 2rem) !important;
+    line-height: 1.14 !important;
+    letter-spacing: 0 !important;
+}
+
+.billing-page .subscription-status-card > strong,
+.billing-page .plan-card > strong {
+    display: flex !important;
+    align-items: baseline !important;
+    gap: 8px !important;
+    margin: 0 !important;
+    color: #ffffff !important;
+    font-size: clamp(2rem, 4vw, 3rem) !important;
+    line-height: 1 !important;
+    letter-spacing: 0 !important;
+    white-space: normal !important;
+}
+
+.billing-page .subscription-status-card > strong span,
+.billing-page .plan-card > strong span {
+    color: rgba(247, 243, 255, 0.68) !important;
+    font-size: 1rem !important;
+    white-space: nowrap !important;
+}
+
+.billing-page .subscription-status-card p,
+.billing-page .subscription-checklist p,
+.billing-page .checkout-card p,
+.billing-page .plan-card p,
+.billing-page .plans-note p {
+    margin: 0 !important;
+    color: rgba(247, 243, 255, 0.74) !important;
+    line-height: 1.65 !important;
+}
+
+.billing-page .subscription-facts,
+.billing-page .checkout-summary,
+.billing-page .billing-details-grid {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 12px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+}
+
+.billing-page .checkout-summary.billing-details-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+}
+
+.billing-page .subscription-facts--stacked,
+.billing-payment-details {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+    margin: 0 !important;
+}
+
+.billing-page .subscription-facts div,
+.billing-page .checkout-summary span,
+.billing-detail {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    justify-content: center !important;
+    min-height: 76px;
+    gap: 7px !important;
+    padding: 15px 16px !important;
+    border: 1px solid rgba(255, 255, 255, 0.11) !important;
+    border-radius: 16px !important;
+    background: rgba(255, 255, 255, 0.055) !important;
+    color: #f8f5ff !important;
+}
+
+.billing-page .subscription-facts dt,
+.billing-page .checkout-summary span,
+.billing-detail span {
+    color: rgba(247, 243, 255, 0.62) !important;
+    font-size: 0.78rem !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.08em !important;
+    line-height: 1.2 !important;
+    text-transform: uppercase !important;
+}
+
+.billing-page .subscription-facts dd,
+.billing-page .checkout-summary strong,
+.billing-detail strong {
+    width: 100%;
+    margin: 0 !important;
+    color: #ffffff !important;
+    font-size: 1rem !important;
+    line-height: 1.35 !important;
+    letter-spacing: 0 !important;
+    text-transform: none !important;
+}
+
+.billing-pix-value {
+    display: block !important;
+    width: 100% !important;
+    overflow-wrap: anywhere !important;
+    word-break: break-word !important;
+    white-space: normal !important;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace !important;
+}
+
+.billing-price-value {
+    display: block !important;
+    white-space: normal !important;
+}
+
+.billing-page .subscription-actions {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 12px !important;
+    margin-top: auto !important;
+}
+
+.billing-page .subscription-actions form {
+    display: contents !important;
+}
+
+.billing-page .subscription-actions a,
+.billing-page .subscription-actions button,
+.billing-page .plan-card a,
+.billing-page .lp-actions a {
+    min-height: 46px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    padding: 12px 18px !important;
+    border-radius: 999px !important;
+    border: 1px solid rgba(255, 255, 255, 0.14) !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+    color: #f8f5ff !important;
+    font-weight: 850 !important;
+    line-height: 1.15 !important;
+    text-align: center !important;
+    text-decoration: none !important;
+    white-space: normal !important;
+    box-shadow: none !important;
+}
+
+.billing-page .subscription-actions .subscription-action--primary,
+.billing-page .plan-card a,
+.billing-page .lp-actions .lp-button:not(.lp-button--ghost) {
+    border-color: rgba(190, 164, 255, 0.64) !important;
+    background: linear-gradient(135deg, #8b5cf6, #ec4899) !important;
+    color: #ffffff !important;
+    box-shadow: 0 16px 34px rgba(139, 92, 246, 0.27) !important;
+}
+
+.billing-page .subscription-actions .subscription-action--danger,
+.billing-page .subscription-actions .danger {
+    border-color: rgba(255, 118, 118, 0.36) !important;
+    background: rgba(255, 70, 70, 0.12) !important;
+    color: #ffd9d9 !important;
+}
+
+.billing-page .subscription-actions a:hover,
+.billing-page .subscription-actions button:hover,
+.billing-page .plan-card a:hover,
+.billing-page .lp-actions a:hover {
+    transform: translateY(-1px);
+}
+
+.billing-page button:disabled,
+.billing-page a[aria-disabled="true"] {
+    cursor: not-allowed !important;
+    opacity: 0.62 !important;
+}
+
+.billing-page .payments-history {
+    margin: 26px auto 0 !important;
+}
+
+.billing-page .section-heading {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 16px !important;
+    margin: 0 0 18px !important;
+}
+
+.billing-page .payments-count,
+.billing-page .section-heading > span {
+    flex: 0 0 auto;
+    border-radius: 999px !important;
+    white-space: nowrap !important;
+}
+
+.billing-page .payments-list {
+    display: grid !important;
+    gap: 12px !important;
+}
+
+.billing-page .payments-list article {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 16px !important;
+    padding: 16px !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 16px !important;
+    background: rgba(255, 255, 255, 0.055) !important;
+}
+
+.billing-page .payments-list span,
+.billing-page .payments-list small {
+    overflow-wrap: anywhere !important;
+}
+
+.billing-page .plans-grid.billing-plans-grid {
+    width: 100% !important;
+    max-width: 760px !important;
+    margin: 0 auto !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+}
+
+.billing-page .plan-card ul {
+    display: grid !important;
+    gap: 10px !important;
+    margin: 6px 0 0 !important;
+}
+
+.billing-page .plans-note {
+    max-width: 760px !important;
+    margin: 24px auto 0 !important;
+    text-align: center !important;
+}
+
+.billing-page .payment-alert {
+    margin: 0 !important;
+    border: 1px solid rgba(255, 204, 102, 0.3) !important;
+    border-radius: 16px !important;
+    background: rgba(255, 204, 102, 0.1) !important;
+    color: #ffe8b5 !important;
+}
+
+@media (max-width: 900px) {
+    .billing-grid,
+    .billing-page .subscription-grid,
+    .billing-page .checkout-shell--manual,
+    .billing-page .subscription-facts,
+    .billing-page .checkout-summary.billing-details-grid {
+        grid-template-columns: minmax(0, 1fr) !important;
+    }
+
+    .billing-page .billing-topbar {
+        width: calc(100% - 32px) !important;
+        margin-top: 16px !important;
+    }
+
+    .billing-container {
+        padding: 34px 16px 64px;
+    }
+}
+
+@media (max-width: 560px) {
+    .billing-page .billing-topbar {
+        align-items: flex-start !important;
+        border-radius: 16px !important;
+        padding: 14px !important;
+    }
+
+    .billing-page .billing-topbar nav {
+        width: 100%;
+        justify-content: flex-start !important;
+        overflow-x: auto;
+        padding-bottom: 2px;
+    }
+
+    .billing-page .plans-hero,
+    .billing-page .subscription-hero,
+    .billing-page .billing-hero,
+    .billing-card,
+    .billing-page .subscription-status-card,
+    .billing-page .subscription-checklist,
+    .billing-page .checkout-copy,
+    .billing-page .checkout-card,
+    .billing-page .plan-card,
+    .billing-page .plans-note,
+    .billing-page .payments-history {
+        padding: 22px !important;
+        border-radius: 20px !important;
+    }
+
+    .billing-page .plans-hero h1,
+    .billing-page .subscription-hero h1,
+    .billing-page .checkout-copy h1 {
+        font-size: 2rem !important;
+    }
+
+    .billing-page .subscription-actions,
+    .billing-page .lp-actions {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) !important;
+        width: 100% !important;
+    }
+
+    .billing-page .subscription-actions a,
+    .billing-page .subscription-actions button,
+    .billing-page .plan-card a,
+    .billing-page .lp-actions a {
+        width: 100% !important;
+    }
+
+    .billing-page .section-heading,
+    .billing-page .payments-list article {
+        align-items: flex-start !important;
+        flex-direction: column !important;
+    }
 }

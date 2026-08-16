@@ -5,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Assinatura - {{ loja.nome }}</title>
     <link rel="stylesheet" href="/static/css/variables.css?v=76">
-    <link rel="stylesheet" href="/static/css/catalogo.css?v=103">
+    <link rel="stylesheet" href="/static/css/catalogo.css?v=104">
     <script>
         document.documentElement.setAttribute("data-theme", "dark");
     </script>
 </head>
-<body class="plans-page">
-    <header class="lp-header">
+<body class="plans-page billing-page">
+    <header class="lp-header billing-topbar">
         <a class="lp-logo" href="{% url 'painel_loja' loja.slug %}">VestLink</a>
         <nav>
             <a href="{% url 'painel_loja' loja.slug %}">Painel</a>
@@ -20,7 +20,8 @@
         </nav>
     </header>
 
-    <main>
+    <main class="billing-main">
+        <div class="billing-container">
         <section class="plans-hero subscription-hero">
             <p class="lp-kicker">Pagamento manual</p>
             <h1>Premium da {{ loja.nome }}</h1>
@@ -28,8 +29,8 @@
             <span class="subscription-hero__status plan-tag">{{ loja.assinatura_status_label }}</span>
         </section>
 
-        <section class="subscription-grid subscription-grid--manual">
-            <article class="subscription-status-card">
+        <section class="subscription-grid subscription-grid--manual billing-grid">
+            <article class="subscription-status-card billing-card">
                 <span class="plan-tag">{{ loja.assinatura_status_label }}</span>
                 <h2>Plano Premium</h2>
                 <strong>R$ 39,90<span>/mês</span></strong>
@@ -82,18 +83,18 @@
                 </div>
             </article>
 
-            <article class="subscription-checklist manual-payment-panel">
+            <article class="subscription-checklist manual-payment-panel billing-card billing-card--pix">
                 <p class="lp-kicker">Pagamento manual</p>
                 <h2>Pix e comprovante</h2>
                 <p>Após pagar via Pix, envie o comprovante pelo WhatsApp. Sua assinatura será ativada após confirmação manual.</p>
                 <dl class="subscription-facts subscription-facts--stacked">
                     <div>
                         <dt>Chave Pix</dt>
-                        <dd id="premium-pix-key">{% if pix_key %}{{ pix_key }}{% else %}Chave Pix em configuração{% endif %}</dd>
+                        <dd id="premium-pix-key" class="billing-pix-value">{% if pix_key %}{{ pix_key }}{% else %}Chave Pix em configuração{% endif %}</dd>
                     </div>
                     <div>
                         <dt>Valor</dt>
-                        <dd>R$ 39,90/mês</dd>
+                        <dd class="billing-price-value">R$ 39,90/mês</dd>
                     </div>
                 </dl>
                 <div class="subscription-actions">
@@ -137,6 +138,7 @@
                 {% endfor %}
             </div>
         </section>
+        </div>
     </main>
     <script src="/static/js/theme.js" defer></script>
     <script>

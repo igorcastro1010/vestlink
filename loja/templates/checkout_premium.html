@@ -5,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Pagamento manual - {{ loja.nome }}</title>
     <link rel="stylesheet" href="/static/css/variables.css?v=76">
-    <link rel="stylesheet" href="/static/css/catalogo.css?v=76">
+    <link rel="stylesheet" href="/static/css/catalogo.css?v=104">
     <script>
         document.documentElement.setAttribute("data-theme", "dark");
     </script>
 </head>
-<body class="plans-page">
-    <header class="lp-header">
+<body class="plans-page billing-page">
+    <header class="lp-header billing-topbar">
         <a class="lp-logo" href="{% url 'painel_loja' loja.slug %}">VestLink</a>
         <nav>
             <a href="{% url 'painel_loja' loja.slug %}">Painel</a>
@@ -20,13 +20,14 @@
         </nav>
     </header>
 
-    <main>
-        <section class="checkout-shell checkout-shell--manual">
-            <div class="checkout-copy">
+    <main class="billing-main">
+        <div class="billing-container">
+        <section class="checkout-shell checkout-shell--manual billing-grid">
+            <div class="checkout-copy billing-card billing-card--intro">
                 <p class="lp-kicker">Pagamento manual</p>
                 <h1>Plano Premium</h1>
                 <p>Pague via Pix e envie o comprovante pelo WhatsApp. Sua assinatura será ativada após confirmação manual.</p>
-                <div class="checkout-summary">
+                <div class="checkout-summary billing-details-grid">
                     <span>Loja: <strong>{{ loja.nome }}</strong></span>
                     <span>Plano: <strong>Premium</strong></span>
                     <span>Valor: <strong>R$ {{ valor_final|default:"39,90" }}/mês</strong></span>
@@ -34,12 +35,23 @@
                 </div>
             </div>
 
-            <aside class="checkout-card manual-payment-panel">
+            <aside class="checkout-card manual-payment-panel billing-card billing-card--pix">
                 <span class="plan-tag">Pagamento manual</span>
                 <h2>Pix e comprovante</h2>
                 <p>Copie a chave Pix, pague o Premium e envie o comprovante. A liberação é feita manualmente.</p>
-                <div class="checkout-summary">
-                    <span>Chave Pix: <strong id="premium-pix-key">{% if pix_key %}{{ pix_key }}{% else %}Chave Pix em configuração{% endif %}</strong></span>
+                <div class="billing-payment-details">
+                    <div class="billing-detail billing-detail--wide">
+                        <span>Chave Pix</span>
+                        <strong id="premium-pix-key" class="billing-pix-value">{% if pix_key %}{{ pix_key }}{% else %}Chave Pix em configuração{% endif %}</strong>
+                    </div>
+                    <div class="billing-detail">
+                        <span>Valor</span>
+                        <strong class="billing-price-value">R$ {{ valor_final|default:"39,90" }}/mês</strong>
+                    </div>
+                    <div class="billing-detail">
+                        <span>Comprovante</span>
+                        <strong>WhatsApp</strong>
+                    </div>
                 </div>
                 <div class="subscription-actions">
                     <button class="subscription-action--secondary" type="button" data-copy-pix {% if not pix_key %}disabled{% endif %}>Copiar chave Pix</button>
@@ -54,6 +66,7 @@
                 {% endif %}
             </aside>
         </section>
+        </div>
     </main>
     <script src="/static/js/theme.js" defer></script>
     <script>

@@ -1,14 +1,17 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-br" data-theme="dark">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Planos - VestLink</title>
     <link rel="stylesheet" href="/static/css/variables.css?v=76">
-    <link rel="stylesheet" href="/static/css/catalogo.css?v=76">
+    <link rel="stylesheet" href="/static/css/catalogo.css?v=104">
+    <script>
+        document.documentElement.setAttribute("data-theme", "dark");
+    </script>
 </head>
-<body class="plans-page">
-    <header class="lp-header">
+<body class="plans-page billing-page">
+    <header class="lp-header billing-topbar">
         <a class="lp-logo" href="/">VestLink</a>
         <nav>
             <a href="/">Início</a>
@@ -27,15 +30,16 @@
         {% endif %}
     </header>
 
-    <main>
-        <section class="plans-hero">
+    <main class="billing-main">
+        <div class="billing-container">
+        <section class="plans-hero billing-hero">
             <p class="lp-kicker">Planos simples</p>
             <h1>Plano Premium para sua loja vender melhor.</h1>
             <p>Tenha catálogo profissional com link próprio, produtos organizados e venda direta pelo WhatsApp. O pagamento é manual via Pix.</p>
         </section>
 
-        <section class="plans-grid" aria-label="Planos do VestLink">
-            <article class="plan-card plan-card--featured">
+        <section class="plans-grid billing-plans-grid" aria-label="Planos do VestLink">
+            <article class="plan-card plan-card--featured billing-card">
                 <span class="plan-tag">7 dias grátis</span>
                 <h2>Plano Premium</h2>
                 <strong>R$ 39,90<span>/mês</span></strong>
@@ -62,6 +66,7 @@
             <h2>Feito para loja que vende no Instagram e WhatsApp.</h2>
             <p>Você continua vendendo pelo WhatsApp, agora com uma vitrine organizada para o cliente escolher sem receber fotos soltas.</p>
         </section>
+        </div>
     </main>
 </body>
 </html>

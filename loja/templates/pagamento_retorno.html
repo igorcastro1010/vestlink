@@ -1,14 +1,17 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-br" data-theme="dark">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Pagamento manual - {{ loja.nome }}</title>
     <link rel="stylesheet" href="/static/css/variables.css?v=76">
-    <link rel="stylesheet" href="/static/css/catalogo.css?v=76">
+    <link rel="stylesheet" href="/static/css/catalogo.css?v=104">
+    <script>
+        document.documentElement.setAttribute("data-theme", "dark");
+    </script>
 </head>
-<body class="plans-page">
-    <header class="lp-header">
+<body class="plans-page billing-page">
+    <header class="lp-header billing-topbar">
         <a class="lp-logo" href="{% url 'painel_loja' loja.slug %}">VestLink</a>
         <nav>
             <a href="{% url 'painel_loja' loja.slug %}">Painel</a>
@@ -16,15 +19,16 @@
         </nav>
     </header>
 
-    <main>
+    <main class="billing-main">
+        <div class="billing-container">
         <section class="checkout-shell checkout-shell--single">
-            <div class="checkout-copy">
+            <div class="checkout-copy billing-card billing-card--intro">
                 <p class="lp-kicker">Pagamento manual</p>
                 <h1>A assinatura não foi alterada automaticamente.</h1>
                 <p>O Premium só é ativado após confirmação manual do comprovante. Volte para a assinatura para ver as instruções de Pix e WhatsApp.</p>
 
                 {% if pagamento %}
-                    <div class="checkout-summary">
+                    <div class="checkout-summary billing-details-grid">
                         <span>Status interno: <strong>{{ pagamento.get_status_display }}</strong></span>
                         <span>Referencia: <strong>{{ pagamento.external_reference }}</strong></span>
                         <span>Valor: <strong>R$ {{ pagamento.valor }}</strong></span>
@@ -36,6 +40,7 @@
                 </div>
             </div>
         </section>
+        </div>
     </main>
 </body>
 </html>
