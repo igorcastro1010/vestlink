@@ -20814,3 +20814,249 @@ body.billing-page {
         flex-direction: column !important;
     }
 }
+
+/* Mobile polish for public auth, landing and plans pages. */
+body.auth-page .auth-switch--cta {
+    margin-top: 22px !important;
+}
+
+body.auth-page .auth-switch--cta a {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-height: 48px !important;
+    min-width: 190px !important;
+    padding: 13px 22px !important;
+    border: 1px solid rgba(190, 164, 255, 0.56) !important;
+    border-radius: 999px !important;
+    background: linear-gradient(135deg, #6d4fd7, #4c2f93) !important;
+    color: #ffffff !important;
+    font-weight: 850 !important;
+    line-height: 1.15 !important;
+    text-align: center !important;
+    text-decoration: none !important;
+    box-shadow: 0 16px 34px rgba(109, 79, 215, 0.24) !important;
+}
+
+html[data-theme="dark"] body.auth-page .auth-note {
+    border: 1px solid rgba(190, 164, 255, 0.2) !important;
+    background: rgba(255, 255, 255, 0.06) !important;
+    color: rgba(247, 243, 255, 0.78) !important;
+}
+
+@media (max-width: 760px) {
+    .saas-landing .lp-hero {
+        padding-top: 118px !important;
+        padding-bottom: 38px !important;
+    }
+
+    .saas-landing .lp-hero h1,
+    .lp-hero h1 {
+        font-size: 2.45rem !important;
+        line-height: 1.08 !important;
+    }
+
+    .saas-landing .lp-hero__copy > p:not(.lp-kicker),
+    .lp-hero__copy > p:not(.lp-kicker) {
+        font-size: 1.18rem !important;
+        line-height: 1.55 !important;
+    }
+
+    .saas-landing .lp-hero__copy > span {
+        font-size: 1rem !important;
+        line-height: 1.35 !important;
+    }
+
+    .billing-container {
+        padding-top: 24px !important;
+    }
+
+    .billing-page .plans-hero,
+    .billing-page .billing-hero {
+        margin-bottom: 16px !important;
+        padding: 20px 16px !important;
+    }
+
+    .billing-page .plans-hero h1,
+    .billing-page .billing-hero h1,
+    .plans-hero h1 {
+        font-size: 2.15rem !important;
+        line-height: 1.12 !important;
+    }
+
+    .billing-page .plans-hero p:not(.lp-kicker),
+    .billing-page .billing-hero p:not(.lp-kicker),
+    .plans-hero p:not(.lp-kicker) {
+        font-size: 1rem !important;
+        line-height: 1.48 !important;
+    }
+
+    .billing-page .plan-card {
+        padding: 20px 16px !important;
+    }
+
+    .billing-page .plan-card > strong {
+        font-size: 2.15rem !important;
+        line-height: 1.05 !important;
+    }
+
+    .billing-page .plan-card p,
+    .billing-page .plan-card li {
+        font-size: 1rem !important;
+        line-height: 1.42 !important;
+    }
+
+    .billing-page .plan-card ul {
+        gap: 7px !important;
+    }
+}
+
+@media (max-width: 640px) {
+    body.auth-page {
+        padding: 24px 0 42px !important;
+    }
+
+    body.auth-page .auth-back-link {
+        margin-left: 18px !important;
+        margin-bottom: 28px !important;
+    }
+
+    body.auth-page .auth-layout {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 10px !important;
+        box-sizing: border-box !important;
+    }
+
+    body.auth-page .auth-layout .auth-card {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    body.auth-page .auth-card,
+    body.auth-page .auth-card--wide {
+        width: calc(100vw - 28px) !important;
+        max-width: 100% !important;
+        padding: 24px 16px !important;
+        border-radius: 22px !important;
+    }
+
+    body.auth-page .auth-card h1,
+    body.auth-page .auth-card h2 {
+        font-size: 2rem !important;
+        line-height: 1.12 !important;
+    }
+
+    body.auth-page .auth-card .panel-form {
+        gap: 12px !important;
+        width: 100% !important;
+    }
+
+    body.auth-page .auth-card .panel-form p,
+    body.auth-page .auth-card .signup-wizard section,
+    body.auth-page .auth-card .legal-acceptance,
+    body.auth-page .auth-card .password-requirements {
+        padding: 14px !important;
+        border-radius: 18px !important;
+    }
+
+    body.auth-page .auth-card .signup-wizard section {
+        gap: 12px !important;
+    }
+
+    body.auth-page .auth-card .signup-wizard h2 {
+        font-size: 1.65rem !important;
+        line-height: 1.15 !important;
+    }
+
+    body.auth-page .auth-card .panel-form label,
+    body.auth-page .auth-card label {
+        line-height: 1.25 !important;
+    }
+
+    body.auth-page .auth-card .panel-form input:not([type="checkbox"]),
+    body.auth-page .auth-card .panel-form select,
+    body.auth-page .auth-card .panel-form textarea,
+    body.auth-page .google-auth-button,
+    body.auth-page .auth-card .panel-form button:not(.password-toggle) {
+        width: 100% !important;
+        max-width: none !important;
+        min-width: 0 !important;
+    }
+
+    body.auth-page .auth-card .panel-form input:not([type="checkbox"]),
+    body.auth-page .auth-card .panel-form select,
+    body.auth-page .auth-card .panel-form textarea {
+        min-height: 46px !important;
+    }
+
+    body.auth-page .auth-card .password-input-wrap {
+        width: 100% !important;
+    }
+
+    body.auth-page .auth-card .panel-form .password-input-wrap input {
+        padding-right: 48px !important;
+    }
+
+    body.auth-page .auth-card .panel-form .password-toggle {
+        width: 36px !important;
+        height: 36px !important;
+        min-width: 36px !important;
+        min-height: 36px !important;
+        right: 6px !important;
+        padding: 0 !important;
+    }
+
+    body.auth-page .auth-card .panel-form .password-toggle__icon {
+        width: 19px !important;
+        height: 19px !important;
+    }
+
+    body.auth-page .auth-card .legal-acceptance label,
+    body.auth-page .auth-card .remember-me {
+        display: grid !important;
+        grid-template-columns: 24px minmax(0, 1fr) !important;
+        align-items: start !important;
+        gap: 12px !important;
+        min-height: 52px !important;
+        padding: 14px !important;
+    }
+
+    body.auth-page .auth-card input[type="checkbox"] {
+        width: 20px !important;
+        height: 20px !important;
+        margin-top: 2px !important;
+    }
+
+    body.auth-page .auth-card .auth-legal-note,
+    body.auth-page .auth-card .auth-switch,
+    body.auth-page .auth-card .helptext,
+    body.auth-page .auth-card .password-requirements li {
+        font-size: 1rem !important;
+        line-height: 1.45 !important;
+    }
+
+    body.auth-page .auth-switch--cta a {
+        width: 100% !important;
+    }
+}
+
+@media (max-width: 390px) {
+    .saas-landing .lp-hero h1,
+    .lp-hero h1 {
+        font-size: 2.28rem !important;
+    }
+
+    .billing-page .plans-hero h1,
+    .billing-page .billing-hero h1,
+    .plans-hero h1 {
+        font-size: 1.86rem !important;
+    }
+
+    body.auth-page .auth-card,
+    body.auth-page .auth-card--wide {
+        width: calc(100vw - 20px) !important;
+        padding: 22px 14px !important;
+    }
+}

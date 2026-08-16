@@ -1,11 +1,14 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-br" data-theme="dark">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% if google_oauth %}Entrando com Google{% else %}Confirmando e-mail{% endif %} - VestLink</title>
     <link rel="stylesheet" href="/static/css/variables.css?v=76">
     <link rel="stylesheet" href="/static/css/catalogo.css?v=76">
+    <script>
+        document.documentElement.setAttribute("data-theme", "dark");
+    </script>
 </head>
 <body class="auth-page">
     <main class="auth-card">
@@ -18,7 +21,7 @@
                 Estamos validando sua conta. Aguarde alguns segundos.
             {% endif %}
         </p>
-        <p class="auth-switch"><a href="{% url 'login' %}">Voltar para entrar</a></p>
+        <p class="auth-switch auth-switch--cta"><a href="{% url 'login' %}">Voltar para entrar</a></p>
     </main>
     <script>
         const statusText = document.querySelector("[data-confirmation-status]");

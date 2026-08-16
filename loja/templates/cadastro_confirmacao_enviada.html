@@ -1,11 +1,14 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-br" data-theme="dark">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Confirme seu e-mail - VestLink</title>
     <link rel="stylesheet" href="/static/css/variables.css?v=76">
     <link rel="stylesheet" href="/static/css/catalogo.css?v=76">
+    <script>
+        document.documentElement.setAttribute("data-theme", "dark");
+    </script>
 </head>
 <body class="auth-page">
     <main class="auth-card">
@@ -30,7 +33,7 @@
             </form>
         {% endif %}
         <p class="auth-note">Se não aparecer na caixa de entrada, confira Spam e Promoções.</p>
-        <p class="auth-switch"><a href="{% url 'login' %}">Voltar para entrar</a></p>
+        <p class="auth-switch auth-switch--cta"><a href="{% url 'login' %}">Voltar para entrar</a></p>
     </main>
     <script>
         sessionStorage.removeItem("vestlink:cadastro:draft");

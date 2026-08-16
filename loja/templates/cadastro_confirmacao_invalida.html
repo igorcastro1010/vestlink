@@ -1,18 +1,21 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-br" data-theme="dark">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Link inválido - VestLink</title>
     <link rel="stylesheet" href="/static/css/variables.css?v=76">
     <link rel="stylesheet" href="/static/css/catalogo.css?v=76">
+    <script>
+        document.documentElement.setAttribute("data-theme", "dark");
+    </script>
 </head>
 <body class="auth-page">
     <main class="auth-card">
         <p class="eyebrow">Confirmação</p>
         <h1>Link inválido ou expirado</h1>
         <p>Esse link de confirmação não está mais válido. Crie a conta novamente ou solicite ajuda pelo suporte.</p>
-        <p class="auth-switch"><a href="{% url 'cadastro' %}">Criar conta</a></p>
+        <p class="auth-switch auth-switch--cta"><a href="{% url 'cadastro' %}">Criar conta</a></p>
     </main>
 </body>
 </html>
