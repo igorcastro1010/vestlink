@@ -8,7 +8,21 @@ Catálogos digitais para lojas de roupas, com painel do lojista, produtos e cont
 
 [**📚 Instalação e configuração**](docs/guia-configuracao.md) · [Código](https://github.com/igorcastro1010/vestlink) · [Mais projetos](https://github.com/igorcastro1010)
 
-> Demonstração temporariamente indisponível: [vestlink.vercel.app](https://vestlink.vercel.app) retornou erro 500 na verificação de 22/10/2026. A captura será adicionada após a recuperação da página pública.
+> Demonstração temporariamente indisponível: [vestlink.vercel.app](https://vestlink.vercel.app) retornou erro 500 na verificação de 22/10/2026. As capturas abaixo foram produzidas localmente e não comprovam a recuperação do site público.
+
+## Funcionalidades em tela
+
+Capturas de demonstração local com dados fictícios, preparadas em 22/10/2026. Não representam dados de produção. [Como foram produzidas](docs/capturas-demonstracao.md).
+
+### Catálogo de produtos
+
+![Catálogo com produtos, preços e variações fictícios](assets/app-preview.png)
+
+As imagens dos produtos são os marcadores ilustrativos do seed de demonstração do projeto.
+
+### Painel do lojista
+
+![Painel da loja demonstrativa](assets/painel-demo.png)
 
 ## Funcionalidades
 
