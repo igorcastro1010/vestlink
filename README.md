@@ -16,7 +16,7 @@ Capturas de demonstração local com dados fictícios, preparadas em 22/10/2026.
 
 ### Catálogo de produtos
 
-![Catálogo com produtos, preços e variações fictícios](assets/app-preview.png)
+![Catálogo com produtos, preços e variações fictícios](assets/funcionalidades-demo.png)
 
 As imagens dos produtos são os marcadores ilustrativos do seed de demonstração do projeto.
 
